@@ -3,3 +3,21 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Playfair Display";
   letter-spacing: 5px;
 }
+
+.button {
+  color: #ffffff;
+  background-color:#6c6c93;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+  height: 50px;
+}
+
+.button:hover {
+  background-color: #21212d;
+}
+
+.contact {
+  display: flex;
+}
