@@ -1,11 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="no-scrollbar" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Houssam YAKHLAF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="img/hyk.png" />
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    
+<body class="bg-black text-gray-200">
+
+<div id="toast" class="flex gap-2 bg-green-600 text-white px-4 py-3 rounded-lg fixed top-28 -left-96 z-[9999]">
+    <span class="font-semibold">Success:</span><h1>Your message has been sent!</h1>
+</div>
+
+<!-- HEADER -->
+<header class="w-full py-6 border-b border-gray-800 fixed top-0 left-0 bg-black backdrop-blur-xl z-50">
+    <div class="mx-auto px-6 flex justify-between items-center">
+        <a id="hyk" href="#hero" class="text-2xl font-bold neon-text">HYK</a>
+        <nav class="space-x-6 hidden md:flex items-center">
+            <a href="#about" class="hover:text-white">About</a>
+            <a href="#skills" class="hover:text-white">Skills</a>
+            <a href="#projects" class="hover:text-white">Projects</a>
+            <a href="#contact" class="hover:text-white">Contact</a>
+            <a href="files/cv.pdf" download class="inline-block px-6 py-3 bg-gray-200 text-black rounded-xl font-semibold hover:bg-white">Download CV</a>
+        </nav>
+    </div>
+</header>
+
+<!-- HERO -->
+<section class="h-screen flex items-center justify-center text-center px-6" id="hero">
+    <div class="w-screen h-screen fixed flex justify-between z-[-9999]">
+        <div id="moon" class="w-1/2 h-full bg-[url('img/whitout.jpg')] bg-no-repeat"></div>
+        <div id="sun" class="w-1/2 h-full bg-[url('img/wit.jpg')] bg-no-repeat bg-right"></div>
+    </div>
+    <div>
+        <h2 class="text-5xl md:text-7xl font-extrabold neon-text">HOUSSAM YAKHLAF</h2>
+        <p class="mt-4 text-xl md:text-2xl text-white">Full-Stack Developer</p>
+        <p class="mt-6 text-gray-300 max-w-lg mx-auto h-20 flex justify-center items-center" id="saying">
+            <span class="ori cursor-default">I loved bugs so much, not because I'm frivolous<br>but because they gave me things I never dreamed I could achieve</span>
+            <span class="hid cursor-default">Everything I write is not in vain, rather, it conceals coded secrets</span>
+        </p>
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="#projects" class="px-6 py-3 bg-white text-black font-semibold rounded-xl hover:opacity-80">My Projects</a>
+            <a href="#contact" class="px-6 py-3 border border-white text-white hover:bg-white hover:text-black rounded-xl">Contact Me</a>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="mx-auto py-24 reveal flex flex-col justify-center items-start h-screen overflow-auto no-scrollbar overflow-x-hidden" id="about">
+    <div class="w-full flex justify-center"><h2 class="h-[10%] text-4xl font-bold text-white mb-6 mx-6">About me</h2></div>
+    <div id="aboutinfo" class="h-[90%] flex justify-start items-start">
+        <div class="w-screen h-full flex items-center justify-around bg-[url('img/id.png')] bg-center bg-no-repeat bg-opacity-50">
+            <p class="text-gray-300 leading-relaxed text-center w-[90%] text-[50px] font-bold neon-text">My name is Houssam YAKHLAF<br>a 19-year-old student from Safi, Morocco<br>I am currently studying development at YouCode<br>focusing on web development</p>
+        </div>
+        <div class="w-screen h-full flex items-center justify-around bg-[url('img/graduate-hat.png')] bg-center bg-no-repeat bg-opacity-50">
+            <p class="text-gray-300 leading-relaxed text-center w-[90%] text-[50px] font-bold neon-text">Previously, I studied English at<br>Polydisciplinary Faculty of Safi - Université Cadi Ayyad (2024/2025)<br>and earned my Baccalaureate in 2024<br>from Lycée Mohammed Belahcen El Ouazzani</p>
+        </div>
+        <div class="w-screen h-full flex flex-col items-center justify-center bg-[url('img/multitasking.png')] bg-center bg-no-repeat bg-opacity-50">
+            <p class="text-gray-300 leading-relaxed text-center w-[90%] text-[50px] font-bold neon-text">I am passionate about programming and web technologies<br>and I aim to enhance my technical skills through hands-on projects and practical learning<br>You can see my current hard skills in the Technical Skills section</p>
+        </div>
+        <div class="w-screen h-full flex items-center justify-around bg-[url('img/softskills.png')] bg-center bg-no-repeat bg-opacity-50">
+            <p class="text-gray-300 leading-relaxed text-center w-[90%] text-[50px] font-bold neon-text">I also value teamwork<br>effective communication<br>and a strong desire to learn and grow</p>
+        </div>
+    </div>
+</section>
+
+<!-- SKILLS -->
+<section class="mx-auto px-6 py-24 reveal flex flex-col justify-center items-center" id="skills">
+<h2 class="text-4xl font-bold text-white mb-10">Technical Skills</h2>
+<div class="w-screen flex flex-wrap justify-center items-center gap-10">
+
+<div class="w-2/5 p-6 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow flex flex-col justify-center items-center">
+<h3 class="text-2xl font-semibold mb-4 text-white">Front-end</h3>
+<p id="front"></p>
+</div>
+
+
+<div class="w-2/5 p-6 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow flex flex-col justify-center items-center">
+<h3 class="text-2xl font-semibold mb-4 text-white">Back-end</h3>
+<p id="back"></p>
+</div>
+
+
+<div class="w-2/5 p-6 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow flex flex-col justify-center items-center">
+<h3 class="text-2xl font-semibold mb-4 text-white">UI/UX & Design</h3>
+<p id="design"></p>
+</div>
+
+
+<div class="w-2/5 p-6 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow flex flex-col justify-center items-center">
+<h3 class="text-2xl font-semibold mb-4 text-white">Tools & Management</h3>
+<p id="tools"></p>
+</div>
+
+</div>
+</section>
+
+<!-- PROJECTS -->
+<section class="mx-auto px-6 py-24 reveal flex flex-col justify-center items-center" id="projects">
+    <h2 class="text-4xl font-bold text-white mb-10">Projects</h2>
+    <div class="grid md:grid-cols-3 gap-10">
+        <div class="p-4 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow tilt">
+            <img src="img/Worksphere.webp" class="rounded-xl mb-3 w-full h-1/2" />
+            <h3 class="text-xl font-bold text-white mb-2">WorkSphere</h3>
+            <p class="text-gray-300">Modern virtual workspace.</p>
+        </div>
+        <div class="p-4 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow tilt">
+            <img src="img/Pixelgame.png" class="rounded-xl mb-3 w-full h-1/2" />
+            <h3 class="text-xl font-bold text-white mb-2">PixelQuest</h3>
+            <p class="text-gray-300">Interactive video game catalog.</p>
+        </div>
+        <div class="p-4 border border-gray-800 rounded-2xl bg-gray-900/40 hover:glow tilt">
+            <img src="img/edirham.webp" class="rounded-xl mb-3 w-full h-1/2" />
+            <h3 class="text-xl font-bold text-white mb-2">E-Dirham</h3>
+            <p class="text-gray-300">Moroccan digital currency.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT FORM -->
+<section class="mx-auto px-6 py-24 reveal flex flex-col justify-center items-center" id="contact">
+    <h2 class="text-4xl font-bold text-white mb-6">Contact</h2>
+    <form id="contactForm" class="grid gap-4 w-full">
+        <input type="text" name="name" placeholder="Name" class="p-3 bg-gray-900 border border-gray-700 rounded-xl" required>
+        <input type="email" name="email" placeholder="Email" class="p-3 bg-gray-900 border border-gray-700 rounded-xl" required>
+        <textarea name="message" placeholder="Message" rows="4" class="p-3 bg-gray-900 border border-gray-700 rounded-xl" required></textarea>
+        <button class="px-6 py-3 bg-white text-black rounded-xl font-semibold">Send</button>
+    </form>
+</section>
+
+<footer class="text-center py-10 text-gray-500 border-t border-gray-800">© 2025 Houssam YAKHLAF</footer>
+
+<script type="module" src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+
 </body>
 </html>

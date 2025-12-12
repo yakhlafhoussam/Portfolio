@@ -1,0 +1,50 @@
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.glow {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+}
+
+.neon-text {
+    text-shadow: 0 0 8px #008600;
+}
+
+.tilt {
+    transition: transform .2s ease;
+}
+
+.tilt:hover {
+    transform: scale(1.05);
+}
+
+#saying {
+    position: relative;
+}
+
+#saying span {
+    position: absolute;
+    transition: opacity 1s ease;
+}
+
+#saying .hid {
+    opacity: 0;
+}
+
+#saying:hover .ori {
+    opacity: 0;
+}
+
+#saying:hover .hid {
+    opacity: 1;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
