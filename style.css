@@ -7,7 +7,7 @@ body {
 }
 
 .neon-text {
-    text-shadow: 0 0 8px #008600;
+    text-shadow: 0 0 25px #008600;
 }
 
 .tilt {
@@ -48,3 +48,51 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+.slide {
+    min-width: 100%;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .slide img {
+    width: 60%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .slide h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: .5rem;
+  }
+
+  .slide p {
+    color: #cbd5e1;
+  }
+
+  .nav-btn {
+    position: absolute;
+    top: 45%;
+    background: rgba(0,0,0,.6);
+    padding: .75rem 1rem;
+    border-radius: 999px;
+    font-size: 1.5rem;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: #555;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background: white;
+  }
