@@ -114,33 +114,6 @@ const projects = ref(db, "projects/");
 
 /************************************************************************************** */
 
-// مثال تخزين مصفوفة
-let myArray = [
-    {
-        img: "https://maghreb.simplonline.co/_next/image?url=https%3A%2F%2Fsimplonline-v3-prod.s3.eu-west-3.amazonaws.com%2Fmedia%2Fimage%2Fpng%2Fchatgpt-image-nov-16-2025-02-15-39-pm-691a1cfdb1aa0331529428.png&w=1280&q=75",
-        link: "https://yakhlafhoussam.github.io/Brief-Soutenance-Crois-e-1-WorkSphere---Virtual-Workspace-/",
-        title: "WorkSphere",
-        des: "Modern virtual workspace."
-    },
-    {
-        img: "https://yakhlafhoussam.github.io/Brief-2-S2/img/cover.png",
-        link: "https://yakhlafhoussam.github.io/Brief-2-S2/",
-        title: "PixelQuest",
-        des: "Interactive video game catalog."
-    },
-    {
-        img: "https://maghreb.simplonline.co/_next/image?url=https%3A%2F%2Fsimplonline-v3-prod.s3.eu-west-3.amazonaws.com%2Fmedia%2Fimage%2Fpng%2Fchatgpt-image-oct-20-2025-04-26-55-am-68f5ac0ad4d70051267516.png&w=1280&q=75",
-        link: "https://yakhlafhoussam.github.io/Brief-3/",
-        title: "E-Dirham",
-        des: "Moroccan digital currency."
-    },
-];
-
-/* // طريقة التخزين
-set(ref(db, "projects/"), myArray)
-  .then(() => console.log("Array saved!"))
-  .catch(err => console.error(err)); */
-
 get(skills).then((ajj) => {
     saj = ajj.val();
     document.querySelector("#front").innerHTML = saj[0];
