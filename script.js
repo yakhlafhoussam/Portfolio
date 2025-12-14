@@ -225,7 +225,7 @@ function enable(e) {
 }
 
 window.addEventListener("scroll", function () {
-    if (window.scrollY >= 920 && window.scrollY <= 950 && window.innerWidth >= 1024) {
+    if (window.scrollY >= 880 && window.scrollY <= 900 && window.innerWidth >= 1024) {
         document.querySelector('body').addEventListener('wheel', enable, { passive: false });
     }
 });
