@@ -111,36 +111,60 @@ const db = getDatabase(app);
 const contactRef = ref(db, "contacts/");
 const skills = ref(db, "skills/");
 const projects = ref(db, "projects/");
+const skill = ref(db, "skill/");
+const project = ref(db, "project/");
 
 /************************************************************************************** */
 
-get(skills).then((ajj) => {
+/* push(project, {
+        des: "Modern virtual workspace.",
+        img: "https://maghreb.simplonline.co/_next/image?url=https%3A%2F%2Fsimplonline-v3-prod.s3.eu-west-3.amazonaws.com%2Fmedia%2Fimage%2Fpng%2Fchatgpt-image-nov-16-2025-02-15-39-pm-691a1cfdb1aa0331529428.png&w=1280&q=75",
+        link: "https://yakhlafhoussam.github.io/Brief-Soutenance-Crois-e-1-WorkSphere---Virtual-Workspace-/",
+        title: "WorkSphere"
+    }).then(() => {
+        sendsucces();
+        document.getElementById("contactForm").reset();
+    }).catch((error) => {
+        alert("Error saving message: " + error);
+    }); */
+
+get(skill).then((ajj) => {
     saj = ajj.val();
-    document.querySelector("#front").innerHTML = saj[0];
-    document.querySelector("#back").innerHTML = saj[1];
-    document.querySelector("#design").innerHTML = saj[2];
-    document.querySelector("#tools").innerHTML = saj[3];
+    const key = Object.keys(saj)[0];
+
+    const backend = saj[key].backend;
+    const frontend = saj[key].frontend;
+    const design = saj[key].design;
+    const tools = saj[key].tools;
+
+    document.querySelector("#front").innerHTML = frontend;
+    document.querySelector("#back").innerHTML = backend;
+    document.querySelector("#design").innerHTML = design;
+    document.querySelector("#tools").innerHTML = tools;
+
 })
-get(projects).then((ajyk) => {
-   hs = ajyk.val();
-   document.querySelector("#slider").innerHTML = "";
-   for (let saou = 0; saou < hs.length; saou++) {
-       document.querySelector("#slider").insertAdjacentHTML("beforeend", `
+
+get(project).then((ajyk) => {
+    hs = ajyk.val();
+    document.querySelector("#slider").innerHTML = "";
+    Object.values(hs).forEach(item => {
+        document.querySelector("#slider").insertAdjacentHTML("afterbegin", `
            <div class="min-w-full h-full flex flex-col items-center text-center px-6">
-       <a class="mb-6 w-full h-5/6 max-w-md md:max-w-full" target="_blank" rel="noopener noreferrer" href='${hs[saou].link}'>
+       <a class="mb-6 w-full h-5/6 max-w-md md:max-w-full" target="_blank" rel="noopener noreferrer" href='${item.link}'>
        <img
-         src='${hs[saou].img}'
+         src='${item.img}'
          class="w-full h-full object-cover rounded-2xl shadow-lg"
        /></a>
-       <h3 class="text-2xl font-bold mb-2">${hs[saou].title}</h3>
+       <h3 class="text-2xl font-bold mb-2">${item.title}</h3>
        <p class="text-gray-400 max-w-md">
-         ${hs[saou].des}
+         ${item.des}
        </p>
      </div>
            `)
-   }
-   projectFromFirebase();
+    });
+    projectFromFirebase();
 })
+
 
 
 function sendsucces() {
@@ -217,7 +241,7 @@ document.addEventListener("DOMContentLoaded", event => {
         repeat: -1,
     });
 
-    const tl = gsap.timeline({ repeat: -1,});
+    const tl = gsap.timeline({ repeat: -1, });
 
     tl.to("#load1", { color: "#000000", duration: 2.5, ease: "none" })
         .to("#load2", { color: "#000000", duration: 2.5, ease: "none" }, "-=1.5")
