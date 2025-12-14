@@ -224,7 +224,11 @@ function enable(e) {
     }
 }
 
+let maxscroll = document.querySelector("body").scrollHeight - document.documentElement.clientHeight;
+
 window.addEventListener("scroll", function () {
+    let scrolling = (window.scrollY / maxscroll) * 100;
+    document.querySelector("#progressbar").style.width = scrolling + "%"
     if (window.scrollY >= 880 && window.scrollY <= 900 && window.innerWidth >= 1024) {
         document.querySelector('body').addEventListener('wheel', enable, { passive: false });
     }
