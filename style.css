@@ -1,0 +1,240 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1d2e 0%, #0f111a 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    font-family: 'JetBrains Mono', 'Monaco', 'Cascadia Code', monospace;
+}
+
+/* GNOME Terminal style window */
+.terminal-window {
+    width: 100%;
+    max-width: 960px;
+    height: 640px;
+    background: #2e2a2b;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+/* GNOME titlebar */
+.window-header {
+    background: #3a3738;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #4a4647;
+    flex-shrink: 0;
+}
+
+.window-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.win-btn {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: 0.1s;
+}
+
+.win-btn-close {
+    background: #f77a6b;
+}
+
+.win-btn-min {
+    background: #f7bf4f;
+}
+
+.win-btn-max {
+    background: #61c255;
+}
+
+.window-title {
+    font-size: 12px;
+    color: #e4e4e4;
+    background: #2a2728;
+    padding: 4px 14px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
+}
+
+.window-menu {
+    margin-left: auto;
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: #c0bfbf;
+}
+
+/* terminal content area - fixed height, scrollable output */
+.terminal-body {
+    background: #0f0e0e;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* scrollable output area - exactly like real terminal */
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 12px 18px;
+    font-family: 'JetBrains Mono', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #efefef;
+    scroll-behavior: smooth;
+}
+
+/* custom scrollbar - gnome style */
+.terminal-output::-webkit-scrollbar {
+    width: 10px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+    background: #1e1c1c;
+    border-radius: 6px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+    background: #5e5a5b;
+    border-radius: 6px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover {
+    background: #7e7a7b;
+}
+
+/* input line - fixed at bottom like real terminal */
+.terminal-input-line {
+    flex-shrink: 0;
+    background: #0f0e0e;
+    border-top: 1px solid #262222;
+    padding: 12px 18px 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.prompt-gnome {
+    color: #6cff6c;
+    font-weight: 500;
+    font-size: 12px;
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.prompt-user-gnome {
+    color: #6cff6c;
+}
+
+.prompt-at-gnome {
+    color: #8f8c8d;
+}
+
+.prompt-host-gnome {
+    color: #4a9eff;
+}
+
+.prompt-path-gnome {
+    color: #b0aeae;
+}
+
+.prompt-dollar-gnome {
+    color: #6cff6c;
+}
+
+.gnome-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f0f0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    flex: 1;
+    caret-color: #6cff6c;
+}
+
+.gnome-input::placeholder {
+    color: #3d3a3a;
+    font-style: italic;
+}
+
+/* output blocks */
+.output-line {
+    margin-bottom: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    animation: terminalFade 0.08s ease;
+}
+
+.command-line {
+    margin: 6px 0 2px 0;
+}
+
+@keyframes terminalFade {
+    from {
+        opacity: 0;
+        transform: translateY(1px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* styling for terminal text */
+.text-green {
+    color: #6cff6c;
+}
+
+.text-blue {
+    color: #6fa8ff;
+}
+
+.text-purple {
+    color: #c792ea;
+}
+
+.text-dim {
+    color: #8f8c8d;
+}
+
+.text-red {
+    color: #f77a6b;
+}
+
+.text-yellow {
+    color: #f7bf4f;
+}
+
+.text-cyan {
+    color: #7cd9ff;
+}
+
+.text-white {
+    color: #efefef;
+}
+
+.ascii-art {
+    line-height: 1.35;
+    font-size: 11px;
+}
