@@ -6,7 +6,9 @@ type Props = {
   id: string
   label: string
   type: IconType
-  onOpen: (id: string) => void
+  selected: boolean
+  onClick: (e: React.MouseEvent) => void
+  onDoubleClick: () => void
 }
 
 function FolderIcon({ color = "#4a9eff" }: { color?: string }) {
@@ -28,7 +30,6 @@ function FolderIcon({ color = "#4a9eff" }: { color?: string }) {
 function PdfIcon() {
   return (
     <svg width="38" height="46" viewBox="0 0 38 46" fill="none">
-      <path d="M4 2H24L36 14V42C36 44.2 34.2 46 32 46H... " fill="none" />
       <rect x="2" y="2" width="34" height="42" rx="3" fill="#2a2a2e" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
       <path d="M22 2L36 16H24C22.9 16 22 15.1 22 14V2Z" fill="#e53e3e" fillOpacity="0.8" />
       <rect x="7" y="20" width="14" height="1.5" rx="0.75" fill="rgba(255,255,255,0.25)" />
@@ -98,17 +99,7 @@ const ICON_COLORS: Record<string, string> = {
   gallery: "#f472b6",
 }
 
-export default function DesktopIcon({ id, label, type, onOpen }: Props) {
-  const lastClick = useRef(0)
-
-  const handleClick = () => {
-    const now = Date.now()
-    if (now - lastClick.current < 400) {
-      onOpen(id)
-    }
-    lastClick.current = now
-  }
-
+export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick }: Props) {
   const renderIcon = () => {
     switch (type) {
       case "folder": return <FolderIcon color={ICON_COLORS[id] ?? "#4a9eff"} />
@@ -122,31 +113,39 @@ export default function DesktopIcon({ id, label, type, onOpen }: Props) {
 
   return (
     <div
-      onClick={handleClick}
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
       style={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 5,
-        padding: "6px 8px",
-        borderRadius: 6,
+        gap: 6,
+        padding: "8px 6px",
+        borderRadius: 8,
         cursor: "default",
-        width: 72,
-        transition: "background 0.12s ease",
+        width: 76,
+        background: selected ? "rgba(59, 130, 246, 0.2)" : "transparent",
+        border: selected ? "1px solid rgba(59, 130, 246, 0.45)" : "1px solid transparent",
+        transition: "background 0.12s ease, border-color 0.12s ease",
+        userSelect: "none",
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
-      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+      onMouseEnter={e => {
+        if (!selected) e.currentTarget.style.background = "rgba(255,255,255,0.07)"
+      }}
+      onMouseLeave={e => {
+        if (!selected) e.currentTarget.style.background = "transparent"
+      }}
     >
       <div style={{ pointerEvents: "none" }}>{renderIcon()}</div>
       <span
         style={{
-          color: "rgba(255,255,255,0.85)",
+          color: selected ? "#fff" : "rgba(255,255,255,0.85)",
           fontSize: "0.72rem",
-          fontWeight: 400,
+          fontWeight: selected ? 500 : 400,
           textAlign: "center",
           textShadow: "0 1px 4px rgba(0,0,0,0.8)",
           lineHeight: 1.3,
-          maxWidth: 70,
+          maxWidth: 72,
           wordBreak: "break-word",
           pointerEvents: "none",
         }}

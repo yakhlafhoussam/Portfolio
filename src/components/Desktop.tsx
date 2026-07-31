@@ -8,6 +8,8 @@ import Browser from "../apps/Browser"
 import Profile from "../apps/Profile"
 import Resume from "../apps/Resume"
 import Gallery from "../apps/Gallery"
+import TextEditor from "../apps/TextEditor"
+import darkWallpaper from "@/imports/dark.jpg"
 
 export type AppId =
   | "projects"
@@ -19,6 +21,7 @@ export type AppId =
   | "terminal"
   | "profile"
   | "recycle"
+  | "editor"
 
 type WindowState = {
   id: string
@@ -31,18 +34,20 @@ type WindowState = {
   minimized: boolean
   maximized: boolean
   zIndex: number
+  params?: any
 }
 
 const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
-  projects:   { width: 820, height: 540 },
-  experience: { width: 820, height: 540 },
-  education:  { width: 820, height: 540 },
+  projects:   { width: 840, height: 550 },
+  experience: { width: 840, height: 550 },
+  education:  { width: 840, height: 550 },
   gallery:    { width: 900, height: 600 },
-  resume:     { width: 680, height: 720 },
-  browser:    { width: 800, height: 560 },
+  resume:     { width: 700, height: 780 },
+  browser:    { width: 820, height: 580 },
   terminal:   { width: 720, height: 460 },
   profile:    { width: 800, height: 580 },
   recycle:    { width: 400, height: 300 },
+  editor:     { width: 740, height: 520 },
 }
 
 const TITLES: Record<AppId, string> = {
@@ -55,6 +60,7 @@ const TITLES: Record<AppId, string> = {
   terminal:   "Terminal",
   profile:    "Profile & Settings",
   recycle:    "Recycle Bin",
+  editor:     "Text Editor",
 }
 
 const ICONS = [
@@ -73,24 +79,55 @@ let idCounter = 0
 
 export default function Desktop() {
   const [windows, setWindows] = useState<WindowState[]>([])
+  const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
+  const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const zRef = useRef(100)
 
   const bringToFront = useCallback((id: string) => {
     const z = ++zRef.current
     setWindows(ws => ws.map(w => (w.id === id ? { ...w, zIndex: z } : w)))
+    setActiveWindowId(id)
   }, [])
 
   const openWindow = useCallback(
-    (appId: AppId) => {
+    (appId: AppId, params?: any) => {
       if (appId === "recycle") return
 
-      const existing = windows.find(w => w.appId === appId)
-      if (existing) {
-        if (existing.minimized) {
-          setWindows(ws => ws.map(w => (w.id === existing.id ? { ...w, minimized: false } : w)))
+      // Handle opening files specifically:
+      // If we open an editor for a file, focus it if already open, or open a new file window
+      if (appId === "editor" && params) {
+        const existingEditor = windows.find(w => w.appId === "editor" && w.params?.title === params.title)
+        if (existingEditor) {
+          if (existingEditor.minimized) {
+            setWindows(ws => ws.map(w => (w.id === existingEditor.id ? { ...w, minimized: false } : w)))
+          }
+          bringToFront(existingEditor.id)
+          return
         }
-        bringToFront(existing.id)
-        return
+      }
+
+      // If opening gallery with a specific preview image and gallery is already open:
+      if (appId === "gallery" && params) {
+        const existingGallery = windows.find(w => w.appId === "gallery")
+        if (existingGallery) {
+          setWindows(ws =>
+            ws.map(w => (w.id === existingGallery.id ? { ...w, minimized: false, params } : w))
+          )
+          bringToFront(existingGallery.id)
+          return
+        }
+      }
+
+      // Generic look up
+      if (appId !== "editor") {
+        const existing = windows.find(w => w.appId === appId)
+        if (existing) {
+          if (existing.minimized) {
+            setWindows(ws => ws.map(w => (w.id === existing.id ? { ...w, minimized: false } : w)))
+          }
+          bringToFront(existing.id)
+          return
+        }
       }
 
       const size = DEFAULT_SIZES[appId]
@@ -107,7 +144,7 @@ export default function Desktop() {
         {
           id,
           appId,
-          title: TITLES[appId],
+          title: appId === "editor" ? (params?.title || TITLES[appId]) : TITLES[appId],
           x: cx,
           y: cy,
           width: size.width,
@@ -115,18 +152,22 @@ export default function Desktop() {
           minimized: false,
           maximized: false,
           zIndex: z,
+          params,
         },
       ])
+      setActiveWindowId(id)
     },
     [windows, bringToFront]
   )
 
   const closeWindow = useCallback((id: string) => {
     setWindows(ws => ws.filter(w => w.id !== id))
+    setActiveWindowId(curr => (curr === id ? null : curr))
   }, [])
 
   const minimizeWindow = useCallback((id: string) => {
     setWindows(ws => ws.map(w => (w.id === id ? { ...w, minimized: true } : w)))
+    setActiveWindowId(curr => (curr === id ? null : curr))
   }, [])
 
   const maximizeWindow = useCallback((id: string) => {
@@ -137,46 +178,52 @@ export default function Desktop() {
     setWindows(ws => ws.map(w => (w.id === id ? { ...w, x, y } : w)))
   }, [])
 
-  const renderApp = (appId: AppId) => {
-    switch (appId) {
-      case "projects":   return <FileExplorer section="projects" />
-      case "experience": return <FileExplorer section="experience" />
-      case "education":  return <FileExplorer section="education" />
-      case "gallery":    return <Gallery />
+  const renderApp = (w: WindowState) => {
+    switch (w.appId) {
+      case "projects":   return <FileExplorer section="projects" openWindow={openWindow} />
+      case "experience": return <FileExplorer section="experience" openWindow={openWindow} />
+      case "education":  return <FileExplorer section="education" openWindow={openWindow} />
+      case "gallery":    return <Gallery initialImageSrc={w.params?.imageSrc} />
       case "resume":     return <Resume />
       case "browser":    return <Browser />
       case "terminal":   return <Terminal />
       case "profile":    return <Profile />
+      case "editor":     return <TextEditor content={w.params?.content} title={w.params?.title} />
       default:           return null
     }
   }
 
   return (
     <div
+      onClick={() => setSelectedIconId(null)}
       style={{
         position: "fixed",
         inset: 0,
-        /* Wallpaper placeholder — replace with:
-           backgroundImage: "url('/wallpaper.jpg')",
-           backgroundSize: "cover",
-           backgroundPosition: "center",
-        */
-        background: "#1a1b1e",
+        backgroundImage: `url(${darkWallpaper})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
         animation: "desktopFadeIn 0.8s ease",
       }}
     >
-      <TopBar />
+      {/* Top Bar (stops click propagation to avoid resetting selection) */}
+      <div onClick={e => e.stopPropagation()}>
+        <TopBar />
+      </div>
 
-      {/* Desktop icons column */}
+      {/* Desktop icons container with responsive wrap (Flexbox wrap) */}
       <div
         style={{
           position: "absolute",
           top: 42,
           left: 12,
+          bottom: 12,
           display: "flex",
           flexDirection: "column",
-          gap: 4,
+          flexWrap: "wrap",
+          alignContent: "flex-start",
+          gap: 6,
+          maxHeight: "calc(100vh - 54px)", // Keep inside viewport boundaries
         }}
       >
         {ICONS.map(icon => (
@@ -185,7 +232,15 @@ export default function Desktop() {
             id={icon.id}
             label={icon.label}
             type={icon.type}
-            onOpen={id => openWindow(id as AppId)}
+            selected={selectedIconId === icon.id}
+            onClick={e => {
+              e.stopPropagation()
+              setSelectedIconId(icon.id)
+            }}
+            onDoubleClick={() => {
+              openWindow(icon.id)
+              setSelectedIconId(null)
+            }}
           />
         ))}
       </div>
@@ -202,13 +257,14 @@ export default function Desktop() {
           zIndex={w.zIndex}
           minimized={w.minimized}
           maximized={w.maximized}
+          isFocused={w.id === activeWindowId}
           onClose={() => closeWindow(w.id)}
           onMinimize={() => minimizeWindow(w.id)}
           onMaximize={() => maximizeWindow(w.id)}
           onMove={(x, y) => moveWindow(w.id, x, y)}
           onFocus={() => bringToFront(w.id)}
         >
-          {renderApp(w.appId)}
+          {renderApp(w)}
         </WindowFrame>
       ))}
     </div>

@@ -1,10 +1,29 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { GALLERY_IMAGES } from "@/data"
 
-export default function Gallery() {
-  const [selected, setSelected] = useState<string | null>(null)
+type Props = {
+  initialImageSrc?: string
+}
 
-  const active = GALLERY_IMAGES.find(img => img.id === selected)
+export default function Gallery({ initialImageSrc }: Props) {
+  const [selected, setSelected] = useState<string | null>(null)
+  const [customImage, setCustomImage] = useState<string | null>(initialImageSrc || null)
+
+  // Sync state if initialImageSrc changes while the component is mounted
+  useEffect(() => {
+    if (initialImageSrc) {
+      setCustomImage(initialImageSrc)
+    }
+  }, [initialImageSrc])
+
+  const active = customImage
+    ? { src: customImage, alt: "Preview", caption: "Project Preview" }
+    : GALLERY_IMAGES.find(img => img.id === selected)
+
+  const handleClose = () => {
+    setSelected(null)
+    setCustomImage(null)
+  }
 
   return (
     <div
@@ -14,12 +33,14 @@ export default function Gallery() {
         flexDirection: "column",
         overflow: "hidden",
         background: "#181818",
+        height: "100%",
+        position: "relative",
       }}
     >
       {/* Lightbox */}
       {active && (
         <div
-          onClick={() => setSelected(null)}
+          onClick={handleClose}
           style={{
             position: "absolute",
             inset: 0,
@@ -35,7 +56,7 @@ export default function Gallery() {
         >
           <img
             src={active.src}
-            alt={active.alt}
+            alt={active.alt || "Preview"}
             onClick={e => e.stopPropagation()}
             style={{
               maxWidth: "100%",
@@ -47,7 +68,7 @@ export default function Gallery() {
           />
           <p
             style={{
-              color: "rgba(255,255,255,0.4)",
+              color: "rgba(255,255,255,0.45)",
               fontSize: "0.8rem",
               marginTop: 16,
               fontFamily: "'JetBrains Mono', monospace",
@@ -81,6 +102,7 @@ export default function Gallery() {
           alignItems: "center",
           paddingLeft: 14,
           gap: 8,
+          userSelect: "none",
         }}
       >
         <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace" }}>
@@ -96,7 +118,7 @@ export default function Gallery() {
           padding: 16,
           display: "grid",
           gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          gap: 10,
+          gap: 12,
           alignContent: "start",
         }}
       >
@@ -112,6 +134,7 @@ export default function Gallery() {
               background: "#2a2a2a",
               border: "1px solid rgba(255,255,255,0.06)",
               transition: "transform 0.15s, border-color 0.15s",
+              userSelect: "none",
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLElement

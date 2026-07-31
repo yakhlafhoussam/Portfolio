@@ -1,4 +1,4 @@
-import hykLogo from "@/imports/light.jpg"
+import profileImg from "@/imports/profile.png"
 
 type SkillLevel = "Expert" | "Proficient" | "Learning"
 
@@ -127,13 +127,12 @@ export default function Profile() {
             }}
           >
             <img
-              src={hykLogo}
+              src={profileImg}
               alt="HYK"
               style={{
-                width: 60,
-                height: "auto",
-                filter: "invert(1)",
-                opacity: 0.85,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
               }}
             />
           </div>
