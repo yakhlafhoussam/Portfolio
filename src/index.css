@@ -23,26 +23,7 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.22); }
 
-@keyframes hykAppear {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1); }
-}
-@keyframes ledGlow {
-  from { filter: invert(1) drop-shadow(0 0 0px rgba(74,222,128,0)); }
-  to   { filter: invert(1) drop-shadow(0 0 40px rgba(74,222,128,0.55)) drop-shadow(0 0 80px rgba(74,222,128,0.2)); }
-}
-@keyframes subtitleFade {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes bootFadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-@keyframes desktopFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
+/* Boot keyframes live in BootScreen.css */
 @keyframes windowOpen {
   from { opacity: 0; transform: scale(0.96) translateY(-6px); }
   to   { opacity: 1; transform: scale(1) translateY(0); }

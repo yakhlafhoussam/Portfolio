@@ -9,7 +9,7 @@ import Profile from "../apps/Profile"
 import Resume from "../apps/Resume"
 import Gallery from "../apps/Gallery"
 import TextEditor from "../apps/TextEditor"
-import darkWallpaper from "@/imports/wallpaper.png"
+import darkWallpaper from "@/imports/wallpaper.jpg"
 
 export type AppId =
   | "projects"

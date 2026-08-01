@@ -1,101 +1,57 @@
-import { useEffect, useState } from "react"
-import hykLogo from "@/imports/logo.jpg"
+/**
+ * BootScreen.tsx
+ *
+ * HYK brand introduction — the first impression before the desktop.
+ *
+ * Design philosophy:
+ *   The user should not think "nice loading animation."
+ *   The user should think "what exactly is HYK?" — without the
+ *   interface explicitly asking that question.
+ *
+ * Animation constants live in BootScreen.css so they can be
+ * retuned without touching component logic.
+ *
+ * To replace the sentence, edit BOOT_MESSAGE below.
+ */
 
-type Props = { onComplete: () => void }
+import { useEffect } from "react"
+import "./BootScreen.css"
 
+// ─── Easily replaceable message ────────────────────────────────────────────
+const BOOT_MESSAGE = "What you discover depends on how deep you look."
+
+// ─── Timing constants (mirror what is in BootScreen.css) ───────────────────
+// The boot screen CSS handles its own exit fade, but we still need to
+// unmount the component after the animation completes so the desktop
+// can take full control.
+const TOTAL_DURATION_MS = 4600 // exit-delay (3.6s) + exit-duration (0.8s) + 200ms buffer
+
+// ─── Props ─────────────────────────────────────────────────────────────────
+type Props = {
+  /** Called once the boot crossfade is complete — switch to desktop. */
+  onComplete: () => void
+}
+
+// ─── Component ─────────────────────────────────────────────────────────────
 export default function BootScreen({ onComplete }: Props) {
-  const [phase, setPhase] = useState<"logo" | "glow" | "subtitle" | "fadeout">("logo")
-
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("glow"), 400)
-    const t2 = setTimeout(() => setPhase("subtitle"), 1200)
-    const t3 = setTimeout(() => setPhase("fadeout"), 2500)
-    const t4 = setTimeout(() => onComplete(), 3100)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-      clearTimeout(t3)
-      clearTimeout(t4)
-    }
+    // Respect reduced-motion preference: skip immediately
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    const delay = prefersReduced ? 600 : TOTAL_DURATION_MS
+    const timer = setTimeout(onComplete, delay)
+    return () => clearTimeout(timer)
   }, [onComplete])
 
-  const glowing = phase === "glow" || phase === "subtitle" || phase === "fadeout"
-
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "#000000",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "3rem",
-        opacity: phase === "fadeout" ? 0 : 1,
-        transition: phase === "fadeout" ? "opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)" : "none",
-        zIndex: 9999,
-        userSelect: "none",
-      }}
-    >
-      <div
-        style={{
-          position: "relative",
-          width: "clamp(160px, 20vw, 240px)",
-          height: "clamp(160px, 20vw, 240px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          animation: "hykAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        }}
-      >
-        {/* Soft, premium, hardware-like green glow behind */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-20%", // extend slightly beyond image boundaries
-            background: "radial-gradient(circle, rgba(74, 222, 128, 0.42) 0%, rgba(74, 222, 128, 0.12) 35%, rgba(74, 222, 128, 0) 70%)",
-            opacity: glowing ? 1 : 0,
-            transition: "opacity 1.6s cubic-bezier(0.25, 1, 0.5, 1)",
-            pointerEvents: "none",
-          }}
-        />
+    <div className="boot-root" aria-hidden="true">
+      {/* HYK — color nearly black, revealed by glow not by light */}
+      <h1 className="boot-word">HYK</h1>
 
-        {/* 
-          Logo image:
-          Inverted to become black text on a white background,
-          then set to mix-blend-mode: multiply.
-          White blends away completely, and the black text remains black,
-          blocking the green glow behind it.
-        */}
-        <img
-          src={hykLogo}
-          alt="HYK"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            filter: "invert(1) brightness(0.04)",
-            mixBlendMode: "multiply",
-            pointerEvents: "none",
-          }}
-        />
-      </div>
-
-      <p
-        style={{
-          color: "rgba(255,255,255,0.38)",
-          fontSize: "0.78rem",
-          fontFamily: "'JetBrains Mono', monospace",
-          letterSpacing: "0.08em",
-          margin: 0,
-          opacity: phase === "subtitle" || phase === "fadeout" ? 1 : 0,
-          transform: phase === "subtitle" || phase === "fadeout" ? "translateY(0)" : "translateY(8px)",
-          transition: "opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)",
-        }}
-      >
-        Not everything running can be seen in htop.
-      </p>
+      {/* Subtle sentence — low contrast, disappears with the screen */}
+      <p className="boot-message">{BOOT_MESSAGE}</p>
     </div>
   )
 }
