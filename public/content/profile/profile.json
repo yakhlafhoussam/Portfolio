@@ -1,0 +1,32 @@
+{
+  "name": "HYK",
+  "title": "Software Engineer",
+  "location": "Earth, Solar System",
+  "status": "Open to opportunities",
+  "focus": "Systems + AI infrastructure",
+  "about": "I build systems that handle complexity at scale — from low-level performance tooling in Rust to ML infrastructure and browser-based creative technology. I care deeply about correctness, clarity, and the craft of writing software that lasts.",
+  "skills": [
+    { "name": "TypeScript", "level": "Expert" },
+    { "name": "Python", "level": "Expert" },
+    { "name": "Rust", "level": "Proficient" },
+    { "name": "Go", "level": "Proficient" },
+    { "name": "React", "level": "Expert" },
+    { "name": "Node.js", "level": "Expert" },
+    { "name": "PostgreSQL", "level": "Proficient" },
+    { "name": "Kubernetes", "level": "Proficient" },
+    { "name": "PyTorch", "level": "Proficient" },
+    { "name": "WebAssembly", "level": "Learning" },
+    { "name": "Zig", "level": "Learning" },
+    { "name": "WebGPU", "level": "Learning" }
+  ],
+  "languages": [
+    { "lang": "English", "level": "Fluent" },
+    { "lang": "Turkish", "level": "Native" },
+    { "lang": "Japanese", "level": "Elementary" }
+  ],
+  "contact": {
+    "email": "hyk@proton.me",
+    "github": "github.com/hyk",
+    "linkedin": "linkedin.com/in/hyk"
+  }
+}

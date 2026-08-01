@@ -1,0 +1,9 @@
+[
+  {
+    "id": "1",
+    "title": "HYK Portfolio Reorganization",
+    "date": "2026-08-01",
+    "summary": "Completed a major refactoring of the portfolio desktop environment, establishing a clean, handcrafted architecture.",
+    "content": "Transitioned the codebase from its Figma AI roots into an isolated React + TypeScript architecture. Reorganized folders into clear domains: components/boot, components/desktop, components/windows, and apps. Prepared the layout for a dynamic content-driven file explorer."
+  }
+]
