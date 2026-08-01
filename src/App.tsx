@@ -1,6 +1,13 @@
+/**
+ * App.tsx
+ *
+ * Root of the HYK Portfolio application.
+ * Manages the boot → desktop transition.
+ */
+
 import { useState, useCallback } from "react"
-import BootScreen from "./components/BootScreen"
-import Desktop from "./components/Desktop"
+import BootScreen from "./components/boot/BootScreen"
+import Desktop from "./components/desktop/Desktop"
 
 type Phase = "boot" | "transitioning" | "desktop"
 
@@ -8,11 +15,10 @@ export default function App() {
   const [phase, setPhase] = useState<Phase>("boot")
 
   // Called by BootScreen once its exit fade completes.
-  // Mount Desktop just before boot screen fully disappears
+  // Desktop is pre-mounted slightly before the boot screen fully disappears
   // so the crossfade feels seamless — no black flash between layers.
   const handleBootComplete = useCallback(() => {
     setPhase("transitioning")
-    // Desktop fades in over 700ms; remove the BootScreen node 50ms later
     setTimeout(() => setPhase("desktop"), 750)
   }, [])
 
@@ -26,7 +32,7 @@ export default function App() {
         fontFamily: "'Inter', sans-serif",
       }}
     >
-      {/* Boot screen — unmounted after crossfade */}
+      {/* Boot screen — unmounted after crossfade completes */}
       {(phase === "boot" || phase === "transitioning") && (
         <BootScreen onComplete={handleBootComplete} />
       )}

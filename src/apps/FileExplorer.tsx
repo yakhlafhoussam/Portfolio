@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react"
-import { PROJECTS, EXPERIENCE, EDUCATION } from "@/data"
+import { PROJECTS, EXPERIENCE, EDUCATION } from "@/content/data"
 
 type Section = "projects" | "experience" | "education"
 type FileExplorerProps = {

@@ -1,4 +1,4 @@
-import resumePdf from "@/imports/Houssam_YAKHLAF_CV.pdf"
+import resumePdf from "@/assets/Houssam_YAKHLAF_CV.pdf"
 
 export default function Resume() {
   return (

@@ -1,15 +1,15 @@
 import { useRef, useState, useCallback } from "react"
 import TopBar from "./TopBar"
 import DesktopIcon from "./DesktopIcon"
-import WindowFrame from "./WindowFrame"
-import Terminal from "../apps/Terminal"
-import FileExplorer from "../apps/FileExplorer"
-import Browser from "../apps/Browser"
-import Profile from "../apps/Profile"
-import Resume from "../apps/Resume"
-import Gallery from "../apps/Gallery"
-import TextEditor from "../apps/TextEditor"
-import darkWallpaper from "@/imports/wallpaper.jpg"
+import WindowFrame from "../windows/WindowFrame"
+import Terminal from "../../apps/Terminal"
+import FileExplorer from "../../apps/FileExplorer"
+import Browser from "../../apps/Browser"
+import Profile from "../../apps/Profile"
+import Resume from "../../apps/Resume"
+import Gallery from "../../apps/Gallery"
+import TextEditor from "../../apps/TextEditor"
+import darkWallpaper from "@/assets/wallpaper.jpg"
 
 export type AppId =
   | "projects"
@@ -34,7 +34,7 @@ type WindowState = {
   minimized: boolean
   maximized: boolean
   zIndex: number
-  params?: any
+  params?: Record<string, unknown>
 }
 
 const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
@@ -64,15 +64,15 @@ const TITLES: Record<AppId, string> = {
 }
 
 const ICONS = [
-  { id: "projects"   as AppId, label: "Projects",     type: "folder" as const },
-  { id: "experience" as AppId, label: "Experience",   type: "folder" as const },
-  { id: "education"  as AppId, label: "Education",    type: "folder" as const },
-  { id: "gallery"    as AppId, label: "Gallery",      type: "folder" as const },
-  { id: "resume"     as AppId, label: "Resume.pdf",   type: "pdf"    as const },
-  { id: "browser"    as AppId, label: "Browser",      type: "browser" as const },
+  { id: "projects"   as AppId, label: "Projects",     type: "folder"   as const },
+  { id: "experience" as AppId, label: "Experience",   type: "folder"   as const },
+  { id: "education"  as AppId, label: "Education",    type: "folder"   as const },
+  { id: "gallery"    as AppId, label: "Gallery",      type: "folder"   as const },
+  { id: "resume"     as AppId, label: "Resume.pdf",   type: "pdf"      as const },
+  { id: "browser"    as AppId, label: "Browser",      type: "browser"  as const },
   { id: "terminal"   as AppId, label: "Terminal",     type: "terminal" as const },
-  { id: "profile"    as AppId, label: "Profile",      type: "person" as const },
-  { id: "recycle"    as AppId, label: "Recycle Bin",  type: "trash"  as const },
+  { id: "profile"    as AppId, label: "Profile",      type: "person"   as const },
+  { id: "recycle"    as AppId, label: "Recycle Bin",  type: "trash"    as const },
 ]
 
 let idCounter = 0
@@ -90,35 +90,36 @@ export default function Desktop() {
   }, [])
 
   const openWindow = useCallback(
-    (appId: AppId, params?: any) => {
+    (appId: AppId, params?: Record<string, unknown>) => {
       if (appId === "recycle") return
 
-      // Handle opening files specifically:
-      // If we open an editor for a file, focus it if already open, or open a new file window
+      // If opening an editor, focus existing instance for same file
       if (appId === "editor" && params) {
-        const existingEditor = windows.find(w => w.appId === "editor" && w.params?.title === params.title)
-        if (existingEditor) {
-          if (existingEditor.minimized) {
-            setWindows(ws => ws.map(w => (w.id === existingEditor.id ? { ...w, minimized: false } : w)))
+        const existing = windows.find(
+          w => w.appId === "editor" && w.params?.title === params.title,
+        )
+        if (existing) {
+          if (existing.minimized) {
+            setWindows(ws => ws.map(w => (w.id === existing.id ? { ...w, minimized: false } : w)))
           }
-          bringToFront(existingEditor.id)
+          bringToFront(existing.id)
           return
         }
       }
 
-      // If opening gallery with a specific preview image and gallery is already open:
+      // If opening gallery with a specific image and gallery is already open
       if (appId === "gallery" && params) {
-        const existingGallery = windows.find(w => w.appId === "gallery")
-        if (existingGallery) {
+        const existing = windows.find(w => w.appId === "gallery")
+        if (existing) {
           setWindows(ws =>
-            ws.map(w => (w.id === existingGallery.id ? { ...w, minimized: false, params } : w))
+            ws.map(w => (w.id === existing.id ? { ...w, minimized: false, params } : w)),
           )
-          bringToFront(existingGallery.id)
+          bringToFront(existing.id)
           return
         }
       }
 
-      // Generic look up
+      // Generic: focus existing window for any other app
       if (appId !== "editor") {
         const existing = windows.find(w => w.appId === appId)
         if (existing) {
@@ -144,7 +145,7 @@ export default function Desktop() {
         {
           id,
           appId,
-          title: appId === "editor" ? (params?.title || TITLES[appId]) : TITLES[appId],
+          title: appId === "editor" ? ((params?.title as string) || TITLES[appId]) : TITLES[appId],
           x: cx,
           y: cy,
           width: size.width,
@@ -157,7 +158,7 @@ export default function Desktop() {
       ])
       setActiveWindowId(id)
     },
-    [windows, bringToFront]
+    [windows, bringToFront],
   )
 
   const closeWindow = useCallback((id: string) => {
@@ -183,12 +184,12 @@ export default function Desktop() {
       case "projects":   return <FileExplorer section="projects" openWindow={openWindow} />
       case "experience": return <FileExplorer section="experience" openWindow={openWindow} />
       case "education":  return <FileExplorer section="education" openWindow={openWindow} />
-      case "gallery":    return <Gallery initialImageSrc={w.params?.imageSrc} />
+      case "gallery":    return <Gallery initialImageSrc={w.params?.imageSrc as string | undefined} />
       case "resume":     return <Resume />
       case "browser":    return <Browser />
       case "terminal":   return <Terminal />
       case "profile":    return <Profile />
-      case "editor":     return <TextEditor content={w.params?.content} title={w.params?.title} />
+      case "editor":     return <TextEditor content={w.params?.content as string | undefined} title={w.params?.title as string | undefined} />
       default:           return null
     }
   }
@@ -203,15 +204,14 @@ export default function Desktop() {
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
-        animation: "desktopFadeIn 0.8s ease",
       }}
     >
-      {/* Top Bar (stops click propagation to avoid resetting selection) */}
+      {/* TopBar — stop click propagation to avoid deselecting icons */}
       <div onClick={e => e.stopPropagation()}>
         <TopBar />
       </div>
 
-      {/* Desktop icons container with responsive wrap (Flexbox wrap) */}
+      {/* Desktop icons — flex column wrap for responsive grid */}
       <div
         style={{
           position: "absolute",
@@ -223,7 +223,7 @@ export default function Desktop() {
           flexWrap: "wrap",
           alignContent: "flex-start",
           gap: 6,
-          maxHeight: "calc(100vh - 54px)", // Keep inside viewport boundaries
+          maxHeight: "calc(100vh - 54px)",
         }}
       >
         {ICONS.map(icon => (

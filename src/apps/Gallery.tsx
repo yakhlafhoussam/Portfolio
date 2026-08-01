@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { GALLERY_IMAGES } from "@/data"
+import { GALLERY_IMAGES } from "@/content/data"
 
 type Props = {
   initialImageSrc?: string

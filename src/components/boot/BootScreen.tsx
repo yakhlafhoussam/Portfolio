@@ -20,10 +20,10 @@ import "./BootScreen.css"
 // ─── Easily replaceable message ────────────────────────────────────────────
 const BOOT_MESSAGE = "What you discover depends on how deep you look."
 
-// ─── Timing constants (mirror what is in BootScreen.css) ───────────────────
-// The boot screen CSS handles its own exit fade, but we still need to
-// unmount the component after the animation completes so the desktop
-// can take full control.
+// ─── Timing constants ───────────────────────────────────────────────────────
+// The boot screen CSS handles its own exit fade via animation-delay.
+// We unmount the component after the full animation completes so the
+// desktop can take full control of the viewport.
 const TOTAL_DURATION_MS = 4600 // exit-delay (3.6s) + exit-duration (0.8s) + 200ms buffer
 
 // ─── Props ─────────────────────────────────────────────────────────────────

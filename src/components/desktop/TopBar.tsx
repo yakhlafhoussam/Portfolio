@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import hykLogo from "@/imports/logo.jpg"
+import hykLogo from "@/assets/logo.jpg"
 
 const WifiIcon = () => (
   <svg
@@ -148,7 +148,7 @@ export default function TopBar() {
         </span>
       </div>
 
-      {/* Right: Static system icons only */}
+      {/* Right: Static system icons */}
       <div
         style={{
           position: "absolute",
