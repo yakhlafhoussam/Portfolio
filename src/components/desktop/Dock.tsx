@@ -1,15 +1,14 @@
-import React from "react"
 import { AppId } from "./Desktop"
-import {
-  FolderIcon,
-  PdfIcon,
-  BrowserIcon,
-  TerminalIcon,
-  PersonIcon,
-  TrashIcon,
-  GraduationIcon,
-  BriefcaseIcon,
-} from "./DesktopIcon"
+
+// ─── Papirus icon imports ───────────────────────────────────────────────────
+import folderSvg     from "@/assets/icons/folder.svg"
+import trashSvg      from "@/assets/icons/trash.svg"
+import terminalSvg   from "@/assets/icons/terminal.svg"
+import browserSvg    from "@/assets/icons/browser.svg"
+import profileSvg    from "@/assets/icons/profile.svg"
+import pdfSvg        from "@/assets/icons/pdf.svg"
+import graduationSvg from "@/assets/icons/graduation.svg"
+import briefcaseSvg  from "@/assets/icons/briefcase.svg"
 
 type WindowState = {
   id: string
@@ -25,17 +24,18 @@ type Props = {
   onItemClick: (id: string) => void
 }
 
-const ICON_MAP: Record<AppId, React.ReactNode> = {
-  projects: <FolderIcon color="#4a9eff" />,
-  experience: <BriefcaseIcon />,
-  education: <GraduationIcon />,
-  gallery: <FolderIcon color="#f472b6" />,
-  resume: <PdfIcon />,
-  browser: <BrowserIcon />,
-  terminal: <TerminalIcon />,
-  profile: <PersonIcon />,
-  recycle: <TrashIcon />,
-  editor: <PdfIcon />, // fallback/editor icon
+// Map every AppId to a Papirus icon src + optional CSS filter
+const DOCK_ICON: Record<AppId, { src: string; filter?: string }> = {
+  projects:   { src: folderSvg },
+  experience: { src: briefcaseSvg },
+  education:  { src: graduationSvg },
+  gallery:    { src: folderSvg, filter: "hue-rotate(280deg) saturate(1.3)" },
+  resume:     { src: pdfSvg },
+  browser:    { src: browserSvg },
+  terminal:   { src: terminalSvg },
+  profile:    { src: profileSvg },
+  recycle:    { src: trashSvg },
+  editor:     { src: pdfSvg },
 }
 
 export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
@@ -44,79 +44,79 @@ export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
   return (
     <div
       style={{
-        position: "fixed",
-        bottom: 12,
-        left: "50%",
-        transform: "translateX(-50%)",
-        height: 60,
+        position:        "fixed",
+        bottom:          12,
+        left:            "50%",
+        transform:       "translateX(-50%)",
+        height:          64,
         backgroundColor: "rgba(18, 18, 20, 0.65)",
-        backdropFilter: "blur(20px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        borderRadius: 18,
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "0 14px",
-        boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.35)",
-        zIndex: 9999,
-        transition: "width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+        backdropFilter:  "blur(20px)",
+        border:          "1px solid rgba(255, 255, 255, 0.08)",
+        borderRadius:    18,
+        display:         "flex",
+        alignItems:      "center",
+        gap:             6,
+        padding:         "0 12px",
+        boxShadow:       "0 8px 32px rgba(0,0,0,0.4)",
+        zIndex:          9999,
       }}
     >
       {windows.map(w => {
-        const isActive = w.id === activeWindowId
+        const isActive    = w.id === activeWindowId
         const isMinimized = w.minimized
-        const icon = ICON_MAP[w.appId] ?? <FolderIcon />
+        const { src, filter } = DOCK_ICON[w.appId] ?? { src: folderSvg }
 
         return (
           <div
             key={w.id}
             onClick={() => onItemClick(w.id)}
+            title={w.title}
             style={{
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              position:       "relative",
+              display:        "flex",
+              flexDirection:  "column",
+              alignItems:     "center",
               justifyContent: "center",
-              cursor: "pointer",
-              width: 44,
-              height: 44,
-              borderRadius: 10,
-              backgroundColor: isActive ? "rgba(255, 255, 255, 0.07)" : "transparent",
-              opacity: isMinimized ? 0.6 : 1,
-              transition: "transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease",
+              cursor:         "pointer",
+              width:          48,
+              height:         48,
+              borderRadius:   10,
+              backgroundColor: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+              opacity:         isMinimized ? 0.55 : 1,
+              transition:      "transform 0.15s ease, opacity 0.15s ease",
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.transform = "scale(1.1)"
-              if (!isActive) e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)"
+              e.currentTarget.style.transform = "scale(1.12) translateY(-2px)"
+              if (!isActive) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.04)"
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.transform = "scale(1)"
+              e.currentTarget.style.transform = "scale(1) translateY(0)"
               if (!isActive) e.currentTarget.style.backgroundColor = "transparent"
             }}
-            title={w.title}
           >
-            {/* Centered Icon Scaled for Dock */}
-            <div
+            <img
+              src={src}
+              alt={w.title}
+              draggable={false}
               style={{
-                transform: "scale(0.85)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                width:         36,
+                height:        36,
+                objectFit:     "contain",
+                pointerEvents: "none",
+                filter,
               }}
-            >
-              {icon}
-            </div>
+            />
 
-            {/* GNOME-style Running/Active Indicator Dot */}
+            {/* GNOME-style running indicator dot */}
             <div
               style={{
-                position: "absolute",
-                bottom: 2,
-                width: isActive ? 6 : 4,
-                height: 4,
-                borderRadius: 2,
-                backgroundColor: isActive ? "#3b82f6" : "rgba(255, 255, 255, 0.4)",
-                transition: "background-color 0.15s, width 0.15s",
+                position:        "absolute",
+                bottom:          1,
+                width:           isActive ? 6 : 4,
+                height:          4,
+                borderRadius:    2,
+                backgroundColor: isActive ? "#3b82f6" : "rgba(255,255,255,0.35)",
+                transition:      "width 0.15s, background-color 0.15s",
               }}
             />
           </div>

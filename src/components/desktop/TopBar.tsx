@@ -147,25 +147,26 @@ export default function TopBar() {
         userSelect: "none",
       }}
     >
-      {/* Left: HYK Typography */}
+      {/* Left: HYK Typography — clean and minimal GNOME-style */}
       <div
         style={{
-          position: "absolute",
-          left: 14,
-          display: "flex",
-          alignItems: "center",
-          cursor: "default",
-          userSelect: "none",
+          position:    "absolute",
+          left:        14,
+          display:     "flex",
+          alignItems:  "center",
+          cursor:      "default",
+          userSelect:  "none",
         }}
       >
         <span
           style={{
-            color: "rgba(255, 255, 255, 0.95)",
-            fontSize: "0.82rem",
-            fontWeight: 800,
-            fontFamily: "'Inter', sans-serif",
+            color:         "rgba(255, 255, 255, 0.95)",
+            fontSize:      "0.82rem",
+            fontWeight:    800,
+            fontFamily:    "'Inter', sans-serif",
             letterSpacing: "0.22em",
-            userSelect: "none",
+            userSelect:    "none",
+            cursor:        "default",
           }}
         >
           HYK

@@ -9,6 +9,7 @@ import Profile from "../../apps/Profile"
 import Resume from "../../apps/Resume"
 import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
+import Trash from "../../apps/Trash"
 import Dock from "./Dock"
 import defaultWallpaper from "@/assets/wallpapers/wallpaper.jpg"
 
@@ -47,7 +48,7 @@ const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
   browser:    { width: 820, height: 580 },
   terminal:   { width: 720, height: 460 },
   profile:    { width: 800, height: 580 },
-  recycle:    { width: 400, height: 300 },
+  recycle:    { width: 520, height: 400 },
   editor:     { width: 740, height: 520 },
 }
 
@@ -90,7 +91,6 @@ export default function Desktop() {
 
   const openWindow = useCallback(
     (appId: AppId, params?: Record<string, unknown>) => {
-      if (appId === "recycle") return
 
       // If opening an editor, focus existing instance for same file
       if (appId === "editor" && params) {
@@ -205,6 +205,7 @@ export default function Desktop() {
       case "browser":    return <Browser />
       case "terminal":   return <Terminal />
       case "profile":    return <Profile />
+      case "recycle":    return <Trash />
       case "editor":     return <TextEditor content={w.params?.content as string | undefined} title={w.params?.title as string | undefined} />
       default:           return null
     }
