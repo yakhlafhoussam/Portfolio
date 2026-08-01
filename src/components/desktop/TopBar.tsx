@@ -154,15 +154,18 @@ export default function TopBar() {
           left: 14,
           display: "flex",
           alignItems: "center",
+          cursor: "default",
+          userSelect: "none",
         }}
       >
         <span
           style={{
             color: "rgba(255, 255, 255, 0.95)",
-            fontSize: "0.85rem",
+            fontSize: "0.82rem",
             fontWeight: 800,
             fontFamily: "'Inter', sans-serif",
-            letterSpacing: "0.08em",
+            letterSpacing: "0.22em",
+            userSelect: "none",
           }}
         >
           HYK

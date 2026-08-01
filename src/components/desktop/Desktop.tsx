@@ -1,6 +1,6 @@
-import { useRef, useState, useCallback } from "react"
+import { useRef, useState, useCallback, useEffect } from "react"
 import TopBar from "./TopBar"
-import DesktopIcon from "./DesktopIcon"
+import DesktopIcon, { IconType } from "./DesktopIcon"
 import WindowFrame from "../windows/WindowFrame"
 import Terminal from "../../apps/Terminal"
 import FileExplorer from "../../apps/FileExplorer"
@@ -10,6 +10,7 @@ import Resume from "../../apps/Resume"
 import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
 import Dock from "./Dock"
+import defaultWallpaper from "@/assets/wallpapers/wallpaper.jpg"
 
 export type AppId =
   | "projects"
@@ -63,25 +64,23 @@ const TITLES: Record<AppId, string> = {
   editor:     "Text Editor",
 }
 
-const ICONS = [
-  { id: "profile"    as AppId, label: "Profile",      type: "person"     as const },
-  { id: "projects"   as AppId, label: "Projects",     type: "folder"     as const },
-  { id: "education"  as AppId, label: "Education",    type: "graduation" as const },
-  { id: "experience" as AppId, label: "Experience",   type: "briefcase"  as const },
-  { id: "gallery"    as AppId, label: "Gallery",      type: "folder"     as const },
-  { id: "resume"     as AppId, label: "Resume.pdf",   type: "pdf"        as const },
-  { id: "browser"    as AppId, label: "Browser",      type: "browser"    as const },
-  { id: "terminal"   as AppId, label: "Terminal",     type: "terminal"   as const },
-  { id: "recycle"    as AppId, label: "Trash",        type: "trash"      as const },
-]
+
 
 let idCounter = 0
 
 export default function Desktop() {
+  const [icons, setIcons] = useState<{ id: AppId; label: string; type: IconType }[]>([])
   const [windows, setWindows] = useState<WindowState[]>([])
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
   const zRef = useRef(100)
+
+  useEffect(() => {
+    fetch("/content/desktop.json")
+      .then(res => res.json())
+      .then(data => setIcons(data))
+      .catch(err => console.error("Failed to load desktop icons:", err))
+  }, [])
 
   const bringToFront = useCallback((id: string) => {
     const z = ++zRef.current
@@ -217,7 +216,7 @@ export default function Desktop() {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: "url('/content/profile/wallpaper.jpg')",
+        backgroundImage: `url(${defaultWallpaper})`,
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
@@ -243,7 +242,7 @@ export default function Desktop() {
           maxHeight: "calc(100vh - 120px)",
         }}
       >
-        {ICONS.map(icon => (
+        {icons.map(icon => (
           <DesktopIcon
             key={icon.id}
             id={icon.id}

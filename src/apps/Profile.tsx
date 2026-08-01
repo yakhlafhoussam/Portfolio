@@ -1,4 +1,4 @@
-import profileImg from "@/assets/profile.png"
+import profileImg from "@/assets/profile/profile.png"
 
 type SkillLevel = "Expert" | "Proficient" | "Learning"
 

@@ -40,8 +40,6 @@ export default function WindowFrame({
   const [hoverMin, setHoverMin] = useState(false)
   const [hoverMax, setHoverMax] = useState(false)
 
-  if (minimized) return null
-
   const handleTitleDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || maximized) return
     e.preventDefault()
@@ -75,7 +73,7 @@ export default function WindowFrame({
         boxShadow: isFocused
           ? "0 28px 72px rgba(0,0,0,0.85), 0 0 16px rgba(74,222,128,0.06)"
           : "0 24px 64px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.4)",
-        display: "flex",
+        display: minimized ? "none" : "flex",
         flexDirection: "column",
         overflow: "hidden",
         animation: "windowOpen 0.18s ease",

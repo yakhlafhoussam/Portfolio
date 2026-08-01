@@ -51,12 +51,11 @@ export function PdfIcon() {
 
 export function BrowserIcon() {
   return (
-    <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-      <circle cx="21" cy="21" r="19" fill="#1e3a5f" stroke="#4a9eff" strokeWidth="1.5" strokeOpacity="0.6" />
-      <ellipse cx="21" cy="21" rx="8" ry="19" stroke="#4a9eff" strokeWidth="1" strokeOpacity="0.4" fill="none" />
-      <line x1="2" y1="21" x2="40" y2="21" stroke="#4a9eff" strokeWidth="1" strokeOpacity="0.4" />
-      <line x1="5" y1="13" x2="37" y2="13" stroke="#4a9eff" strokeWidth="0.8" strokeOpacity="0.3" />
-      <line x1="5" y1="29" x2="37" y2="29" stroke="#4a9eff" strokeWidth="0.8" strokeOpacity="0.3" />
+    <svg width="40" height="42" viewBox="0 0 40 42" fill="none">
+      <rect x="1" y="1" width="38" height="40" rx="6" fill="#1b2535" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      <circle cx="20" cy="20" r="10" fill="#3b82f6" fillOpacity="0.4" stroke="#4a9eff" strokeWidth="1.5" strokeOpacity="0.85" />
+      <ellipse cx="20" cy="20" rx="4" ry="10" stroke="#4a9eff" strokeWidth="1.2" strokeOpacity="0.65" fill="none" />
+      <line x1="10" y1="20" x2="30" y2="20" stroke="#4a9eff" strokeWidth="1.2" strokeOpacity="0.65" />
     </svg>
   )
 }
