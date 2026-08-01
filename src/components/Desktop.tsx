@@ -9,7 +9,7 @@ import Profile from "../apps/Profile"
 import Resume from "../apps/Resume"
 import Gallery from "../apps/Gallery"
 import TextEditor from "../apps/TextEditor"
-import darkWallpaper from "@/imports/dark.jpg"
+import darkWallpaper from "@/imports/wallpaper.jpg"
 
 export type AppId =
   | "projects"
@@ -200,7 +200,7 @@ export default function Desktop() {
         position: "fixed",
         inset: 0,
         backgroundImage: `url(${darkWallpaper})`,
-        backgroundSize: "cover",
+        backgroundSize: "100% 100%",
         backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
         animation: "desktopFadeIn 0.8s ease",
