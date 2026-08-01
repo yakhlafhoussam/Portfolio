@@ -1,6 +1,14 @@
-import { useRef } from "react"
+import React from "react"
 
-type IconType = "folder" | "pdf" | "browser" | "terminal" | "person" | "trash"
+export type IconType =
+  | "folder"
+  | "pdf"
+  | "browser"
+  | "terminal"
+  | "person"
+  | "trash"
+  | "graduation"
+  | "briefcase"
 
 type Props = {
   id: string
@@ -11,7 +19,7 @@ type Props = {
   onDoubleClick: () => void
 }
 
-function FolderIcon({ color = "#4a9eff" }: { color?: string }) {
+export function FolderIcon({ color = "#4a9eff" }: { color?: string }) {
   return (
     <svg width="44" height="38" viewBox="0 0 44 38" fill="none">
       <path
@@ -27,7 +35,7 @@ function FolderIcon({ color = "#4a9eff" }: { color?: string }) {
   )
 }
 
-function PdfIcon() {
+export function PdfIcon() {
   return (
     <svg width="38" height="46" viewBox="0 0 38 46" fill="none">
       <rect x="2" y="2" width="34" height="42" rx="3" fill="#2a2a2e" stroke="rgba(255,255,255,0.12)" strokeWidth="1" />
@@ -41,7 +49,7 @@ function PdfIcon() {
   )
 }
 
-function BrowserIcon() {
+export function BrowserIcon() {
   return (
     <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
       <circle cx="21" cy="21" r="19" fill="#1e3a5f" stroke="#4a9eff" strokeWidth="1.5" strokeOpacity="0.6" />
@@ -53,7 +61,7 @@ function BrowserIcon() {
   )
 }
 
-function TerminalIcon() {
+export function TerminalIcon() {
   return (
     <svg width="42" height="38" viewBox="0 0 42 38" fill="none">
       <rect x="1" y="1" width="40" height="36" rx="5" fill="#1a1a1a" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
@@ -69,7 +77,7 @@ function TerminalIcon() {
   )
 }
 
-function PersonIcon() {
+export function PersonIcon() {
   return (
     <svg width="40" height="42" viewBox="0 0 40 42" fill="none">
       <rect x="1" y="1" width="38" height="40" rx="6" fill="#1e2530" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
@@ -79,7 +87,7 @@ function PersonIcon() {
   )
 }
 
-function TrashIcon() {
+export function TrashIcon() {
   return (
     <svg width="38" height="44" viewBox="0 0 38 44" fill="none">
       <rect x="4" y="10" width="30" height="32" rx="3" fill="#2a2a2e" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
@@ -88,6 +96,28 @@ function TrashIcon() {
       <line x1="13" y1="18" x2="13" y2="36" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" />
       <line x1="19" y1="18" x2="19" y2="36" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" />
       <line x1="25" y1="18" x2="25" y2="36" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function GraduationIcon() {
+  return (
+    <svg width="40" height="42" viewBox="0 0 40 42" fill="none">
+      <rect x="1" y="1" width="38" height="40" rx="6" fill="#2d251e" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      <path d="M20 9L32 15L20 21L8 15L20 9Z" fill="#fbbf24" fillOpacity="0.75" />
+      <path d="M12 17.5V25C12 28.5 20 30 20 30C20 30 28 28.5 28 25V17.5" stroke="#fbbf24" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M30 16.5V22.5" stroke="#fbbf24" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+export function BriefcaseIcon() {
+  return (
+    <svg width="40" height="42" viewBox="0 0 40 42" fill="none">
+      <rect x="1" y="1" width="38" height="40" rx="6" fill="#251e30" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      <rect x="8" y="15" width="24" height="18" rx="2" fill="#a78bfa" fillOpacity="0.6" stroke="#a78bfa" strokeWidth="1.5" />
+      <path d="M14 15V11C14 9.9 14.9 9 16 9H24C25.1 9 26 9.9 26 11V15" stroke="#a78bfa" strokeWidth="1.8" strokeLinecap="round" />
+      <line x1="8" y1="21" x2="32" y2="21" stroke="#a78bfa" strokeWidth="1.5" strokeDasharray="2 2" />
     </svg>
   )
 }
@@ -102,12 +132,22 @@ const ICON_COLORS: Record<string, string> = {
 export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick }: Props) {
   const renderIcon = () => {
     switch (type) {
-      case "folder": return <FolderIcon color={ICON_COLORS[id] ?? "#4a9eff"} />
-      case "pdf": return <PdfIcon />
-      case "browser": return <BrowserIcon />
-      case "terminal": return <TerminalIcon />
-      case "person": return <PersonIcon />
-      case "trash": return <TrashIcon />
+      case "folder":
+        return <FolderIcon color={ICON_COLORS[id] ?? "#4a9eff"} />
+      case "pdf":
+        return <PdfIcon />
+      case "browser":
+        return <BrowserIcon />
+      case "terminal":
+        return <TerminalIcon />
+      case "person":
+        return <PersonIcon />
+      case "trash":
+        return <TrashIcon />
+      case "graduation":
+        return <GraduationIcon />
+      case "briefcase":
+        return <BriefcaseIcon />
     }
   }
 

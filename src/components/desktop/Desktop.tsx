@@ -9,7 +9,7 @@ import Profile from "../../apps/Profile"
 import Resume from "../../apps/Resume"
 import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
-import darkWallpaper from "@/assets/wallpaper.jpg"
+import Dock from "./Dock"
 
 export type AppId =
   | "projects"
@@ -59,20 +59,20 @@ const TITLES: Record<AppId, string> = {
   browser:    "Browser",
   terminal:   "Terminal",
   profile:    "Profile & Settings",
-  recycle:    "Recycle Bin",
+  recycle:    "Trash",
   editor:     "Text Editor",
 }
 
 const ICONS = [
-  { id: "projects"   as AppId, label: "Projects",     type: "folder"   as const },
-  { id: "experience" as AppId, label: "Experience",   type: "folder"   as const },
-  { id: "education"  as AppId, label: "Education",    type: "folder"   as const },
-  { id: "gallery"    as AppId, label: "Gallery",      type: "folder"   as const },
-  { id: "resume"     as AppId, label: "Resume.pdf",   type: "pdf"      as const },
-  { id: "browser"    as AppId, label: "Browser",      type: "browser"  as const },
-  { id: "terminal"   as AppId, label: "Terminal",     type: "terminal" as const },
-  { id: "profile"    as AppId, label: "Profile",      type: "person"   as const },
-  { id: "recycle"    as AppId, label: "Recycle Bin",  type: "trash"    as const },
+  { id: "profile"    as AppId, label: "Profile",      type: "person"     as const },
+  { id: "projects"   as AppId, label: "Projects",     type: "folder"     as const },
+  { id: "education"  as AppId, label: "Education",    type: "graduation" as const },
+  { id: "experience" as AppId, label: "Experience",   type: "briefcase"  as const },
+  { id: "gallery"    as AppId, label: "Gallery",      type: "folder"     as const },
+  { id: "resume"     as AppId, label: "Resume.pdf",   type: "pdf"        as const },
+  { id: "browser"    as AppId, label: "Browser",      type: "browser"    as const },
+  { id: "terminal"   as AppId, label: "Terminal",     type: "terminal"   as const },
+  { id: "recycle"    as AppId, label: "Trash",        type: "trash"      as const },
 ]
 
 let idCounter = 0
@@ -179,6 +179,23 @@ export default function Desktop() {
     setWindows(ws => ws.map(w => (w.id === id ? { ...w, x, y } : w)))
   }, [])
 
+  const handleDockItemClick = useCallback(
+    (windowId: string) => {
+      const win = windows.find(w => w.id === windowId)
+      if (!win) return
+
+      if (win.minimized) {
+        setWindows(ws => ws.map(w => (w.id === windowId ? { ...w, minimized: false } : w)))
+        bringToFront(windowId)
+      } else if (activeWindowId === windowId) {
+        minimizeWindow(windowId)
+      } else {
+        bringToFront(windowId)
+      }
+    },
+    [windows, activeWindowId, bringToFront, minimizeWindow],
+  )
+
   const renderApp = (w: WindowState) => {
     switch (w.appId) {
       case "projects":   return <FileExplorer section="projects" openWindow={openWindow} />
@@ -200,7 +217,7 @@ export default function Desktop() {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: `url(${darkWallpaper})`,
+        backgroundImage: "url('/content/profile/wallpaper.jpg')",
         backgroundSize: "100% 100%",
         backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
@@ -217,13 +234,13 @@ export default function Desktop() {
           position: "absolute",
           top: 42,
           left: 12,
-          bottom: 12,
+          bottom: 76, // Leave space for the dock
           display: "flex",
           flexDirection: "column",
           flexWrap: "wrap",
           alignContent: "flex-start",
           gap: 6,
-          maxHeight: "calc(100vh - 54px)",
+          maxHeight: "calc(100vh - 120px)",
         }}
       >
         {ICONS.map(icon => (
@@ -267,6 +284,13 @@ export default function Desktop() {
           {renderApp(w)}
         </WindowFrame>
       ))}
+
+      {/* Bottom Center Dock */}
+      <Dock
+        windows={windows}
+        activeWindowId={activeWindowId}
+        onItemClick={handleDockItemClick}
+      />
     </div>
   )
 }

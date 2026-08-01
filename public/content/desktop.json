@@ -1,0 +1,11 @@
+[
+  { "id": "profile", "label": "Profile", "type": "person" },
+  { "id": "projects", "label": "Projects", "type": "folder" },
+  { "id": "education", "label": "Education", "type": "graduation" },
+  { "id": "experience", "label": "Experience", "type": "briefcase" },
+  { "id": "gallery", "label": "Gallery", "type": "folder" },
+  { "id": "resume", "label": "Resume.pdf", "type": "pdf" },
+  { "id": "browser", "label": "Browser", "type": "browser" },
+  { "id": "terminal", "label": "Terminal", "type": "terminal" },
+  { "id": "recycle", "label": "Trash", "type": "trash" }
+]
