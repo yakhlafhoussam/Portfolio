@@ -11,7 +11,7 @@ import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
 import Trash from "../../apps/Trash"
 import Dock from "./Dock"
-import defaultWallpaper from "@/assets/wallpapers/wallpaper.jpg"
+import defaultWallpaper from "@/assets/wallpapers/light.png"
 
 export type AppId =
   | "projects"
@@ -218,7 +218,7 @@ export default function Desktop() {
         position: "fixed",
         inset: 0,
         backgroundImage: `url(${defaultWallpaper})`,
-        backgroundSize: "100% 100%",
+        backgroundSize: "100% 90%",
         backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
       }}
