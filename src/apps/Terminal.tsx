@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 type Line = { type: "input" | "output" | "error" | "blank"; text: string }
 
@@ -225,19 +226,22 @@ export default function Terminal() {
     }
   }
 
+  const t = useTheme()
+
   return (
     <div
       onClick={() => inputRef.current?.focus()}
       style={{
         flex: 1,
-        background: "#141416",
+        background: t.isDark ? "#141416" : "#f4f4f7",
         padding: "12px 16px",
         overflowY: "auto",
         fontFamily: "'JetBrains Mono', monospace",
         fontSize: "0.82rem",
         lineHeight: 1.6,
-        color: "#e0e0e0",
+        color: t.isDark ? "#e0e0e0" : "#1c1c1e",
         cursor: "text",
+        transition: t.transition,
       }}
     >
       {lines.map((line, i) => {
@@ -248,16 +252,17 @@ export default function Terminal() {
             style={{
               color:
                 line.type === "input"
-                  ? "rgba(255,255,255,0.85)"
+                  ? (t.isDark ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.85)")
                   : line.type === "error"
-                  ? "#f87171"
-                  : "rgba(255,255,255,0.55)",
+                  ? (t.isDark ? "#f87171" : "#dc2626")
+                  : (t.isDark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)"),
               whiteSpace: "pre-wrap",
               wordBreak: "break-all",
+              transition: t.transition,
             }}
           >
             {line.type === "input" && (
-              <span style={{ color: "#4ade80" }}>{line.text.split("$")[0]}$</span>
+              <span style={{ color: t.isDark ? "#4ade80" : "#16a34a", transition: t.transition }}>{line.text.split("$")[0]}$</span>
             )}
             {line.type === "input"
               ? <span>{" " + line.text.split("$ ").slice(1).join("$ ")}</span>
@@ -268,7 +273,7 @@ export default function Terminal() {
 
       {/* Input row */}
       <div style={{ display: "flex", alignItems: "center", marginTop: 2 }}>
-        <span style={{ color: "#4ade80", marginRight: 4, whiteSpace: "nowrap" }}>
+        <span style={{ color: t.isDark ? "#4ade80" : "#16a34a", marginRight: 4, whiteSpace: "nowrap", transition: t.transition }}>
           {HOSTNAME}:{cwd}$
         </span>
         <input
@@ -283,10 +288,11 @@ export default function Terminal() {
             background: "transparent",
             border: "none",
             outline: "none",
-            color: "#e0e0e0",
+            color: t.isDark ? "#e0e0e0" : "#1c1c1e",
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: "0.82rem",
-            caretColor: "#4ade80",
+            caretColor: t.isDark ? "#4ade80" : "#16a34a",
+            transition: t.transition,
           }}
         />
       </div>

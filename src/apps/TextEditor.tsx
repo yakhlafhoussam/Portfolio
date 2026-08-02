@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 type Props = {
   content?: string
@@ -6,6 +7,7 @@ type Props = {
 }
 
 export default function TextEditor({ content: initialContent = "", title = "untitled.txt" }: Props) {
+  const t = useTheme()
   const [content, setContent] = useState(initialContent)
   const [mode, setMode] = useState<"edit" | "preview">(title.endsWith(".md") ? "preview" : "edit")
 
@@ -19,12 +21,13 @@ export default function TextEditor({ content: initialContent = "", title = "unti
           <h1
             key={index}
             style={{
-              color: "#fff",
+              color: t.text,
               fontSize: "1.5rem",
               fontWeight: 600,
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              borderBottom: "1px solid " + t.border,
               paddingBottom: 6,
               margin: "18px 0 10px",
+              transition: t.transition,
             }}
           >
             {line.slice(2)}
@@ -36,10 +39,11 @@ export default function TextEditor({ content: initialContent = "", title = "unti
           <h2
             key={index}
             style={{
-              color: "#e2e2e2",
+              color: t.text,
               fontSize: "1.2rem",
               fontWeight: 600,
               margin: "14px 0 8px",
+              transition: t.transition,
             }}
           >
             {line.slice(3)}
@@ -51,10 +55,11 @@ export default function TextEditor({ content: initialContent = "", title = "unti
           <h3
             key={index}
             style={{
-              color: "#d2d2d2",
+              color: t.text,
               fontSize: "1.05rem",
               fontWeight: 500,
               margin: "12px 0 6px",
+              transition: t.transition,
             }}
           >
             {line.slice(4)}
@@ -67,11 +72,12 @@ export default function TextEditor({ content: initialContent = "", title = "unti
           <li
             key={index}
             style={{
-              color: "rgba(255,255,255,0.75)",
+              color: t.textMuted,
               fontSize: "0.82rem",
               marginLeft: 16,
               marginBottom: 4,
               lineHeight: 1.5,
+              transition: t.transition,
             }}
           >
             {line.slice(2)}
@@ -87,10 +93,11 @@ export default function TextEditor({ content: initialContent = "", title = "unti
         <p
           key={index}
           style={{
-            color: "rgba(255,255,255,0.75)",
+            color: t.textMuted,
             fontSize: "0.82rem",
             lineHeight: 1.6,
             margin: "6px 0",
+            transition: t.transition,
           }}
         >
           {line}
@@ -105,30 +112,33 @@ export default function TextEditor({ content: initialContent = "", title = "unti
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        background: "#1e1e1e",
+        background: t.bg,
         overflow: "hidden",
         height: "100%",
+        transition: t.transition,
       }}
     >
       {/* Editor top bar */}
       <div
         style={{
           height: 36,
-          background: "#252526",
+          background: t.bgToolbar,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           padding: "0 12px",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid " + t.border,
           userSelect: "none",
           flexShrink: 0,
+          transition: t.transition,
         }}
       >
         <span
           style={{
-            color: "rgba(255,255,255,0.45)",
+            color: t.textMuted,
             fontSize: "0.72rem",
             fontFamily: "'JetBrains Mono', monospace",
+            transition: t.transition,
           }}
         >
           {title}
@@ -137,22 +147,24 @@ export default function TextEditor({ content: initialContent = "", title = "unti
           <div
             style={{
               display: "flex",
-              background: "rgba(0,0,0,0.2)",
+              background: t.bgInput,
               borderRadius: 4,
               padding: 2,
+              transition: t.transition,
             }}
           >
             <button
               onClick={() => setMode("edit")}
               style={{
-                background: mode === "edit" ? "rgba(255,255,255,0.08)" : "transparent",
-                color: mode === "edit" ? "#4ade80" : "rgba(255,255,255,0.4)",
+                background: mode === "edit" ? (t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") : "transparent",
+                color: mode === "edit" ? (t.isDark ? "#4ade80" : "#2563eb") : t.textFaint,
                 border: "none",
                 borderRadius: 3,
                 padding: "2px 8px",
                 fontSize: "0.68rem",
                 cursor: "pointer",
                 fontFamily: "'Inter', sans-serif",
+                transition: t.transition,
               }}
             >
               Edit
@@ -160,14 +172,15 @@ export default function TextEditor({ content: initialContent = "", title = "unti
             <button
               onClick={() => setMode("preview")}
               style={{
-                background: mode === "preview" ? "rgba(255,255,255,0.08)" : "transparent",
-                color: mode === "preview" ? "#4ade80" : "rgba(255,255,255,0.4)",
+                background: mode === "preview" ? (t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") : "transparent",
+                color: mode === "preview" ? (t.isDark ? "#4ade80" : "#2563eb") : t.textFaint,
                 border: "none",
                 borderRadius: 3,
                 padding: "2px 8px",
                 fontSize: "0.68rem",
                 cursor: "pointer",
                 fontFamily: "'Inter', sans-serif",
+                transition: t.transition,
               }}
             >
               Preview
@@ -192,15 +205,16 @@ export default function TextEditor({ content: initialContent = "", title = "unti
             <div
               style={{
                 width: 42,
-                background: "#1e1e1e",
-                borderRight: "1px solid rgba(255,255,255,0.03)",
+                background: t.bgSidebar,
+                borderRight: "1px solid " + t.border,
                 padding: "12px 0",
-                color: "rgba(255,255,255,0.18)",
+                color: t.textFaint,
                 textAlign: "right",
                 paddingRight: 10,
                 userSelect: "none",
                 boxSizing: "border-box",
                 lineHeight: 1.5,
+                transition: t.transition,
               }}
             >
               {(content.split("\n").length > 0 ? content.split("\n") : [""]).map((_, i) => (
@@ -216,12 +230,13 @@ export default function TextEditor({ content: initialContent = "", title = "unti
                 background: "transparent",
                 border: "none",
                 outline: "none",
-                color: "#e2e2e2",
+                color: t.text,
                 padding: 12,
                 resize: "none",
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: "0.82rem",
                 lineHeight: 1.5,
+                transition: t.transition,
               }}
             />
           </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 const WifiIcon = () => (
   <svg
@@ -56,6 +57,7 @@ const BatteryIcon = () => (
 )
 
 const ThemeToggleIcon = ({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) => {
+  const t = useTheme()
   return (
     <div
       onClick={onToggle}
@@ -68,9 +70,9 @@ const ThemeToggleIcon = ({ isDark, onToggle }: { isDark: boolean; onToggle: () =
         borderRadius: 4,
         transition: "background 0.2s",
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.08)")}
+      onMouseEnter={e => (e.currentTarget.style.background = t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)")}
       onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-      title="Toggle Theme (UI Only)"
+      title="Toggle Theme"
     >
       {isDark ? (
         <svg
@@ -119,6 +121,7 @@ type TopBarProps = {
 }
 
 export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
+  const t = useTheme()
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
@@ -142,13 +145,14 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
         left: 0,
         right: 0,
         height: 30,
-        background: "rgba(18,18,20,0.92)",
+        background: t.isDark ? "rgba(18,18,20,0.92)" : "rgba(240,240,243,0.92)",
         backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        borderBottom: t.isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.08)",
         display: "flex",
         alignItems: "center",
         zIndex: 9000,
         userSelect: "none",
+        transition: t.transition,
       }}
     >
       {/* Left: HYK Typography — clean and minimal GNOME-style */}
@@ -164,13 +168,14 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
       >
         <span
           style={{
-            color:         "rgba(255, 255, 255, 0.95)",
+            color:         t.isDark ? "rgba(255, 255, 255, 0.95)" : "rgba(0, 0, 0, 0.95)",
             fontSize:      "0.82rem",
             fontWeight:    800,
             fontFamily:    "'Inter', sans-serif",
             letterSpacing: "0.22em",
             userSelect:    "none",
             cursor:        "default",
+            transition:    t.transition,
           }}
         >
           HYK
@@ -191,22 +196,24 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
       >
         <span
           style={{
-            color: "rgba(255,255,255,0.85)",
+            color: t.isDark ? "rgba(255,255,255,0.85)" : "rgba(0,0,0,0.85)",
             fontSize: "0.78rem",
             fontWeight: 500,
             fontFamily: "'JetBrains Mono', monospace",
             letterSpacing: "0.04em",
+            transition: t.transition,
           }}
         >
           {hh}:{mm}
         </span>
-        <span style={{ color: "rgba(255,255,255,0.16)", fontSize: "0.75rem" }}>|</span>
+        <span style={{ color: t.isDark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.16)", fontSize: "0.75rem", transition: t.transition }}>|</span>
         <span
           style={{
-            color: "rgba(255,255,255,0.5)",
+            color: t.isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
             fontSize: "0.75rem",
             fontWeight: 400,
             fontFamily: "'Inter', sans-serif",
+            transition: t.transition,
           }}
         >
           {dateStr}
@@ -221,7 +228,8 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
           display: "flex",
           alignItems: "center",
           gap: 12,
-          color: "rgba(255,255,255,0.72)",
+          color: t.isDark ? "rgba(255,255,255,0.72)" : "rgba(0,0,0,0.72)",
+          transition: t.transition,
         }}
       >
         <WifiIcon />

@@ -1,4 +1,5 @@
 import { AppId } from "./Desktop"
+import { useTheme } from "@/context/ThemeContext"
 
 // ─── Papirus icon imports ───────────────────────────────────────────────────
 import folderSvg     from "@/assets/icons/folder.svg"
@@ -39,6 +40,7 @@ const DOCK_ICON: Record<AppId, { src: string; filter?: string }> = {
 }
 
 export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
+  const t = useTheme()
   if (windows.length === 0) return null
 
   return (
@@ -49,16 +51,17 @@ export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
         left:            "50%",
         transform:       "translateX(-50%)",
         height:          64,
-        backgroundColor: "rgba(18, 18, 20, 0.65)",
+        backgroundColor: t.isDark ? "rgba(18, 18, 20, 0.65)" : "rgba(235, 235, 237, 0.7)",
         backdropFilter:  "blur(20px)",
-        border:          "1px solid rgba(255, 255, 255, 0.08)",
+        border:          "1px solid " + (t.isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"),
         borderRadius:    18,
         display:         "flex",
         alignItems:      "center",
         gap:             6,
         padding:         "0 12px",
-        boxShadow:       "0 8px 32px rgba(0,0,0,0.4)",
+        boxShadow:       t.isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 32px rgba(0,0,0,0.1)",
         zIndex:          9999,
+        transition:      t.transition,
       }}
     >
       {windows.map(w => {
@@ -81,13 +84,15 @@ export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
               width:          48,
               height:         48,
               borderRadius:   10,
-              backgroundColor: isActive ? "rgba(255,255,255,0.08)" : "transparent",
+              backgroundColor: isActive 
+                ? (t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") 
+                : "transparent",
               opacity:         isMinimized ? 0.55 : 1,
-              transition:      "transform 0.15s ease, opacity 0.15s ease",
+              transition:      "transform 0.15s ease, opacity 0.15s ease, background-color 0.28s ease",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.transform = "scale(1.12) translateY(-2px)"
-              if (!isActive) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.04)"
+              if (!isActive) e.currentTarget.style.backgroundColor = t.isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)"
             }}
             onMouseLeave={e => {
               e.currentTarget.style.transform = "scale(1) translateY(0)"
@@ -115,7 +120,9 @@ export default function Dock({ windows, activeWindowId, onItemClick }: Props) {
                 width:           isActive ? 6 : 4,
                 height:          4,
                 borderRadius:    2,
-                backgroundColor: isActive ? "#3b82f6" : "rgba(255,255,255,0.35)",
+                backgroundColor: isActive 
+                  ? (t.isDark ? "#3b82f6" : "#2563eb") 
+                  : (t.isDark ? "rgba(255,255,255,0.35)" : "rgba(0,0,0,0.35)"),
                 transition:      "width 0.15s, background-color 0.15s",
               }}
             />

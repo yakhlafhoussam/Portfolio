@@ -1,4 +1,5 @@
 import React from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 // ─── Papirus icon imports ───────────────────────────────────────────────────
 import folderSvg     from "@/assets/icons/folder.svg"
@@ -50,10 +51,10 @@ const ICON_SRC: Record<IconType, string> = {
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
-export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick, isDark }: Props) {
+export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick }: Props) {
+  const t = useTheme()
   const src    = ICON_SRC[type]
   const filter = type === "folder" ? (FOLDER_TINT[id] ?? FOLDER_TINT["projects"]) : undefined
-  const isTrash = type === "trash"  // reserved for future Trash-specific logic
 
   return (
     <div
@@ -68,18 +69,24 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
         borderRadius:   8,
         cursor:         "default",
         width:          76,
-        background:     selected ? "rgba(59, 130, 246, 0.2)" : "transparent",
-        border:         selected ? "1px solid rgba(59, 130, 246, 0.45)" : "1px solid transparent",
-        transition:     "background 0.12s ease, border-color 0.12s ease",
+        background:     selected 
+          ? (t.isDark ? "rgba(59, 130, 246, 0.2)" : "rgba(37, 99, 235, 0.15)") 
+          : "transparent",
+        border:         selected 
+          ? (t.isDark ? "1px solid rgba(59, 130, 246, 0.45)" : "1px solid rgba(37, 99, 235, 0.4)") 
+          : "1px solid transparent",
+        transition:     "background 0.12s ease, border-color 0.12s ease, transform 0.12s ease",
         userSelect:     "none",
       }}
       onMouseEnter={e => {
-        if (!selected) e.currentTarget.style.background = isDark
+        if (!selected) e.currentTarget.style.background = t.isDark
           ? "rgba(255, 255, 255, 0.07)"
           : "rgba(0, 0, 0, 0.06)"
+        e.currentTarget.style.transform = "translateY(-2px)"
       }}
       onMouseLeave={e => {
         if (!selected) e.currentTarget.style.background = "transparent"
+        e.currentTarget.style.transform = "translateY(0)"
       }}
     >
       {/* Icon image */}
@@ -99,7 +106,7 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
       {/* Label */}
       <span
         style={{
-          color:              isDark
+          color:              t.isDark
                                 ? (selected ? "#ffffff" : "rgba(255, 255, 255, 0.95)")
                                 : (selected ? "#000000" : "#1c1c1e"),
           fontSize:           "0.72rem",
@@ -109,9 +116,10 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
           maxWidth:           72,
           wordBreak:          "break-word",
           pointerEvents:      "none",
-          // Dark Mode: multi-directional outline shadow & thin text-stroke; Light Mode: clean text
-          textShadow:         isDark ? "0 0 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 0.95)" : "none",
-          WebkitTextStroke:   isDark ? "0.15px rgba(0, 0, 0, 0.6)" : "none",
+          transition:         t.transition,
+          // Dark Mode: outline shadow & thin text-stroke; Light Mode: clean text
+          textShadow:         t.isDark ? "0 0 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 0.95)" : "none",
+          WebkitTextStroke:   t.isDark ? "0.15px rgba(0, 0, 0, 0.6)" : "none",
         }}
       >
         {label}

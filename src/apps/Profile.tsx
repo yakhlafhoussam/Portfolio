@@ -1,4 +1,5 @@
 import profileImg from "@/assets/profile/profile.png"
+import { useTheme } from "@/context/ThemeContext"
 
 type SkillLevel = "Expert" | "Proficient" | "Learning"
 
@@ -19,14 +20,25 @@ const SKILLS: Skill[] = [
   { name: "WebGPU",        level: "Learning" },
 ]
 
-const LEVEL_COLOR: Record<SkillLevel, string> = {
-  Expert:     "#4ade80",
-  Proficient: "#60a5fa",
-  Learning:   "#fbbf24",
+function getLevelColor(level: SkillLevel, isDark: boolean): string {
+  if (isDark) {
+    switch (level) {
+      case "Expert": return "#4ade80"
+      case "Proficient": return "#60a5fa"
+      case "Learning": return "#fbbf24"
+    }
+  } else {
+    switch (level) {
+      case "Expert": return "#16a34a"
+      case "Proficient": return "#2563eb"
+      case "Learning": return "#d97706"
+    }
+  }
 }
 
 function SkillBadge({ name, level }: Skill) {
-  const color = LEVEL_COLOR[level]
+  const t = useTheme()
+  const color = getLevelColor(level, t.isDark)
   return (
     <div
       style={{
@@ -34,9 +46,10 @@ function SkillBadge({ name, level }: Skill) {
         alignItems: "center",
         gap: 8,
         padding: "6px 12px",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.07)",
+        background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+        border: "1px solid " + t.border,
         borderRadius: 6,
+        transition: t.transition,
       }}
     >
       <div
@@ -45,18 +58,20 @@ function SkillBadge({ name, level }: Skill) {
           height: 6,
           borderRadius: "50%",
           background: color,
-          boxShadow: `0 0 6px ${color}80`,
+          boxShadow: t.isDark ? `0 0 6px ${color}80` : "none",
           flexShrink: 0,
+          transition: t.transition,
         }}
       />
-      <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem" }}>{name}</span>
+      <span style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}>{name}</span>
       <span
         style={{
           marginLeft: "auto",
           color: color,
           fontSize: "0.68rem",
           fontFamily: "'JetBrains Mono', monospace",
-          opacity: 0.7,
+          opacity: 0.8,
+          transition: t.transition,
         }}
       >
         {level}
@@ -66,17 +81,19 @@ function SkillBadge({ name, level }: Skill) {
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  const t = useTheme()
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <div
         style={{
-          color: "rgba(255,255,255,0.25)",
+          color: t.textFaint,
           fontSize: "0.68rem",
           fontWeight: 600,
           letterSpacing: "0.09em",
           textTransform: "uppercase",
           paddingBottom: 6,
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          borderBottom: "1px solid " + t.border,
+          transition: t.transition,
         }}
       >
         {title}
@@ -87,13 +104,15 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function Profile() {
+  const t = useTheme()
   return (
     <div
       style={{
         flex: 1,
         display: "flex",
         overflow: "hidden",
-        background: "#202024",
+        background: t.bg,
+        transition: t.transition,
       }}
     >
       {/* Left sidebar */}
@@ -101,13 +120,14 @@ export default function Profile() {
         style={{
           width: 240,
           flexShrink: 0,
-          background: "#1c1c20",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgSidebar,
+          borderRight: "1px solid " + t.border,
           display: "flex",
           flexDirection: "column",
           padding: "28px 20px",
           gap: 20,
           overflowY: "auto",
+          transition: t.transition,
         }}
       >
         {/* Avatar */}
@@ -118,12 +138,13 @@ export default function Profile() {
               height: 88,
               borderRadius: "50%",
               overflow: "hidden",
-              border: "2px solid rgba(74,222,128,0.3)",
-              boxShadow: "0 0 20px rgba(74,222,128,0.15)",
-              background: "#111",
+              border: t.isDark ? "2px solid rgba(74,222,128,0.3)" : "2px solid rgba(37,99,235,0.3)",
+              boxShadow: t.isDark ? "0 0 20px rgba(74,222,128,0.15)" : "0 0 20px rgba(37,99,235,0.1)",
+              background: t.isDark ? "#111" : "#fff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
+              transition: t.transition,
             }}
           >
             <img
@@ -137,8 +158,8 @@ export default function Profile() {
             />
           </div>
           <div style={{ textAlign: "center" }}>
-            <div style={{ color: "#e2e2e2", fontWeight: 600, fontSize: "1rem" }}>HYK</div>
-            <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", marginTop: 2 }}>
+            <div style={{ color: t.text, fontWeight: 600, fontSize: "1rem", transition: t.transition }}>HYK</div>
+            <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>
               Software Engineer
             </div>
           </div>
@@ -156,10 +177,15 @@ export default function Profile() {
             style={{
               padding: "7px 12px",
               borderRadius: 6,
-              color: i === 0 ? "#4ade80" : "rgba(255,255,255,0.5)",
-              background: i === 0 ? "rgba(74,222,128,0.08)" : "transparent",
+              color: i === 0 
+                ? (t.isDark ? "#4ade80" : "#2563eb") 
+                : t.textMuted,
+              background: i === 0 
+                ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)") 
+                : "transparent",
               fontSize: "0.82rem",
               cursor: "default",
+              transition: t.transition,
             }}
           >
             {item}
@@ -187,11 +213,12 @@ export default function Profile() {
           </div>
           <p
             style={{
-              color: "rgba(255,255,255,0.55)",
+              color: t.textMuted,
               fontSize: "0.85rem",
               lineHeight: 1.75,
               margin: 0,
               marginTop: 8,
+              transition: t.transition,
             }}
           >
             I build systems that handle complexity at scale — from low-level performance tooling
@@ -216,10 +243,11 @@ export default function Profile() {
                 <div
                   style={{
                     width: 6, height: 6, borderRadius: "50%",
-                    background: LEVEL_COLOR[l],
+                    background: getLevelColor(l, t.isDark),
+                    transition: t.transition,
                   }}
                 />
-                <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.7rem" }}>{l}</span>
+                <span style={{ color: t.textFaint, fontSize: "0.7rem", transition: t.transition }}>{l}</span>
               </div>
             ))}
           </div>
@@ -246,22 +274,27 @@ export default function Profile() {
 }
 
 function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  const t = useTheme()
   return (
     <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
       <span
         style={{
-          color: "rgba(255,255,255,0.3)",
+          color: t.textFaint,
           fontSize: "0.78rem",
           minWidth: 80,
           fontFamily: "'JetBrains Mono', monospace",
+          transition: t.transition,
         }}
       >
         {label}
       </span>
       <span
         style={{
-          color: accent ? "#4ade80" : "rgba(255,255,255,0.7)",
+          color: accent 
+            ? (t.isDark ? "#4ade80" : "#16a34a") 
+            : t.textMuted,
           fontSize: "0.82rem",
+          transition: t.transition,
         }}
       >
         {value}
@@ -275,6 +308,7 @@ function ContactRow({
 }: {
   icon: string; label: string; value: string; href: string
 }) {
+  const t = useTheme()
   return (
     <a
       href={href}
@@ -286,17 +320,17 @@ function ContactRow({
         gap: 12,
         padding: "8px 12px",
         borderRadius: 6,
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.06)",
+        background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+        border: "1px solid " + t.border,
         textDecoration: "none",
-        transition: "background 0.12s",
+        transition: t.transition,
       }}
-      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.06)"}
-      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.03)"}
+      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = t.bgHover}
+      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
     >
-      <span style={{ fontSize: "0.9rem", opacity: 0.6 }}>{icon}</span>
-      <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.75rem", minWidth: 60 }}>{label}</span>
-      <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.8rem" }}>{value}</span>
+      <span style={{ fontSize: "0.9rem", color: t.textFaint, transition: t.transition }}>{icon}</span>
+      <span style={{ color: t.textMuted, fontSize: "0.75rem", minWidth: 60, transition: t.transition }}>{label}</span>
+      <span style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}>{value}</span>
     </a>
   )
 }

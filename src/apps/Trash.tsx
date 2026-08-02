@@ -1,19 +1,23 @@
+import { useTheme } from "@/context/ThemeContext"
+
 export default function Trash() {
+  const t = useTheme()
   return (
     <div
       style={{
         flex: 1,
-        backgroundColor: "#1a1a1e",
-        color: "#ffffff",
+        backgroundColor: t.bg,
+        color: t.text,
         display: "flex",
         flexDirection: "column",
         padding: "24px 32px",
         fontFamily: "'Inter', sans-serif",
         userSelect: "none",
+        transition: t.transition,
       }}
     >
-      <h1 style={{ fontSize: "1.4rem", fontWeight: 600, margin: 0, color: "rgba(255,255,255,0.9)" }}>Trash</h1>
-      <hr style={{ border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.08)", margin: "16px 0 32px 0" }} />
+      <h1 style={{ fontSize: "1.4rem", fontWeight: 600, margin: 0, color: t.text, transition: t.transition }}>Trash</h1>
+      <hr style={{ border: "none", borderTop: "1px solid " + t.border, margin: "16px 0 32px 0", transition: t.transition }} />
       <div
         style={{
           flex: 1,
@@ -21,8 +25,9 @@ export default function Trash() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          color: "rgba(255, 255, 255, 0.3)",
+          color: t.textFaint,
           gap: 16,
+          transition: t.transition,
         }}
       >
         <svg

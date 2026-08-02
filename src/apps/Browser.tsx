@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 type Bookmark = {
   id: string
@@ -90,6 +91,7 @@ const BOOKMARKS: Bookmark[] = [
 type PageState = "bookmarks" | "404" | "external"
 
 export default function Browser() {
+  const t = useTheme()
   const [page, setPage] = useState<PageState>("bookmarks")
   const [urlBar, setUrlBar] = useState("bookmarks://new-tab")
   const [activeUrl, setActiveUrl] = useState("")
@@ -106,29 +108,31 @@ export default function Browser() {
   }
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#202024" }}>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: t.bg, transition: t.transition }}>
       {/* Browser chrome */}
       <div
         style={{
-          background: "#28282c",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgToolbar,
+          borderBottom: "1px solid " + t.border,
           padding: "8px 12px",
           display: "flex",
           alignItems: "center",
           gap: 8,
           flexShrink: 0,
+          transition: t.transition,
         }}
       >
         <button
           onClick={() => { setPage("bookmarks"); setUrlBar("bookmarks://new-tab") }}
           style={{
-            background: "rgba(255,255,255,0.06)",
+            background: t.bgHover,
             border: "none",
             borderRadius: 4,
-            color: "rgba(255,255,255,0.4)",
+            color: t.textMuted,
             fontSize: "0.8rem",
             padding: "4px 8px",
             cursor: "pointer",
+            transition: t.transition,
           }}
         >
           ←
@@ -136,21 +140,22 @@ export default function Browser() {
         <div
           style={{
             flex: 1,
-            background: "rgba(0,0,0,0.3)",
-            border: "1px solid rgba(255,255,255,0.07)",
+            background: t.bgInput,
+            border: "1px solid " + t.border,
             borderRadius: 6,
             padding: "5px 12px",
-            color: "rgba(255,255,255,0.45)",
+            color: t.textMuted,
             fontSize: "0.78rem",
             fontFamily: "'JetBrains Mono', monospace",
             display: "flex",
             alignItems: "center",
             gap: 6,
+            transition: t.transition,
           }}
         >
           <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
-            <rect x="1" y="1" width="14" height="14" rx="3" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
-            <path d="M5 8h6M8 5v6" stroke="rgba(255,255,255,0.3)" strokeWidth="1.2" />
+            <rect x="1" y="1" width="14" height="14" rx="3" stroke={t.textFaint} strokeWidth="1.5" style={{ transition: t.transition }} />
+            <path d="M5 8h6M8 5v6" stroke={t.textFaint} strokeWidth="1.2" style={{ transition: t.transition }} />
           </svg>
           {urlBar}
         </div>
@@ -174,22 +179,24 @@ export default function Browser() {
               style={{
                 fontSize: "4rem",
                 fontWeight: 700,
-                color: "rgba(255,255,255,0.08)",
+                color: t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)",
                 fontFamily: "'JetBrains Mono', monospace",
                 lineHeight: 1,
+                transition: t.transition,
               }}
             >
               404
             </div>
-            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.9rem", textAlign: "center" }}>
+            <div style={{ color: t.textMuted, fontSize: "0.9rem", textAlign: "center", transition: t.transition }}>
               Documentation unavailable.
             </div>
             <div
               style={{
-                color: "rgba(255,255,255,0.15)",
+                color: t.textFaint,
                 fontSize: "0.75rem",
                 fontFamily: "'JetBrains Mono', monospace",
                 textAlign: "center",
+                transition: t.transition,
               }}
             >
               This page was never published. Or perhaps it was.
@@ -197,7 +204,7 @@ export default function Browser() {
           </div>
         ) : (
           <div style={{ padding: "28px 32px" }}>
-            <div style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: 20 }}>
+            <div style={{ color: t.textFaint, fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: 20, transition: t.transition }}>
               Bookmarks
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -211,34 +218,34 @@ export default function Browser() {
                     gap: 14,
                     padding: "12px 16px",
                     borderRadius: 8,
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.06)",
+                    background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                    border: "1px solid " + t.border,
                     cursor: "pointer",
-                    transition: "background 0.12s, border-color 0.12s",
+                    transition: t.transition,
                     opacity: bm.easter ? 0.5 : 1,
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.background = "rgba(255,255,255,0.06)"
-                    el.style.borderColor = "rgba(74,222,128,0.2)"
+                    el.style.background = t.bgHover
+                    el.style.borderColor = t.isDark ? "rgba(74,222,128,0.2)" : "rgba(37,99,235,0.3)"
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.background = "rgba(255,255,255,0.03)"
-                    el.style.borderColor = "rgba(255,255,255,0.06)"
+                    el.style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"
+                    el.style.borderColor = t.border
                   }}
                 >
-                  <div style={{ color: "rgba(255,255,255,0.45)", flexShrink: 0 }}>{bm.icon}</div>
+                  <div style={{ color: t.textMuted, flexShrink: 0, transition: t.transition }}>{bm.icon}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ color: "rgba(255,255,255,0.8)", fontSize: "0.85rem", fontWeight: 500 }}>
+                    <div style={{ color: t.text, fontSize: "0.85rem", fontWeight: 500, transition: t.transition }}>
                       {bm.label}
                     </div>
-                    <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.75rem", marginTop: 2 }}>
+                    <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>
                       {bm.description}
                     </div>
                   </div>
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M3 8h10M9 4l4 4-4 4" stroke={t.textFaint} strokeWidth="1.5" strokeLinecap="round" style={{ transition: t.transition }} />
                   </svg>
                 </div>
               ))}

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import { GALLERY_IMAGES } from "@/content/data"
+import { useTheme } from "@/context/ThemeContext"
 
 type Props = {
   initialImageSrc?: string
 }
 
 export default function Gallery({ initialImageSrc }: Props) {
+  const t = useTheme()
   const [selected, setSelected] = useState<string | null>(null)
   const [customImage, setCustomImage] = useState<string | null>(initialImageSrc || null)
 
@@ -32,9 +34,10 @@ export default function Gallery({ initialImageSrc }: Props) {
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        background: "#181818",
+        background: t.bg,
         height: "100%",
         position: "relative",
+        transition: t.transition,
       }}
     >
       {/* Lightbox */}
@@ -96,16 +99,17 @@ export default function Gallery({ initialImageSrc }: Props) {
         style={{
           height: 36,
           flexShrink: 0,
-          background: "#222224",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgToolbar,
+          borderBottom: "1px solid " + t.border,
           display: "flex",
           alignItems: "center",
           paddingLeft: 14,
           gap: 8,
           userSelect: "none",
+          transition: t.transition,
         }}
       >
-        <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace" }}>
+        <span style={{ color: t.textFaint, fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
           {GALLERY_IMAGES.length} items · Grid view
         </span>
       </div>
@@ -131,20 +135,20 @@ export default function Gallery({ initialImageSrc }: Props) {
               overflow: "hidden",
               cursor: "zoom-in",
               position: "relative",
-              background: "#2a2a2a",
-              border: "1px solid rgba(255,255,255,0.06)",
-              transition: "transform 0.15s, border-color 0.15s",
+              background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              border: "1px solid " + t.border,
+              transition: "transform 0.15s, border-color 0.15s, background 0.15s",
               userSelect: "none",
             }}
             onMouseEnter={e => {
               const el = e.currentTarget as HTMLElement
               el.style.transform = "scale(1.02)"
-              el.style.borderColor = "rgba(74,222,128,0.3)"
+              el.style.borderColor = t.isDark ? "rgba(74,222,128,0.3)" : "rgba(37,99,235,0.3)"
             }}
             onMouseLeave={e => {
               const el = e.currentTarget as HTMLElement
               el.style.transform = "scale(1)"
-              el.style.borderColor = "rgba(255,255,255,0.06)"
+              el.style.borderColor = t.border
             }}
           >
             <img
@@ -160,12 +164,13 @@ export default function Gallery({ initialImageSrc }: Props) {
             <div
               style={{
                 padding: "7px 10px",
-                color: "rgba(255,255,255,0.45)",
+                color: t.textMuted,
                 fontSize: "0.72rem",
                 fontFamily: "'JetBrains Mono', monospace",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
+                transition: t.transition,
               }}
             >
               {img.caption}

@@ -11,6 +11,7 @@ import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
 import Trash from "../../apps/Trash"
 import Dock from "./Dock"
+import { ThemeContext, getTheme } from "../../context/ThemeContext"
 import lightWallpaper from "@/assets/wallpapers/light.png"
 import darkWallpaper from "@/assets/wallpapers/dark.png"
 
@@ -84,6 +85,20 @@ export default function Desktop() {
       .then(data => setIcons(data))
       .catch(err => console.error("Failed to load desktop icons:", err))
   }, [])
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark")
+      document.documentElement.classList.remove("light")
+      document.documentElement.style.setProperty("--scrollbar-thumb", "rgba(255,255,255,0.12)")
+      document.documentElement.style.setProperty("--scrollbar-thumb-hover", "rgba(255,255,255,0.22)")
+    } else {
+      document.documentElement.classList.add("light")
+      document.documentElement.classList.remove("dark")
+      document.documentElement.style.setProperty("--scrollbar-thumb", "rgba(0,0,0,0.15)")
+      document.documentElement.style.setProperty("--scrollbar-thumb-hover", "rgba(0,0,0,0.25)")
+    }
+  }, [isDark])
 
   const bringToFront = useCallback((id: string) => {
     const z = ++zRef.current
@@ -214,6 +229,7 @@ export default function Desktop() {
   }
 
   return (
+    <ThemeContext.Provider value={getTheme(isDark)}>
     <div
       onClick={() => setSelectedIconId(null)}
       style={{
@@ -321,5 +337,6 @@ export default function Desktop() {
         onItemClick={handleDockItemClick}
       />
     </div>
+    </ThemeContext.Provider>
   )
 }

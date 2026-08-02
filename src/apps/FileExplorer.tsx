@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react"
 import { PROJECTS, EXPERIENCE, EDUCATION } from "@/content/data"
+import { useTheme } from "@/context/ThemeContext"
 
 type Section = "projects" | "experience" | "education"
 type FileExplorerProps = {
@@ -80,17 +81,19 @@ const col: React.CSSProperties = { display: "flex", flexDirection: "column", ove
 const row: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8 }
 
 function Tag({ label }: { label: string }) {
+  const t = useTheme()
   return (
     <span
       style={{
-        background: "rgba(74,222,128,0.1)",
-        color: "#4ade80",
-        border: "1px solid rgba(74,222,128,0.2)",
+        background: t.isDark ? "rgba(74,222,128,0.1)" : "rgba(22,163,74,0.08)",
+        color: t.isDark ? "#4ade80" : "#16a34a",
+        border: t.isDark ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(22,163,74,0.15)",
         borderRadius: 4,
         padding: "1px 7px",
         fontSize: "0.7rem",
         fontFamily: "'JetBrains Mono', monospace",
         whiteSpace: "nowrap",
+        transition: t.transition,
       }}
     >
       {label}
@@ -192,6 +195,7 @@ function ProjectsExplorer({
   currentPath: string[]
   setCurrentPath: React.Dispatch<React.SetStateAction<string[]>>
 }) {
+  const t = useTheme()
   const [selectedItem, setSelectedItem] = useState<string | null>(null)
 
   // Construct virtual folder structure
@@ -284,25 +288,27 @@ function ProjectsExplorer({
   }
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+    <div style={{ flex: 1, display: "flex", overflow: "hidden", transition: t.transition }}>
       {/* Sidebar */}
       <div
         style={{
           width: 200,
           flexShrink: 0,
-          background: "#1e1e21",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgSidebar,
+          borderRight: "1px solid " + t.border,
           ...col,
+          transition: t.transition,
         }}
       >
         <div
           style={{
             padding: "10px 14px 6px",
-            color: "rgba(255,255,255,0.3)",
+            color: t.textFaint,
             fontSize: "0.68rem",
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
+            transition: t.transition,
           }}
         >
           Navigation
@@ -317,22 +323,26 @@ function ProjectsExplorer({
           style={{
             padding: "7px 14px",
             cursor: "default",
-            background: currentPath.length === 0 ? "rgba(74,222,128,0.08)" : "transparent",
-            borderLeft: currentPath.length === 0 ? "2px solid #4ade80" : "2px solid transparent",
+            background: currentPath.length === 0
+              ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)")
+              : "transparent",
+            borderLeft: currentPath.length === 0
+              ? (t.isDark ? "2px solid #4ade80" : "2px solid #2563eb")
+              : "2px solid transparent",
             display: "flex",
             alignItems: "center",
             gap: 8,
-            transition: "background 0.1s",
+            transition: t.transition,
           }}
           onMouseEnter={e => {
-            if (currentPath.length !== 0) e.currentTarget.style.background = "rgba(255,255,255,0.04)"
+            if (currentPath.length !== 0) e.currentTarget.style.background = t.bgHover
           }}
           onMouseLeave={e => {
             if (currentPath.length !== 0) e.currentTarget.style.background = "transparent"
           }}
         >
           <FolderIcon />
-          <span style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace" }}>
+          <span style={{ color: currentPath.length === 0 ? t.text : t.textMuted, fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
             All Projects
           </span>
         </div>
@@ -350,15 +360,19 @@ function ProjectsExplorer({
               style={{
                 padding: "7px 14px",
                 cursor: "default",
-                background: isActive ? "rgba(74,222,128,0.08)" : "transparent",
-                borderLeft: isActive ? "2px solid #4ade80" : "2px solid transparent",
+                background: isActive
+                  ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)")
+                  : "transparent",
+                borderLeft: isActive
+                  ? (t.isDark ? "2px solid #4ade80" : "2px solid #2563eb")
+                  : "2px solid transparent",
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                transition: "background 0.1s",
+                transition: t.transition,
               }}
               onMouseEnter={e => {
-                if (!isActive) e.currentTarget.style.background = "rgba(255,255,255,0.04)"
+                if (!isActive) e.currentTarget.style.background = t.bgHover
               }}
               onMouseLeave={e => {
                 if (!isActive) e.currentTarget.style.background = "transparent"
@@ -367,18 +381,19 @@ function ProjectsExplorer({
               <svg width="14" height="14" viewBox="0 0 16 14" fill="none">
                 <path
                   d="M1 3C1 2.2 1.6 1.5 2.4 1.5H6.5L7.5 3H13.6C14.4 3 15 3.7 15 4.5V11.5C15 12.3 14.4 13 13.6 13H2.4C1.6 13 1 12.3 1 11.5V3Z"
-                  fill="#4a9eff"
+                  fill={t.isDark ? "#4a9eff" : "#2563eb"}
                   fillOpacity="0.75"
                 />
               </svg>
               <span
                 style={{
-                  color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
+                  color: isActive ? t.text : t.textMuted,
                   fontSize: "0.78rem",
                   fontFamily: "'JetBrains Mono', monospace",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  transition: t.transition,
                 }}
               >
                 {p.name}
@@ -400,11 +415,12 @@ function ProjectsExplorer({
             display: "flex",
             alignItems: "center",
             gap: 8,
-            background: currentPath[0] === "Archive" ? "rgba(255,255,255,0.04)" : "transparent",
-            borderLeft: currentPath[0] === "Archive" ? "2px solid rgba(255,255,255,0.2)" : "2px solid transparent",
+            background: currentPath[0] === "Archive" ? t.bgHover : "transparent",
+            borderLeft: currentPath[0] === "Archive" ? "2px solid " + t.borderStrong : "2px solid transparent",
+            transition: t.transition,
           }}
           onMouseEnter={e => {
-            if (currentPath[0] !== "Archive") e.currentTarget.style.background = "rgba(255,255,255,0.03)"
+            if (currentPath[0] !== "Archive") e.currentTarget.style.background = t.bgHover
           }}
           onMouseLeave={e => {
             if (currentPath[0] !== "Archive") e.currentTarget.style.background = "transparent"
@@ -413,10 +429,10 @@ function ProjectsExplorer({
           <svg width="14" height="14" viewBox="0 0 16 14" fill="none">
             <path
               d="M1 3C1 2.2 1.6 1.5 2.4 1.5H6.5L7.5 3H13.6C14.4 3 15 3.7 15 4.5V11.5C15 12.3 14.4 13 13.6 13H2.4C1.6 13 1 12.3 1 11.5V3Z"
-              fill="#555"
+              fill={t.isDark ? "#555" : "#888"}
             />
           </svg>
-          <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace" }}>
+          <span style={{ color: t.textFaint, fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
             Archive
           </span>
         </div>
@@ -433,10 +449,12 @@ function ProjectsExplorer({
           gap: 16,
           alignContent: "start",
           overflowY: "auto",
+          background: t.bg,
+          transition: t.transition,
         }}
       >
         {displayItems.length === 0 ? (
-          <div style={{ gridColumn: "1/-1", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: "0.8rem", marginTop: 40, fontFamily: "'JetBrains Mono', monospace" }}>
+          <div style={{ gridColumn: "1/-1", textAlign: "center", color: t.textFaint, fontSize: "0.8rem", marginTop: 40, fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
             Empty Folder
           </div>
         ) : (
@@ -455,16 +473,20 @@ function ProjectsExplorer({
                   padding: "10px 6px",
                   borderRadius: 6,
                   cursor: "default",
-                  background: isSelected ? "rgba(59, 130, 246, 0.16)" : "transparent",
-                  border: isSelected ? "1px solid rgba(59, 130, 246, 0.4)" : "1px solid transparent",
-                  transition: "background 0.1s, border-color 0.1s",
+                  background: isSelected
+                    ? (t.isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.12)")
+                    : "transparent",
+                  border: isSelected
+                    ? (t.isDark ? "1px solid rgba(59, 130, 246, 0.4)" : "1px solid rgba(37, 99, 235, 0.3)")
+                    : "1px solid transparent",
+                  transition: t.transition,
                   minWidth: 84,
                   maxWidth: 110,
                 }}
                 onMouseEnter={e => {
                   if (!isSelected) {
-                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.04)"
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)"
+                    e.currentTarget.style.background = t.bgHover
+                    e.currentTarget.style.borderColor = t.border
                   }
                 }}
                 onMouseLeave={e => {
@@ -477,7 +499,7 @@ function ProjectsExplorer({
                 <div style={{ pointerEvents: "none" }}>{renderItemIcon(item)}</div>
                 <span
                   style={{
-                    color: isSelected ? "#fff" : "rgba(255,255,255,0.8)",
+                    color: isSelected ? t.text : t.textMuted,
                     fontSize: "0.74rem",
                     fontFamily: "'JetBrains Mono', monospace",
                     textAlign: "center",
@@ -485,6 +507,7 @@ function ProjectsExplorer({
                     maxWidth: "100%",
                     lineHeight: 1.3,
                     userSelect: "none",
+                    transition: t.transition,
                   }}
                 >
                   {item.name}
@@ -500,58 +523,68 @@ function ProjectsExplorer({
 
 /* ── Experience Explorer (Original Details Layout) ── */
 function ExperienceExplorer() {
+  const t = useTheme()
   const [selected, setSelected] = useState(EXPERIENCE[0].id)
   const item = EXPERIENCE.find(e => e.id === selected)
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+    <div style={{ flex: 1, display: "flex", overflow: "hidden", background: t.bg, transition: t.transition }}>
       <div
         style={{
           width: 200,
           flexShrink: 0,
-          background: "#1e1e21",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgSidebar,
+          borderRight: "1px solid " + t.border,
           ...col,
+          transition: t.transition,
         }}
       >
         <div
           style={{
             padding: "10px 14px 6px",
-            color: "rgba(255,255,255,0.3)",
+            color: t.textFaint,
             fontSize: "0.68rem",
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
+            transition: t.transition,
           }}
         >
           Experience
         </div>
-        {EXPERIENCE.map(e => (
-          <div
-            key={e.id}
-            onClick={() => setSelected(e.id)}
-            style={{
-              padding: "8px 14px",
-              cursor: "default",
-              background: selected === e.id ? "rgba(167,139,250,0.08)" : "transparent",
-              borderLeft: selected === e.id ? "2px solid #a78bfa" : "2px solid transparent",
-              transition: "background 0.1s",
-            }}
-            onMouseEnter={ev => {
-              if (selected !== e.id) ev.currentTarget.style.background = "rgba(255,255,255,0.04)"
-            }}
-            onMouseLeave={ev => {
-              if (selected !== e.id) ev.currentTarget.style.background = "transparent"
-            }}
-          >
-            <div style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.79rem", fontWeight: 500 }}>
-              {e.company}
+        {EXPERIENCE.map(e => {
+          const isActive = selected === e.id
+          return (
+            <div
+              key={e.id}
+              onClick={() => setSelected(e.id)}
+              style={{
+                padding: "8px 14px",
+                cursor: "default",
+                background: isActive
+                  ? (t.isDark ? "rgba(167,139,250,0.08)" : "rgba(124,58,237,0.08)")
+                  : "transparent",
+                borderLeft: isActive
+                  ? (t.isDark ? "2px solid #a78bfa" : "2px solid #7c3aed")
+                  : "2px solid transparent",
+                transition: t.transition,
+              }}
+              onMouseEnter={ev => {
+                if (!isActive) ev.currentTarget.style.background = t.bgHover
+              }}
+              onMouseLeave={ev => {
+                if (!isActive) ev.currentTarget.style.background = "transparent"
+              }}
+            >
+              <div style={{ color: isActive ? t.text : t.textMuted, fontSize: "0.79rem", fontWeight: 500, transition: t.transition }}>
+                {e.company}
+              </div>
+              <div style={{ color: t.textFaint, fontSize: "0.72rem", marginTop: 1, transition: t.transition }}>
+                {e.period.split(" — ")[0]}
+              </div>
             </div>
-            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.72rem", marginTop: 1 }}>
-              {e.period.split(" — ")[0]}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <div style={{ flex: 1, ...col, overflowY: "auto", padding: "24px 28px" }}>
@@ -559,24 +592,24 @@ function ExperienceExplorer() {
           <div style={{ ...col, gap: 18 }}>
             <div>
               <div style={{ ...row, gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
-                <h2 style={{ margin: 0, color: "#e2e2e2", fontWeight: 600, fontSize: "1.1rem" }}>
+                <h2 style={{ margin: 0, color: t.text, fontWeight: 600, fontSize: "1.1rem", transition: t.transition }}>
                   {item.role}
                 </h2>
-                <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.75rem", fontFamily: "'JetBrains Mono', monospace" }}>
+                <span style={{ color: t.textFaint, fontSize: "0.75rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
                   {item.period}
                 </span>
               </div>
-              <div style={{ color: "#a78bfa", fontSize: "0.85rem", marginTop: 4 }}>
+              <div style={{ color: t.isDark ? "#a78bfa" : "#7c3aed", fontSize: "0.85rem", marginTop: 4, transition: t.transition }}>
                 {item.company} · {item.location}
               </div>
             </div>
 
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem", lineHeight: 1.7, margin: 0 }}>
+            <p style={{ color: t.textMuted, fontSize: "0.85rem", lineHeight: 1.7, margin: 0, transition: t.transition }}>
               {item.description}
             </p>
 
             <div>
-              <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
+              <div style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, transition: t.transition }}>
                 Technologies
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -592,72 +625,82 @@ function ExperienceExplorer() {
 
 /* ── Education Explorer (Original Details Layout) ── */
 function EducationExplorer() {
+  const t = useTheme()
   const [selected, setSelected] = useState(EDUCATION[0].id)
   const item = EDUCATION.find(e => e.id === selected)
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+    <div style={{ flex: 1, display: "flex", overflow: "hidden", background: t.bg, transition: t.transition }}>
       <div
         style={{
           width: 200,
           flexShrink: 0,
-          background: "#1e1e21",
-          borderRight: "1px solid rgba(255,255,255,0.06)",
+          background: t.bgSidebar,
+          borderRight: "1px solid " + t.border,
           ...col,
+          transition: t.transition,
         }}
       >
         <div
           style={{
             padding: "10px 14px 6px",
-            color: "rgba(255,255,255,0.3)",
+            color: t.textFaint,
             fontSize: "0.68rem",
             fontWeight: 600,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
+            transition: t.transition,
           }}
         >
           Education
         </div>
-        {EDUCATION.map(e => (
-          <div
-            key={e.id}
-            onClick={() => setSelected(e.id)}
-            style={{
-              padding: "8px 14px",
-              cursor: "default",
-              background: selected === e.id ? "rgba(251,191,36,0.08)" : "transparent",
-              borderLeft: selected === e.id ? "2px solid #fbbf24" : "2px solid transparent",
-              transition: "background 0.1s",
-            }}
-            onMouseEnter={ev => {
-              if (selected !== e.id) ev.currentTarget.style.background = "rgba(255,255,255,0.04)"
-            }}
-            onMouseLeave={ev => {
-              if (selected !== e.id) ev.currentTarget.style.background = "transparent"
-            }}
-          >
-            <div style={{ color: "rgba(255,255,255,0.75)", fontSize: "0.79rem", fontWeight: 500 }}>
-              {e.degree}
+        {EDUCATION.map(e => {
+          const isActive = selected === e.id
+          return (
+            <div
+              key={e.id}
+              onClick={() => setSelected(e.id)}
+              style={{
+                padding: "8px 14px",
+                cursor: "default",
+                background: isActive
+                  ? (t.isDark ? "rgba(251,191,36,0.08)" : "rgba(217,119,6,0.08)")
+                  : "transparent",
+                borderLeft: isActive
+                  ? (t.isDark ? "2px solid #fbbf24" : "2px solid #d97706")
+                  : "2px solid transparent",
+                transition: t.transition,
+              }}
+              onMouseEnter={ev => {
+                if (!isActive) ev.currentTarget.style.background = t.bgHover
+              }}
+              onMouseLeave={ev => {
+                if (!isActive) ev.currentTarget.style.background = "transparent"
+              }}
+            >
+              <div style={{ color: isActive ? t.text : t.textMuted, fontSize: "0.79rem", fontWeight: 500, transition: t.transition }}>
+                {e.degree}
+              </div>
+              <div style={{ color: t.textFaint, fontSize: "0.72rem", marginTop: 1, transition: t.transition }}>
+                {e.period}
+              </div>
             </div>
-            <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.72rem", marginTop: 1 }}>
-              {e.period}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       <div style={{ flex: 1, ...col, overflowY: "auto", padding: "24px 28px" }}>
         {item && (
           <div style={{ ...col, gap: 18 }}>
             <div>
-              <h2 style={{ margin: 0, color: "#e2e2e2", fontWeight: 600, fontSize: "1.1rem" }}>
+              <h2 style={{ margin: 0, color: t.text, fontWeight: 600, fontSize: "1.1rem", transition: t.transition }}>
                 {item.degree}
               </h2>
-              <div style={{ color: "#fbbf24", fontSize: "0.85rem", marginTop: 4 }}>
+              <div style={{ color: t.isDark ? "#fbbf24" : "#d97706", fontSize: "0.85rem", marginTop: 4, transition: t.transition }}>
                 {item.institution} · {item.period}
               </div>
               {item.gpa && (
-                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: "0.78rem", marginTop: 4, fontFamily: "'JetBrains Mono', monospace" }}>
+                <div style={{ color: t.textMuted, fontSize: "0.78rem", marginTop: 4, fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
                   GPA: {item.gpa}
                 </div>
               )}
@@ -665,7 +708,7 @@ function EducationExplorer() {
 
             {item.relevant.length > 0 && (
               <div>
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8 }}>
+                <div style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, transition: t.transition }}>
                   Relevant Coursework
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -673,12 +716,13 @@ function EducationExplorer() {
                     <span
                       key={r}
                       style={{
-                        background: "rgba(251,191,36,0.08)",
-                        color: "rgba(251,191,36,0.8)",
-                        border: "1px solid rgba(251,191,36,0.18)",
+                        background: t.isDark ? "rgba(251,191,36,0.08)" : "rgba(217,119,6,0.06)",
+                        color: t.isDark ? "rgba(251,191,36,0.8)" : "#d97706",
+                        border: t.isDark ? "1px solid rgba(251,191,36,0.18)" : "1px solid rgba(217,119,6,0.15)",
                         borderRadius: 4,
                         padding: "2px 8px",
                         fontSize: "0.75rem",
+                        transition: t.transition,
                       }}
                     >
                       {r}
@@ -704,6 +748,7 @@ function Toolbar({
   currentPath: string[]
   setCurrentPath: React.Dispatch<React.SetStateAction<string[]>>
 }) {
+  const t = useTheme()
   const canGoBack = currentPath.length > 0
 
   const handleBackClick = () => {
@@ -713,7 +758,6 @@ function Toolbar({
   }
 
   const handleBreadcrumbClick = (index: number) => {
-    // index is -1 for the root "projects" section, and 0, 1 for currentPath items
     if (index === -1) {
       setCurrentPath([])
     } else {
@@ -726,13 +770,14 @@ function Toolbar({
       style={{
         height: 36,
         flexShrink: 0,
-        background: "#252528",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: t.bgToolbar,
+        borderBottom: "1px solid " + t.border,
         display: "flex",
         alignItems: "center",
         padding: "0 12px",
         gap: 8,
         userSelect: "none",
+        transition: t.transition,
       }}
     >
       {/* Back button */}
@@ -748,11 +793,11 @@ function Toolbar({
           justifyContent: "center",
           padding: 4,
           borderRadius: 4,
-          color: canGoBack ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.2)",
-          transition: "background 0.12s, color 0.12s",
+          color: canGoBack ? t.text : t.textFaint,
+          transition: t.transition,
         }}
         onMouseEnter={e => {
-          if (canGoBack) e.currentTarget.style.background = "rgba(255,255,255,0.06)"
+          if (canGoBack) e.currentTarget.style.background = t.bgHover
         }}
         onMouseLeave={e => {
           if (canGoBack) e.currentTarget.style.background = "transparent"
@@ -764,7 +809,7 @@ function Toolbar({
       </button>
 
       {/* Forward placeholder icon */}
-      <div style={{ color: "rgba(255,255,255,0.15)", padding: 4 }}>
+      <div style={{ color: t.textFaint, padding: 4, transition: t.transition }}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
@@ -774,27 +819,29 @@ function Toolbar({
       <div
         style={{
           flex: 1,
-          background: "rgba(0,0,0,0.25)",
-          border: "1px solid rgba(255,255,255,0.07)",
+          background: t.bgInput,
+          border: "1px solid " + t.border,
           borderRadius: 4,
           padding: "3px 10px",
-          color: "rgba(255,255,255,0.45)",
+          color: t.textMuted,
           fontSize: "0.75rem",
           fontFamily: "'JetBrains Mono', monospace",
           marginLeft: 6,
           display: "flex",
           alignItems: "center",
           gap: 4,
+          transition: t.transition,
         }}
       >
-        <span style={{ color: "rgba(255,255,255,0.25)" }}>~/desktop/</span>
+        <span style={{ color: t.textFaint, transition: t.transition }}>~/desktop/</span>
         
         {/* Main section tag (e.g. projects) */}
         <span
           onClick={() => handleBreadcrumbClick(-1)}
           style={{
-            color: currentPath.length === 0 ? "rgba(255,255,255,0.6)" : "#4ade80",
+            color: currentPath.length === 0 ? t.textMuted : (t.isDark ? "#4ade80" : "#16a34a"),
             cursor: "pointer",
+            transition: t.transition,
           }}
           onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
           onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
@@ -806,12 +853,13 @@ function Toolbar({
           const isLast = i === currentPath.length - 1
           return (
             <div key={seg} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
+              <span style={{ color: t.textFaint, transition: t.transition }}>/</span>
               <span
                 onClick={() => !isLast && handleBreadcrumbClick(i)}
                 style={{
-                  color: isLast ? "rgba(255,255,255,0.7)" : "#3b82f6",
+                  color: isLast ? t.text : (t.isDark ? "#3b82f6" : "#2563eb"),
                   cursor: isLast ? "default" : "pointer",
+                  transition: t.transition,
                 }}
                 onMouseEnter={e => {
                   if (!isLast) e.currentTarget.style.textDecoration = "underline"
@@ -831,10 +879,11 @@ function Toolbar({
 }
 
 export default function FileExplorer({ section, openWindow }: FileExplorerProps) {
+  const t = useTheme()
   const [currentPath, setCurrentPath] = useState<string[]>([])
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#222225" }}>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: t.bg, transition: t.transition }}>
       <Toolbar path={section} currentPath={currentPath} setCurrentPath={setCurrentPath} />
       {section === "projects" && (
         <ProjectsExplorer
