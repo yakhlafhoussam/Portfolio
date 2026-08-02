@@ -1,9 +1,26 @@
 [
   {
-    "id": "1",
-    "title": "HYK Portfolio Reorganization",
+    "id": "vibe-coding",
+    "category": "industry",
+    "title": "Vibe Coding Is Creating Faster Developers... or Slower Learners?",
+    "date": "2026-08-02",
+    "summary": "AI can generate code in seconds, but many new developers are beginning to skip the fundamentals. The community is divided on whether productivity is replacing understanding.",
+    "article": "vibe-coding.json"
+  },
+  {
+    "id": "framework-wars",
+    "category": "industry",
+    "title": "Another JavaScript Framework Enters the Race",
     "date": "2026-08-01",
-    "summary": "Completed a major refactoring of the portfolio desktop environment, establishing a clean, handcrafted architecture.",
-    "content": "Transitioned the codebase from its Figma AI roots into an isolated React + TypeScript architecture. Reorganized folders into clear domains: components/boot, components/desktop, components/windows, and apps. Prepared the layout for a dynamic content-driven file explorer."
+    "summary": "Every few weeks another framework promises better performance and a simpler future, leaving developers questioning whether their current stack is already outdated.",
+    "article": "framework-wars.json"
+  },
+  {
+    "id": "mavel",
+    "category": "community",
+    "title": "Mavel Still Awaits Its Next Commit",
+    "date": "2026-07-31",
+    "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects among YouCode students.",
+    "article": "mavel.json"
   }
 ]
