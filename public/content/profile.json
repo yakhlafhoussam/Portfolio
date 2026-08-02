@@ -1,32 +1,84 @@
 {
-  "name": "HYK",
-  "title": "Software Engineer",
+  "name": "Houssam YAKHLAF",
+  "title": "Full-Stack Developer",
   "location": "Earth, Solar System",
-  "status": "Open to opportunities",
-  "focus": "Systems + AI infrastructure",
-  "about": "I build systems that handle complexity at scale — from low-level performance tooling in Rust to ML infrastructure and browser-based creative technology. I care deeply about correctness, clarity, and the craft of writing software that lasts.",
-  "skills": [
-    { "name": "TypeScript", "level": "Expert" },
-    { "name": "Python", "level": "Expert" },
-    { "name": "Rust", "level": "Proficient" },
-    { "name": "Go", "level": "Proficient" },
-    { "name": "React", "level": "Expert" },
-    { "name": "Node.js", "level": "Expert" },
-    { "name": "PostgreSQL", "level": "Proficient" },
-    { "name": "Kubernetes", "level": "Proficient" },
-    { "name": "PyTorch", "level": "Proficient" },
-    { "name": "WebAssembly", "level": "Learning" },
-    { "name": "Zig", "level": "Learning" },
-    { "name": "WebGPU", "level": "Learning" }
-  ],
+  "status": "Building what others avoid",
+  "focus": "Building modern web applications and developer tools",
+  "about": "Second-year student at YouCode with a passion for building clean and practical software. Always learning, always improving. Currently working on HYK.",
+  "skills": {
+    "Languages": [
+      "Java",
+      "TypeScript",
+      "JavaScript",
+      "C",
+      "PHP",
+      "HTML5",
+      "CSS3",
+      "SQL"
+    ],
+    "Frontend": [
+      "Angular",
+      "Vue.js",
+      "TailwindCSS",
+      "Bootstrap"
+    ],
+    "Backend": [
+      "Spring Boot",
+      "Laravel",
+      "REST APIs",
+      "JWT",
+      "JPA"
+    ],
+    "Databases": [
+      "PostgreSQL",
+      "MySQL",
+      "Firebase"
+    ],
+    "Deployment & CI/CD": [
+      "AWS",
+      "Vercel",
+      "GitHub Pages",
+      "CI/CD"
+    ],
+    "DevOps & Tools": [
+      "Docker",
+      "Docker Compose",
+      "Git",
+      "GitHub",
+      "Linux",
+      "Nginx",
+      "Postman"
+    ],
+    "Desktop Development": [
+      "Hyprland",
+      "Wayland",
+      "AGS",
+      "Astal",
+      "GTK4"
+    ],
+    "Design": [
+      "Figma",
+      "Draw.io"
+    ]
+  },
   "languages": [
-    { "lang": "English", "level": "Fluent" },
-    { "lang": "Turkish", "level": "Native" },
-    { "lang": "Japanese", "level": "Elementary" }
+    {
+      "lang": "Arabic",
+      "level": "Native"
+    },
+    {
+      "lang": "English",
+      "level": "Professional"
+    },
+    {
+      "lang": "French",
+      "level": "Intermediate"
+    }
   ],
   "contact": {
-    "email": "hyk@proton.me",
-    "github": "github.com/hyk",
-    "linkedin": "linkedin.com/in/hyk"
+    "email": "yakhlafhoussam@gmail.com",
+    "phone": "+212 6 15 94 06 05",
+    "github": "github.com/yakhlafhoussam",
+    "linkedin": "linkedin.com/in/houssam-yakhlaf"
   }
 }
