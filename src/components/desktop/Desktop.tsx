@@ -232,7 +232,7 @@ export default function Desktop() {
           backgroundSize: "100% 100%",
           backgroundPosition: "center",
           opacity:     isDark ? 0 : 1,
-          transition:  "opacity 420ms ease-in-out",
+          transition:  "opacity 500ms ease-in-out",
           zIndex:      0,
           pointerEvents: "none",
         }}
@@ -246,7 +246,7 @@ export default function Desktop() {
           backgroundSize: "100% 100%",
           backgroundPosition: "center",
           opacity:     isDark ? 1 : 0,
-          transition:  "opacity 420ms ease-in-out",
+          transition:  "opacity 500ms ease-in-out",
           zIndex:      0,
           pointerEvents: "none",
         }}
