@@ -55,11 +55,10 @@ const BatteryIcon = () => (
   </svg>
 )
 
-const ThemeToggleIcon = () => {
-  const [isDark, setIsDark] = useState(false)
+const ThemeToggleIcon = ({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) => {
   return (
     <div
-      onClick={() => setIsDark(!isDark)}
+      onClick={onToggle}
       style={{
         display: "flex",
         alignItems: "center",
@@ -114,7 +113,12 @@ const ThemeToggleIcon = () => {
   )
 }
 
-export default function TopBar() {
+type TopBarProps = {
+  isDark: boolean
+  onToggleTheme: () => void
+}
+
+export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
   const [time, setTime] = useState(new Date())
 
   useEffect(() => {
@@ -223,7 +227,7 @@ export default function TopBar() {
         <WifiIcon />
         <VolumeIcon />
         <BatteryIcon />
-        <ThemeToggleIcon />
+        <ThemeToggleIcon isDark={isDark} onToggle={onToggleTheme} />
       </div>
     </div>
   )

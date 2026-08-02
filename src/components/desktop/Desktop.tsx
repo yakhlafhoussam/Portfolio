@@ -11,7 +11,8 @@ import Gallery from "../../apps/Gallery"
 import TextEditor from "../../apps/TextEditor"
 import Trash from "../../apps/Trash"
 import Dock from "./Dock"
-import defaultWallpaper from "@/assets/wallpapers/light.png"
+import lightWallpaper from "@/assets/wallpapers/light.png"
+import darkWallpaper from "@/assets/wallpapers/dark.png"
 
 export type AppId =
   | "projects"
@@ -70,6 +71,7 @@ const TITLES: Record<AppId, string> = {
 let idCounter = 0
 
 export default function Desktop() {
+  const [isDark, setIsDark] = useState(false)
   const [icons, setIcons] = useState<{ id: AppId; label: string; type: IconType }[]>([])
   const [windows, setWindows] = useState<WindowState[]>([])
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
@@ -217,15 +219,41 @@ export default function Desktop() {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundImage: `url(${defaultWallpaper})`,
-        backgroundSize: "100% 90%",
-        backgroundPosition: "center",
         fontFamily: "'Inter', sans-serif",
       }}
     >
+      {/* ── Wallpaper layers — both always mounted for zero-delay crossfade ── */}
+      <div
+        aria-hidden="true"
+        style={{
+          position:   "absolute",
+          inset:       0,
+          backgroundImage: `url(${lightWallpaper})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          opacity:     isDark ? 0 : 1,
+          transition:  "opacity 420ms ease-in-out",
+          zIndex:      0,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position:   "absolute",
+          inset:       0,
+          backgroundImage: `url(${darkWallpaper})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          opacity:     isDark ? 1 : 0,
+          transition:  "opacity 420ms ease-in-out",
+          zIndex:      0,
+          pointerEvents: "none",
+        }}
+      />
       {/* TopBar — stop click propagation to avoid deselecting icons */}
       <div onClick={e => e.stopPropagation()}>
-        <TopBar />
+        <TopBar isDark={isDark} onToggleTheme={() => setIsDark(d => !d)} />
       </div>
 
       {/* Desktop icons — flex column wrap for responsive grid */}
@@ -250,6 +278,7 @@ export default function Desktop() {
             label={icon.label}
             type={icon.type}
             selected={selectedIconId === icon.id}
+            isDark={isDark}
             onClick={e => {
               e.stopPropagation()
               setSelectedIconId(icon.id)

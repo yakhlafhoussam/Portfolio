@@ -28,6 +28,7 @@ type Props = {
   selected: boolean
   onClick: (e: React.MouseEvent) => void
   onDoubleClick: () => void
+  isDark: boolean
 }
 
 // ─── Icon colour tints for folder variants ──────────────────────────────────
@@ -49,10 +50,10 @@ const ICON_SRC: Record<IconType, string> = {
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
-export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick }: Props) {
+export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick, isDark }: Props) {
   const src    = ICON_SRC[type]
   const filter = type === "folder" ? (FOLDER_TINT[id] ?? FOLDER_TINT["projects"]) : undefined
-  const isTrash = type === "trash"
+  const isTrash = type === "trash"  // reserved for future Trash-specific logic
 
   return (
     <div
@@ -73,7 +74,9 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
         userSelect:     "none",
       }}
       onMouseEnter={e => {
-        if (!selected) e.currentTarget.style.background = "rgba(255,255,255,0.07)"
+        if (!selected) e.currentTarget.style.background = isDark
+          ? "rgba(255, 255, 255, 0.07)"
+          : "rgba(0, 0, 0, 0.06)"
       }}
       onMouseLeave={e => {
         if (!selected) e.currentTarget.style.background = "transparent"
@@ -96,15 +99,19 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
       {/* Label */}
       <span
         style={{
-          color:      selected ? "#fff" : "rgba(255,255,255,0.88)",
-          fontSize:   "0.72rem",
-          fontWeight: selected ? 500 : 400,
-          textAlign:  "center",
-          textShadow: "0 1px 4px rgba(0,0,0,0.85)",
-          lineHeight: 1.3,
-          maxWidth:   72,
-          wordBreak:  "break-word",
-          pointerEvents: "none",
+          color:              isDark
+                                ? (selected ? "#ffffff" : "rgba(255, 255, 255, 0.95)")
+                                : (selected ? "#000000" : "#1c1c1e"),
+          fontSize:           "0.72rem",
+          fontWeight:         selected ? 600 : 500,
+          textAlign:          "center",
+          lineHeight:         1.3,
+          maxWidth:           72,
+          wordBreak:          "break-word",
+          pointerEvents:      "none",
+          // Dark Mode: multi-directional outline shadow & thin text-stroke; Light Mode: clean text
+          textShadow:         isDark ? "0 0 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 0.95)" : "none",
+          WebkitTextStroke:   isDark ? "0.15px rgba(0, 0, 0, 0.6)" : "none",
         }}
       >
         {label}
