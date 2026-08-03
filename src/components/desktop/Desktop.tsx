@@ -33,7 +33,7 @@ type WindowState = {
   params?: Record<string, unknown>
 }
 
-const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
+const DEFAULT_SIZES: Record<AppId, { width: number, height: number }> = {
   projects: { width: 840, height: 550 },
   experience: { width: 840, height: 550 },
   education: { width: 840, height: 550 },

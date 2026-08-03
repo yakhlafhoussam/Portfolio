@@ -14,7 +14,7 @@ type NewsFeedEntry = {
   miniImage: string
 }
 
-type ContentBlock = { type: "paragraph" | "heading"; text: string }
+type ContentBlock = { type: "paragraph" | "heading", text: string }
 
 type NewsArticle = NewsFeedEntry & {
   author: string
@@ -23,16 +23,19 @@ type NewsArticle = NewsFeedEntry & {
 
 type PageState = "home" | "news" | "article" | "404"
 
-// ─── Fetch helpers (swap URL for /api/news later) ─────────────────────────────
-
 async function fetchFeed(): Promise<NewsFeedEntry[]> {
-  const r = await fetch("/content/news/feed.json")
+  const r = await fetch("/api/news/hyk")
   if (!r.ok) throw new Error("feed")
-  return r.json()
+  const data = await r.json()
+  if (!Array.isArray(data)) {
+    console.error("[Browser] /api/news/hyk did not return an array:", data)
+    return []
+  }
+  return data
 }
 
 async function fetchArticle(id: string): Promise<NewsArticle> {
-  const r = await fetch(`/content/news/${id}/index.json`)
+  const r = await fetch(`/api/news/hyk/${id}`)
   if (!r.ok) throw new Error("article")
   return r.json()
 }
