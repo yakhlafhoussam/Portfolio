@@ -1,0 +1,36 @@
+{
+  "id": "vibe-coding",
+  "title": "Vibe Coding Is Creating Faster Developers... or Slower Learners?",
+  "summary": "AI can generate code in seconds, but many new developers are beginning to skip the fundamentals. The community is divided on whether productivity is replacing understanding.",
+  "date": "2026-08-02",
+  "category": "industry",
+  "author": "HYK",
+  "readingTime": "4 min read",
+  "cover": "cover.png",
+  "content": [
+    {
+      "type": "paragraph",
+      "text": "A new generation of developers is entering the industry with an unusual advantage: they can ship working code on day one. AI-powered tools like GitHub Copilot, Cursor, and ChatGPT allow newcomers to generate entire components, resolve bugs, and scaffold projects without fully understanding the underlying logic."
+    },
+    {
+      "type": "heading",
+      "text": "The Productivity Argument"
+    },
+    {
+      "type": "paragraph",
+      "text": "Proponents of AI-assisted development argue that the bottleneck in software engineering has never been typing speed—it's been problem decomposition and system design. If AI handles the boilerplate, developers can spend more time on architecture, user experience, and business logic."
+    },
+    {
+      "type": "heading",
+      "text": "The Learning Concern"
+    },
+    {
+      "type": "paragraph",
+      "text": "Critics, however, raise a more fundamental issue: when developers skip the hard parts of learning—debugging, understanding memory, writing algorithms from scratch—they build shallow mental models. These developers may excel at building CRUD apps quickly but struggle to diagnose performance regressions or design scalable systems."
+    },
+    {
+      "type": "paragraph",
+      "text": "The community remains divided. What is clear is that the skills that matter most are shifting—and the developers who can leverage AI without depending on it entirely may hold the greatest advantage."
+    }
+  ]
+}

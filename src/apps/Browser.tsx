@@ -1,5 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useTheme } from "@/context/ThemeContext"
+
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 type Bookmark = {
   id: string
@@ -9,6 +11,30 @@ type Bookmark = {
   icon: React.ReactNode
   easter?: boolean
 }
+
+/** A single entry in feed.json — only the fields needed for the news list. */
+type NewsFeedEntry = {
+  id: string
+  title: string
+  summary: string
+  date: string
+  category: string
+}
+
+/** A single content block inside an article's index.json. */
+type ContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; text: string }
+
+/** The full shape of a per-article index.json file. */
+type NewsArticle = NewsFeedEntry & {
+  author: string
+  readingTime: string
+  cover?: string
+  content: ContentBlock[]
+}
+
+// ─── Static bookmarks ────────────────────────────────────────────────────────
 
 const GitHubIcon = () => (
   <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
@@ -88,14 +114,83 @@ const BOOKMARKS: Bookmark[] = [
   },
 ]
 
-type PageState = "bookmarks" | "404" | "external"
+// ─── Data fetching helpers ────────────────────────────────────────────────────
+
+/**
+ * Load the news feed index.
+ *
+ * Future migration: swap `/content/news/feed.json` for `/api/news`
+ * without touching any rendering logic.
+ */
+async function fetchFeed(): Promise<NewsFeedEntry[]> {
+  const res = await fetch("/content/news/feed.json")
+  if (!res.ok) throw new Error("Failed to load news feed")
+  return res.json()
+}
+
+/**
+ * Load a single article by ID.
+ *
+ * Future migration: swap `/content/news/${id}/index.json` for `/api/news/${id}`
+ * without touching any rendering logic.
+ */
+async function fetchArticle(id: string): Promise<NewsArticle> {
+  const res = await fetch(`/content/news/${id}/index.json`)
+  if (!res.ok) throw new Error(`Failed to load article: ${id}`)
+  return res.json()
+}
+
+// ─── Page state ───────────────────────────────────────────────────────────────
+
+type PageState = "bookmarks" | "news" | "article" | "404" | "external"
+
+// ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Browser() {
   const t = useTheme()
+
   const [page, setPage] = useState<PageState>("bookmarks")
   const [urlBar, setUrlBar] = useState("bookmarks://new-tab")
-  const [activeUrl, setActiveUrl] = useState("")
 
+  // News state
+  const [feed, setFeed] = useState<NewsFeedEntry[]>([])
+  const [feedLoading, setFeedLoading] = useState(false)
+  const [article, setArticle] = useState<NewsArticle | null>(null)
+  const [articleLoading, setArticleLoading] = useState(false)
+
+  // ── Load feed when navigating to news page ──
+  const openNews = useCallback(async () => {
+    setPage("news")
+    setUrlBar("news://hyk.internal/feed")
+    if (feed.length > 0) return
+    setFeedLoading(true)
+    try {
+      const data = await fetchFeed()
+      setFeed(data)
+    } catch {
+      // feed stays empty; UI handles gracefully
+    } finally {
+      setFeedLoading(false)
+    }
+  }, [feed.length])
+
+  // ── Load individual article on demand ──
+  const openArticle = useCallback(async (entry: NewsFeedEntry) => {
+    setPage("article")
+    setUrlBar(`news://hyk.internal/${entry.id}`)
+    setArticle(null)
+    setArticleLoading(true)
+    try {
+      const data = await fetchArticle(entry.id)
+      setArticle(data)
+    } catch {
+      setPage("404")
+    } finally {
+      setArticleLoading(false)
+    }
+  }, [])
+
+  // ── Navigate bookmarks ──
   const navigate = (bm: Bookmark) => {
     if (bm.easter) {
       setPage("404")
@@ -103,12 +198,25 @@ export default function Browser() {
       return
     }
     if (bm.id === "resume") return
-    setActiveUrl(bm.url)
     window.open(bm.url, "_blank", "noopener,noreferrer")
   }
 
+  // ── Back to bookmarks ──
+  const goBack = () => {
+    if (page === "article") {
+      setPage("news")
+      setUrlBar("news://hyk.internal/feed")
+    } else {
+      setPage("bookmarks")
+      setUrlBar("bookmarks://new-tab")
+    }
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: t.bg, transition: t.transition }}>
+
       {/* Browser chrome */}
       <div
         style={{
@@ -123,7 +231,7 @@ export default function Browser() {
         }}
       >
         <button
-          onClick={() => { setPage("bookmarks"); setUrlBar("bookmarks://new-tab") }}
+          onClick={goBack}
           style={{
             background: t.bgHover,
             border: "none",
@@ -163,7 +271,9 @@ export default function Browser() {
 
       {/* Page content */}
       <div style={{ flex: 1, overflowY: "auto" }}>
-        {page === "404" ? (
+
+        {/* 404 */}
+        {page === "404" && (
           <div
             style={{
               display: "flex",
@@ -202,12 +312,57 @@ export default function Browser() {
               This page was never published. Or perhaps it was.
             </div>
           </div>
-        ) : (
+        )}
+
+        {/* Bookmarks */}
+        {page === "bookmarks" && (
           <div style={{ padding: "28px 32px" }}>
             <div style={{ color: t.textFaint, fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: 20, transition: t.transition }}>
               Bookmarks
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+
+              {/* News shortcut */}
+              <div
+                onClick={openNews}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 14,
+                  padding: "12px 16px",
+                  borderRadius: 8,
+                  background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                  border: "1px solid " + t.border,
+                  cursor: "pointer",
+                  transition: t.transition,
+                }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.background = t.bgHover
+                  el.style.borderColor = t.isDark ? "rgba(74,222,128,0.2)" : "rgba(37,99,235,0.3)"
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"
+                  el.style.borderColor = t.border
+                }}
+              >
+                <div style={{ color: t.textMuted, flexShrink: 0, transition: t.transition }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2" />
+                    <path d="M18 14h-8M15 18h-5M10 6h8v4h-8z" />
+                  </svg>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ color: t.text, fontSize: "0.85rem", fontWeight: 500, transition: t.transition }}>HYK News</div>
+                  <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>Industry news, community highlights, and dev culture</div>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke={t.textFaint} strokeWidth="1.5" strokeLinecap="round" style={{ transition: t.transition }} />
+                </svg>
+              </div>
+
+              {/* Static bookmarks */}
               {BOOKMARKS.map(bm => (
                 <div
                   key={bm.id}
@@ -237,12 +392,8 @@ export default function Browser() {
                 >
                   <div style={{ color: t.textMuted, flexShrink: 0, transition: t.transition }}>{bm.icon}</div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ color: t.text, fontSize: "0.85rem", fontWeight: 500, transition: t.transition }}>
-                      {bm.label}
-                    </div>
-                    <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>
-                      {bm.description}
-                    </div>
+                    <div style={{ color: t.text, fontSize: "0.85rem", fontWeight: 500, transition: t.transition }}>{bm.label}</div>
+                    <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>{bm.description}</div>
                   </div>
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                     <path d="M3 8h10M9 4l4 4-4 4" stroke={t.textFaint} strokeWidth="1.5" strokeLinecap="round" style={{ transition: t.transition }} />
@@ -252,6 +403,124 @@ export default function Browser() {
             </div>
           </div>
         )}
+
+        {/* News feed list */}
+        {page === "news" && (
+          <div style={{ padding: "28px 32px" }}>
+            <div style={{ color: t.textFaint, fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: 20, transition: t.transition }}>
+              HYK News
+            </div>
+            {feedLoading ? (
+              <div style={{ color: t.textFaint, fontSize: "0.8rem", transition: t.transition }}>Loading…</div>
+            ) : feed.length === 0 ? (
+              <div style={{ color: t.textFaint, fontSize: "0.8rem", transition: t.transition }}>No articles available.</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {feed.map(entry => (
+                  <div
+                    key={entry.id}
+                    onClick={() => openArticle(entry)}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 14,
+                      padding: "12px 16px",
+                      borderRadius: 8,
+                      background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                      border: "1px solid " + t.border,
+                      cursor: "pointer",
+                      transition: t.transition,
+                    }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLElement
+                      el.style.background = t.bgHover
+                      el.style.borderColor = t.isDark ? "rgba(74,222,128,0.2)" : "rgba(37,99,235,0.3)"
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLElement
+                      el.style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"
+                      el.style.borderColor = t.border
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span
+                          style={{
+                            fontSize: "0.62rem",
+                            fontWeight: 600,
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: t.isDark ? "rgba(74,222,128,0.8)" : "rgba(37,99,235,0.8)",
+                            transition: t.transition,
+                          }}
+                        >
+                          {entry.category}
+                        </span>
+                        <span style={{ color: t.textFaint, fontSize: "0.7rem", transition: t.transition }}>{entry.date}</span>
+                      </div>
+                      <div style={{ color: t.text, fontSize: "0.85rem", fontWeight: 500, transition: t.transition }}>{entry.title}</div>
+                      <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 3, lineHeight: 1.4, transition: t.transition }}>{entry.summary}</div>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8h10M9 4l4 4-4 4" stroke={t.textFaint} strokeWidth="1.5" strokeLinecap="round" style={{ transition: t.transition }} />
+                    </svg>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Article reader */}
+        {page === "article" && (
+          <div style={{ padding: "28px 32px", maxWidth: 640 }}>
+            {articleLoading || !article ? (
+              <div style={{ color: t.textFaint, fontSize: "0.8rem", transition: t.transition }}>Loading…</div>
+            ) : (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                  <span
+                    style={{
+                      fontSize: "0.62rem",
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: t.isDark ? "rgba(74,222,128,0.8)" : "rgba(37,99,235,0.8)",
+                      transition: t.transition,
+                    }}
+                  >
+                    {article.category}
+                  </span>
+                  <span style={{ color: t.textFaint, fontSize: "0.7rem", transition: t.transition }}>{article.date}</span>
+                  <span style={{ color: t.textFaint, fontSize: "0.7rem", transition: t.transition }}>· {article.readingTime}</span>
+                </div>
+                <div style={{ color: t.text, fontSize: "1rem", fontWeight: 700, lineHeight: 1.4, marginBottom: 16, transition: t.transition }}>
+                  {article.title}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {article.content.map((block, i) => {
+                    if (block.type === "heading") {
+                      return (
+                        <div key={i} style={{ color: t.text, fontSize: "0.88rem", fontWeight: 600, marginTop: 8, transition: t.transition }}>
+                          {block.text}
+                        </div>
+                      )
+                    }
+                    return (
+                      <div key={i} style={{ color: t.textMuted, fontSize: "0.82rem", lineHeight: 1.65, transition: t.transition }}>
+                        {block.text}
+                      </div>
+                    )
+                  })}
+                </div>
+                <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid " + t.border, color: t.textFaint, fontSize: "0.72rem", transition: t.transition }}>
+                  By {article.author}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   )

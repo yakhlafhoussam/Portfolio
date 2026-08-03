@@ -1,26 +1,23 @@
 [
   {
     "id": "vibe-coding",
-    "category": "industry",
     "title": "Vibe Coding Is Creating Faster Developers... or Slower Learners?",
-    "date": "2026-08-02",
     "summary": "AI can generate code in seconds, but many new developers are beginning to skip the fundamentals. The community is divided on whether productivity is replacing understanding.",
-    "article": "vibe-coding.json"
+    "date": "2026-08-02",
+    "category": "industry"
   },
   {
     "id": "framework-wars",
-    "category": "industry",
     "title": "Another JavaScript Framework Enters the Race",
-    "date": "2026-08-01",
     "summary": "Every few weeks another framework promises better performance and a simpler future, leaving developers questioning whether their current stack is already outdated.",
-    "article": "framework-wars.json"
+    "date": "2026-08-01",
+    "category": "industry"
   },
   {
     "id": "mavel",
-    "category": "community",
     "title": "Mavel Still Awaits Its Next Commit",
-    "date": "2026-07-31",
     "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects among YouCode students.",
-    "article": "mavel.json"
+    "date": "2026-07-31",
+    "category": "community"
   }
 ]

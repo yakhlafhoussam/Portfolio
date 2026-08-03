@@ -1,0 +1,36 @@
+{
+  "id": "mavel",
+  "title": "Mavel Still Awaits Its Next Commit",
+  "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects among YouCode students.",
+  "date": "2026-07-31",
+  "category": "community",
+  "author": "HYK",
+  "readingTime": "2 min read",
+  "cover": "cover.png",
+  "content": [
+    {
+      "type": "paragraph",
+      "text": "Last spring, a group of YouCode students announced Mavel—an experimental PHP micro-framework inspired by Laravel's expressive syntax but built from scratch as a learning exercise. The announcement generated genuine excitement in local developer circles."
+    },
+    {
+      "type": "heading",
+      "text": "Promise and Silence"
+    },
+    {
+      "type": "paragraph",
+      "text": "The repository launched with a clean README, a routing engine, and a basic ORM sketch. Then, silence. Months have passed since the last commit. Contributors moved on to internships, final projects, and other pursuits."
+    },
+    {
+      "type": "heading",
+      "text": "Why It Still Matters"
+    },
+    {
+      "type": "paragraph",
+      "text": "Mavel represents something common in developer culture: ambitious personal projects that teach more than they ship. The engineers who built it learned about HTTP internals, container IoC, and PHP's object model in ways that no tutorial could replicate."
+    },
+    {
+      "type": "paragraph",
+      "text": "Whether it ever ships a stable release is almost beside the point. The experience lives on in the developers who built it—and that is quietly impressive."
+    }
+  ]
+}
