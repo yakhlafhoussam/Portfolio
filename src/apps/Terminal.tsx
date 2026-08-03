@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, KeyboardEvent } from "react"
+import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react"
 
-type Line = { type: "input" | "output" | "error" | "blank" text: string }
+type Line = { type: "input" | "output" | "error" | "blank"; text: string }
 
 const HOSTNAME = "hyk@localhost"
 
@@ -48,7 +48,7 @@ const FILE_CONTENTS: Record<string, string> = {
 function processCommand(
   cmd: string,
   cwd: string,
-): { output: Line[] nextCwd?: string } {
+): { output: Line[]; nextCwd?: string } {
   const parts = cmd.trim().split(/\s+/)
   const bin = parts[0]
   const args = parts.slice(1)
@@ -227,7 +227,11 @@ function processCommand(
   }
 }
 
-export default function Terminal() {
+type TerminalProps = {
+  autoCommands?: string[]
+}
+
+export default function Terminal({ autoCommands }: TerminalProps = {}) {
   const [lines, setLines] = useState<Line[]>([
     { type: "output", text: "HYK OS  —  v1.0.0-stable" },
     { type: "output", text: 'Type "help" for available commands.' },
@@ -239,34 +243,38 @@ export default function Terminal() {
   const [histIdx, setHistIdx] = useState(-1)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const autoRef = useRef({ started: false, commandIndex: 0, charIndex: 0, timeouts: [] as number[] })
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [lines])
 
-  const submit = () => {
-    const cmd = input.trim()
-    const prompt: Line = { type: "input", text: `${HOSTNAME}:${cwd}$ ${cmd}` }
+  const submit = useCallback(
+    (cmdOverride?: string) => {
+      const cmd = (cmdOverride ?? input).trim()
+      const prompt: Line = { type: "input", text: `${HOSTNAME}:${cwd}$ ${cmd}` }
 
-    if (!cmd) {
-      setLines((l) => [...l, prompt, { type: "blank", text: "" }])
+      if (!cmd) {
+        setLines((l) => [...l, prompt, { type: "blank", text: "" }])
+        setInput("")
+        return
+      }
+
+      const { output, nextCwd } = processCommand(cmd, cwd)
+
+      if (output[0]?.text === "__CLEAR__") {
+        setLines([])
+      } else {
+        setLines((l) => [...l, prompt, ...output, { type: "blank", text: "" }])
+      }
+
+      if (nextCwd !== undefined) setCwd(nextCwd)
+      setHistory((h) => [cmd, ...h])
+      setHistIdx(-1)
       setInput("")
-      return
-    }
-
-    const { output, nextCwd } = processCommand(cmd, cwd)
-
-    if (output[0]?.text === "__CLEAR__") {
-      setLines([])
-    } else {
-      setLines((l) => [...l, prompt, ...output, { type: "blank", text: "" }])
-    }
-
-    if (nextCwd !== undefined) setCwd(nextCwd)
-    setHistory((h) => [cmd, ...h])
-    setHistIdx(-1)
-    setInput("")
-  }
+    },
+    [cwd, input],
+  )
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -283,6 +291,48 @@ export default function Terminal() {
       setInput(idx === -1 ? "" : history[idx])
     }
   }
+
+  useEffect(() => {
+    if (!autoCommands || autoCommands.length === 0) return
+    if (autoRef.current.started) return
+
+    autoRef.current.started = true
+    autoRef.current.timeouts = []
+
+    const schedule = (fn: () => void, delay: number) => {
+      const id = window.setTimeout(fn, delay)
+      autoRef.current.timeouts.push(id)
+    }
+
+    const typeCommand = (command: string, onComplete: () => void) => {
+      let charIndex = 0
+      const typeNext = () => {
+        if (charIndex > command.length) {
+          schedule(() => {
+            submit(command)
+            onComplete()
+          }, 280)
+          return
+        }
+        setInput(command.slice(0, charIndex))
+        charIndex += 1
+        schedule(typeNext, 80)
+      }
+      typeNext()
+    }
+
+    const runNextCommand = (index: number) => {
+      if (index >= autoCommands.length) return
+      typeCommand(autoCommands[index], () => runNextCommand(index + 1))
+    }
+
+    schedule(() => runNextCommand(0), 500)
+
+    return () => {
+      autoRef.current.timeouts.forEach((id) => window.clearTimeout(id))
+      autoRef.current.timeouts = []
+    }
+  }, [autoCommands, submit])
 
   return (
     <div

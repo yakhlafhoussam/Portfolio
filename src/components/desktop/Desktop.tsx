@@ -80,7 +80,16 @@ export default function Desktop() {
   const [windows, setWindows] = useState<WindowState[]>([])
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
   const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
+  const [blockDesktopInput, setBlockDesktopInput] = useState(false)
+  const [wallpaperGlitch, setWallpaperGlitch] = useState(false)
+  const [iconsFlicker, setIconsFlicker] = useState(false)
+  const [flashScreen, setFlashScreen] = useState(false)
+  const [logoFlash, setLogoFlash] = useState(false)
+  const [breachMessage, setBreachMessage] = useState(false)
+  const [screenBlack, setScreenBlack] = useState(false)
   const zRef = useRef(100)
+  const breachTimers = useRef<number[]>([])
+  const browserCloseRequestRef = useRef<() => boolean>(() => true)
 
   useEffect(() => {
     fetch("/content/desktop.json")
@@ -115,14 +124,26 @@ export default function Desktop() {
     }
   }, [isDark])
 
-  const bringToFront = useCallback((id: string) => {
-    const z = ++zRef.current
-    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, zIndex: z } : w)))
-    setActiveWindowId(id)
-  }, [])
+  const bringToFront = useCallback(
+    (id: string, options?: { force?: boolean }) => {
+      if (blockDesktopInput && !options?.force) return
+      const z = ++zRef.current
+      setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, zIndex: z } : w)))
+      setActiveWindowId(id)
+    },
+    [blockDesktopInput],
+  )
 
   const openWindow = useCallback(
-    (appId: AppId, params?: Record<string, unknown>) => {
+    (
+      appId: AppId,
+      params?: Record<string, unknown>,
+      options?: { force?: boolean },
+    ) => {
+      if (blockDesktopInput && !options?.force) {
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+        return
+      }
       // If opening an editor, focus existing instance for same file
       if (appId === "editor" && params) {
         const existing = windows.find(
@@ -204,6 +225,92 @@ export default function Desktop() {
     [windows, bringToFront],
   )
 
+  useEffect(() => {
+    const handleCountdown = (event: Event) => {
+      const detail = (event as CustomEvent).detail as { active: boolean }
+      setBlockDesktopInput(detail.active)
+    }
+
+    const handlePhase = (event: Event) => {
+      const phase = (event as CustomEvent).detail.phase as string
+      switch (phase) {
+        case "freeze":
+          setBlockDesktopInput(true)
+          break
+        case "open-terminal":
+          openWindow(
+            "terminal",
+            {
+              autoCommands: [
+                "connecting...",
+                "bypassing firewall...",
+                "reading portfolio...",
+                "locating visitor...",
+                "decrypting...",
+                "access granted",
+              ],
+            },
+            { force: true },
+          )
+          break
+        case "close-terminal":
+          setWindows((ws) => ws.filter((w) => w.appId !== "terminal"))
+          setActiveWindowId(null)
+          break
+        case "wallpaper-glitch":
+          setWallpaperGlitch(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setWallpaperGlitch(false), 600),
+          )
+          break
+        case "icon-flicker":
+          setIconsFlicker(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setIconsFlicker(false), 600),
+          )
+          break
+        case "flash-screen":
+          setFlashScreen(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setFlashScreen(false), 220),
+          )
+          break
+        case "logo-flash":
+          setLogoFlash(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setLogoFlash(false), 220),
+          )
+          break
+        case "breach-message":
+          setBreachMessage(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setBreachMessage(false), 900),
+          )
+          break
+        case "screen-black":
+          setScreenBlack(true)
+          break
+        case "reload":
+          window.location.reload()
+          break
+        case "finished":
+          setBlockDesktopInput(false)
+          setScreenBlack(false)
+          break
+      }
+    }
+
+    window.addEventListener("hyk-breach-countdown", handleCountdown)
+    window.addEventListener("hyk-breach-phase", handlePhase)
+
+    return () => {
+      window.removeEventListener("hyk-breach-countdown", handleCountdown)
+      window.removeEventListener("hyk-breach-phase", handlePhase)
+      breachTimers.current.forEach((id) => window.clearTimeout(id))
+      breachTimers.current = []
+    }
+  }, [openWindow])
+
   const closeWindow = useCallback((id: string) => {
     setWindows((ws) => ws.filter((w) => w.id !== id))
     setActiveWindowId((curr) => (curr === id ? null : curr))
@@ -228,6 +335,11 @@ export default function Desktop() {
 
   const handleDockItemClick = useCallback(
     (windowId: string) => {
+      if (blockDesktopInput) {
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+        return
+      }
+
       const win = windows.find((w) => w.id === windowId)
       if (!win) return
 
@@ -242,7 +354,7 @@ export default function Desktop() {
         bringToFront(windowId)
       }
     },
-    [windows, activeWindowId, bringToFront, minimizeWindow],
+    [windows, activeWindowId, bringToFront, minimizeWindow, blockDesktopInput],
   )
 
   const renderApp = (w: WindowState) => {
@@ -260,9 +372,19 @@ export default function Desktop() {
       case "resume":
         return <Resume />
       case "browser":
-        return <Browser />
+        return (
+          <Browser
+            registerCloseRequest={(callback) => {
+              browserCloseRequestRef.current = callback
+            }}
+          />
+        )
       case "terminal":
-        return <Terminal />
+        return (
+          <Terminal
+            autoCommands={w.params?.autoCommands as string[] | undefined}
+          />
+        )
       case "profile":
         return <Profile />
       case "recycle":
@@ -282,7 +404,13 @@ export default function Desktop() {
   return (
     <ThemeContext.Provider value={getTheme(isDark)}>
       <div
-        onClick={() => setSelectedIconId(null)}
+        onClick={(e) => {
+          if (blockDesktopInput) {
+            e.stopPropagation()
+            return
+          }
+          setSelectedIconId(null)
+        }}
         style={{
           position: "fixed",
           inset: 0,
@@ -300,6 +428,8 @@ export default function Desktop() {
             backgroundPosition: "center",
             opacity: isDark ? 0 : 1,
             transition: "opacity 500ms ease-in-out",
+            filter: wallpaperGlitch ? "blur(1px) saturate(1.2)" : undefined,
+            transform: wallpaperGlitch ? "scale(1.01)" : undefined,
             zIndex: 0,
             pointerEvents: "none",
           }}
@@ -314,15 +444,70 @@ export default function Desktop() {
             backgroundPosition: "center",
             opacity: isDark ? 1 : 0,
             transition: "opacity 500ms ease-in-out",
+            filter: wallpaperGlitch ? "blur(1px) saturate(1.2)" : undefined,
+            transform: wallpaperGlitch ? "scale(1.01)" : undefined,
             zIndex: 0,
             pointerEvents: "none",
           }}
         />
+        {flashScreen && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(255,255,255,0.8)",
+              zIndex: 99,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+        {breachMessage && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(0,0,0,0.74)",
+              zIndex: 99,
+              pointerEvents: "none",
+            }}
+          >
+            <div
+              style={{
+                color: "#f87171",
+                fontSize: "2rem",
+                fontWeight: 800,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                padding: "12px 18px",
+                border: "1px solid rgba(248,113,113,0.18)",
+                borderRadius: 14,
+                background: "rgba(0,0,0,0.45)",
+              }}
+            >
+              SYSTEM BREACH
+            </div>
+          </div>
+        )}
+        {screenBlack && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "#000",
+              zIndex: 99999,
+              pointerEvents: "none",
+            }}
+          />
+        )}
         {/* TopBar — stop click propagation to avoid deselecting icons */}
         <div onClick={(e) => e.stopPropagation()}>
           <TopBar
             isDark={isDark}
             onToggleTheme={() => {
+              if (blockDesktopInput) return
               setIsDark((d) => {
                 const next = !d
                 storageManager.update({ theme: next ? "dark" : "light" })
@@ -345,6 +530,8 @@ export default function Desktop() {
             alignContent: "flex-start",
             gap: 6,
             maxHeight: "calc(100vh - 120px)",
+            opacity: iconsFlicker ? 0.35 : 1,
+            transition: iconsFlicker ? "opacity 0.1s ease" : "opacity 0.3s ease",
           }}
         >
           {icons.map((icon) => (
@@ -380,7 +567,13 @@ export default function Desktop() {
             minimized={w.minimized}
             maximized={w.maximized}
             isFocused={w.id === activeWindowId}
-            onClose={() => closeWindow(w.id)}
+            onClose={() => {
+              if (w.appId === "browser" && !browserCloseRequestRef.current()) {
+                window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+                return
+              }
+              closeWindow(w.id)
+            }}
             onMinimize={() => minimizeWindow(w.id)}
             onMaximize={() => maximizeWindow(w.id)}
             onMove={(x, y) => moveWindow(w.id, x, y)}

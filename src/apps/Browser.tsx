@@ -656,7 +656,11 @@ function SponsoredCard({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function Browser() {
+export default function Browser({
+  registerCloseRequest,
+}: {
+  registerCloseRequest?: (callback: () => boolean) => void
+}) {
   const t = useTheme()
   const [page, setPage] = useState<PageState>("home")
   const [urlBar, setUrlBar] = useState("hyk://new-tab")
@@ -669,7 +673,7 @@ export default function Browser() {
 
   const {
     showStarted,
-    remainingTime,
+    takeoverActive,
     countdownActive,
     startCountdown,
     resetCountdown,
@@ -688,16 +692,24 @@ export default function Browser() {
     if (page === "home") setTimeout(() => searchRef.current?.focus(), 100)
   }, [page])
 
+  useEffect(() => {
+    registerCloseRequest?.(() => {
+      return !countdownActive && !takeoverActive
+    })
+    return () => {
+      registerCloseRequest?.(() => true)
+    }
+  }, [countdownActive, takeoverActive, registerCloseRequest])
+
   const guardNavigation = useCallback(
     (navigate: () => void | Promise<void>) => {
-      if (countdownActive && currentArticle?.source === "hyk") {
-        console.log("[HYK] forceStartShow() called via guardNavigation")
+      if ((countdownActive || takeoverActive) && currentArticle?.source === "hyk") {
         forceStartShow()
         return
       }
       void navigate()
     },
-    [countdownActive, currentArticle, forceStartShow],
+    [countdownActive, takeoverActive, currentArticle, forceStartShow],
   )
 
   const goHome = useCallback(() => {
@@ -728,7 +740,6 @@ export default function Browser() {
 
   const openArticle = useCallback(
     async (entry: NewsFeedEntry) => {
-      console.log("[HYK] HYK article opened", entry.id, entry.source)
       guardNavigation(async () => {
         setPage("article")
         setUrlBar(`news://hyk.internal/${entry.id}`)
@@ -736,7 +747,6 @@ export default function Browser() {
         setArticle(null)
         setArticleLoading(true)
         if (entry.source === "hyk") {
-          console.log("[HYK] Countdown started for article", entry.id)
           startCountdown()
         } else {
           resetCountdown()
@@ -773,7 +783,9 @@ export default function Browser() {
 
   return (
     <div
+      className={takeoverActive ? "browser browser--takeover" : "browser"}
       style={{
+        position: "relative",
         flex: 1,
         display: "flex",
         flexDirection: "column",
@@ -787,9 +799,9 @@ export default function Browser() {
         onBack={goBack}
         onHome={goHome}
         urlBar={urlBar}
-        disableNavigation={countdownActive}
         t={t}
       />
+
 
       <div style={{ flex: 1, overflowY: "auto" }}>
         {/* ── HOME ── */}
@@ -1161,44 +1173,6 @@ export default function Browser() {
                       {article.date} · {article.readingTime}
                     </span>
                   </div>
-
-                  {article.source === "hyk" && countdownActive && (
-                    <div
-                      style={{
-                        marginBottom: 24,
-                        padding: "18px 20px",
-                        borderRadius: 14,
-                        background: t.isDark
-                          ? "rgba(74,222,128,0.12)"
-                          : "rgba(37,99,235,0.10)",
-                        border:
-                          "1px solid " +
-                          (t.isDark
-                            ? "rgba(74,222,128,0.22)"
-                            : "rgba(37,99,235,0.15)"),
-                      }}
-                    >
-                      <div
-                        style={{
-                          color: accent,
-                          fontSize: "0.82rem",
-                          fontWeight: 700,
-                          marginBottom: 8,
-                        }}
-                      >
-                        HYK Experience starts in
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "2rem",
-                          fontWeight: 800,
-                          lineHeight: 1,
-                        }}
-                      >
-                        {remainingTime}...
-                      </div>
-                    </div>
-                  )}
 
                   <h1
                     style={{

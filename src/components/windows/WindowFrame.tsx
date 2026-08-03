@@ -16,6 +16,7 @@ type Props = {
   onMaximize: () => void
   onMove: (x: number, y: number) => void
   onFocus: () => void
+  closeDisabled?: boolean
   children: React.ReactNode
 }
 
@@ -34,6 +35,7 @@ export default function WindowFrame({
   onMaximize,
   onMove,
   onFocus,
+  closeDisabled = false,
   children,
 }: Props) {
   const t = useTheme()
@@ -116,10 +118,11 @@ export default function WindowFrame({
         {/* Traffic lights */}
         <div style={{ display: "flex", gap: 7, zIndex: 1 }}>
           <button
+            disabled={closeDisabled}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation()
-              onClose()
+              if (!closeDisabled) onClose()
             }}
             onMouseEnter={() => setHoverClose(true)}
             onMouseLeave={() => setHoverClose(false)}
@@ -129,18 +132,22 @@ export default function WindowFrame({
               borderRadius: "50%",
               background: "#ff5f57",
               border: "none",
-              cursor: "pointer",
+              cursor: closeDisabled ? "default" : "pointer",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: 8,
               color: "#7a0000",
-              opacity: hoverClose ? 1 : 0.85,
-              boxShadow: hoverClose ? "0 0 0 2px rgba(255,95,87,0.3)" : "none",
+              opacity: closeDisabled ? 0.45 : hoverClose ? 1 : 0.85,
+              boxShadow: closeDisabled
+                ? "none"
+                : hoverClose
+                ? "0 0 0 2px rgba(255,95,87,0.3)"
+                : "none",
               transition: "box-shadow 0.12s, opacity 0.12s",
             }}
           >
-            {hoverClose && "×"}
+            {hoverClose && !closeDisabled && "×"}
           </button>
           <button
             onPointerDown={(e) => e.stopPropagation()}

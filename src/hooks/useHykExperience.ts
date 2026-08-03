@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react"
+import glitchSound from "@/assets/sound/glitch.mp3"
+
+type TakeoverPhase = "idle" | "flash" | "glitch" | "collapse" | "done"
 
 export function useHykExperience() {
   const [showStarted, setShowStarted] = useState(false)
+  const [takeoverActive, setTakeoverActive] = useState(false)
+  const [takeoverPhase, setTakeoverPhase] = useState<TakeoverPhase>("idle")
   const [remainingTime, setRemainingTime] = useState<number | null>(null)
   const countdownRef = useRef<number | null>(null)
   const intervalRef = useRef<number | null>(null)
+  const timerRefs = useRef<number[]>([])
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const showStartedRef = useRef(false)
 
   const cleanupCountdown = useCallback(() => {
@@ -15,42 +22,152 @@ export function useHykExperience() {
     countdownRef.current = null
   }, [])
 
+  const dispatchBreachPhase = useCallback((phase: string) => {
+    window.dispatchEvent(
+      new CustomEvent("hyk-breach-phase", { detail: { phase } }),
+    )
+  }, [])
+
+  const dispatchCountdownState = useCallback(
+    (active: boolean) => {
+      window.dispatchEvent(
+        new CustomEvent("hyk-breach-countdown", { detail: { active } }),
+      )
+    },
+    [],
+  )
+
+  const clearTakeoverTimers = useCallback(() => {
+    timerRefs.current.forEach((id) => window.clearTimeout(id))
+    timerRefs.current = []
+  }, [])
+
+  const finishTakeover = useCallback(() => {
+    clearTakeoverTimers()
+    setTakeoverActive(false)
+    setTakeoverPhase("done")
+    dispatchBreachPhase("finished")
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
+  }, [clearTakeoverTimers, dispatchBreachPhase])
+
   const startShow = useCallback(async () => {
     if (showStartedRef.current) return
     showStartedRef.current = true
     setShowStarted(true)
+    setTakeoverActive(true)
+    setTakeoverPhase("flash")
     cleanupCountdown()
     setRemainingTime(0)
-    console.log("[HYK] startShow() called")
-    alert("HYK SHOW STARTED")
-  }, [cleanupCountdown])
+    dispatchCountdownState(false)
+    dispatchBreachPhase("freeze")
+
+    if (!audioRef.current) {
+      audioRef.current = new Audio(glitchSound)
+      audioRef.current.preload = "auto"
+    }
+    audioRef.current.currentTime = 0
+
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        void audioRef.current?.play().catch(() => {})
+        dispatchBreachPhase("sound")
+      }, 200),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("flicker")
+      }, 300),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("browser-shake")
+      }, 600),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("open-terminal")
+      }, 1000),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("terminal-typing")
+      }, 1300),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("close-terminal")
+      }, 3500),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("wallpaper-glitch")
+      }, 3800),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("icon-flicker")
+      }, 4200),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("browser-move")
+      }, 4800),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("flash-screen")
+      }, 5500),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("logo-flash")
+      }, 6000),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("breach-message")
+      }, 6500),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        setTakeoverPhase("collapse")
+        dispatchBreachPhase("screen-black")
+      }, 7000),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("reload")
+      }, 7500),
+    )
+  }, [cleanupCountdown, dispatchBreachPhase, dispatchCountdownState])
 
   const resetCountdown = useCallback(() => {
     cleanupCountdown()
     setRemainingTime(null)
-  }, [cleanupCountdown])
+    dispatchCountdownState(false)
+  }, [cleanupCountdown, dispatchCountdownState])
 
   const startCountdown = useCallback(() => {
     if (showStartedRef.current) return
-    console.log("[HYK] startCountdown() called")
     cleanupCountdown()
     const initialValue = 10
     countdownRef.current = initialValue
     setRemainingTime(initialValue)
-    console.log("[HYK] countdown value", initialValue)
+    dispatchCountdownState(true)
 
     intervalRef.current = window.setInterval(() => {
       setRemainingTime((current) => {
         if (current === null) return null
         if (current <= 1) {
-          console.log("[HYK] countdown value", 0)
           cleanupCountdown()
           void startShow()
           return 0
         }
         const next = current - 1
         countdownRef.current = next
-        console.log("[HYK] countdown value", next)
         return next
       })
     }, 1000)
@@ -58,18 +175,33 @@ export function useHykExperience() {
 
   const forceStartShow = useCallback(() => {
     if (showStartedRef.current) return
-    console.log("[HYK] forceStartShow() called")
     void startShow()
   }, [startShow])
 
   useEffect(() => {
-    return () => {
-      cleanupCountdown()
+    const handleEscape = () => {
+      if (!showStartedRef.current) {
+        forceStartShow()
+      }
     }
-  }, [cleanupCountdown])
+
+    window.addEventListener("hyk-breach-escape", handleEscape)
+
+    return () => {
+      window.removeEventListener("hyk-breach-escape", handleEscape)
+      cleanupCountdown()
+      finishTakeover()
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [cleanupCountdown, finishTakeover, forceStartShow])
 
   return {
     showStarted,
+    takeoverActive,
+    takeoverPhase,
     remainingTime,
     countdownActive:
       remainingTime !== null && remainingTime > 0 && !showStarted,
