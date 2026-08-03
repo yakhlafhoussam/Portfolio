@@ -2,22 +2,31 @@
   {
     "id": "vibe-coding",
     "title": "Vibe Coding Is Creating Faster Developers... or Slower Learners?",
-    "summary": "AI can generate code in seconds, but many new developers are beginning to skip the fundamentals. The community is divided on whether productivity is replacing understanding.",
+    "summary": "AI can generate code in seconds, but many new developers are beginning to skip the fundamentals.",
     "date": "2026-08-02",
-    "category": "industry"
+    "category": "industry",
+    "readingTime": "4 min read",
+    "cover": "/content/news/covers/vibe-coding_cover.jpeg",
+    "miniImage": "/content/news/mini_images/vibe-coding.jpeg"
   },
   {
     "id": "framework-wars",
     "title": "Another JavaScript Framework Enters the Race",
-    "summary": "Every few weeks another framework promises better performance and a simpler future, leaving developers questioning whether their current stack is already outdated.",
+    "summary": "Every few weeks another framework promises better performance and a simpler future.",
     "date": "2026-08-01",
-    "category": "industry"
+    "category": "industry",
+    "readingTime": "3 min read",
+    "cover": "/content/news/covers/framworks.png",
+    "miniImage": "/content/news/mini_images/framwork.png"
   },
   {
     "id": "mavel",
     "title": "Mavel Still Awaits Its Next Commit",
-    "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects among YouCode students.",
+    "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects.",
     "date": "2026-07-31",
-    "category": "community"
+    "category": "community",
+    "readingTime": "2 min read",
+    "cover": "/content/news/covers/mavel.png",
+    "miniImage": "/content/news/mini_images/mavel_b.png"
   }
 ]
