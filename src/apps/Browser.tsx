@@ -37,11 +37,13 @@ async function fetchArticle(id: string): Promise<NewsArticle> {
   return r.json()
 }
 
-// ─── Shortcut data ────────────────────────────────────────────────────────────
+// ─── Shortcuts ────────────────────────────────────────────────────────────────
 
 const SHORTCUTS = [
   {
-    id: "github", label: "GitHub", url: "https://github.com/yakhlafhoussam",
+    id: "github",
+    label: "GitHub",
+    url: "https://github.com/yakhlafhoussam",
     icon: (
       <svg width="22" height="22" viewBox="0 0 16 16" fill="currentColor">
         <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
@@ -49,7 +51,9 @@ const SHORTCUTS = [
     )
   },
   {
-    id: "linkedin", label: "LinkedIn", url: "https://linkedin.com/in/houssam-yakhlaf",
+    id: "linkedin",
+    label: "LinkedIn",
+    url: "https://linkedin.com/in/houssam-yakhlaf",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -57,7 +61,9 @@ const SHORTCUTS = [
     )
   },
   {
-    id: "email", label: "Email", url: "mailto:yakhlafhoussam@gmail.com",
+    id: "email",
+    label: "Email",
+    url: "mailto:yakhlafhoussam@gmail.com",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -66,35 +72,25 @@ const SHORTCUTS = [
     )
   },
   {
-    id: "resume", label: "Resume", url: "#",
+    id: "whatsapp",
+    label: "WhatsApp",
+    url: "https://wa.me/212615940605",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="12" y1="18" x2="12" y2="12"/>
-        <polyline points="9 15 12 18 15 15"/>
+        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
       </svg>
     )
   },
   {
-    id: "projects", label: "Projects", url: "#",
+    id: "discord",
+    label: "Discord",
+    url: "https://discord.com/users/houssam_yakhlaf",
     icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 18 22 12 16 6"/>
-        <polyline points="8 6 2 12 8 18"/>
+      <svg width="22" height="22" viewBox="0 0 127.14 96.36" fill="currentColor">
+        <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C-3.66,42.48-1.93,76.06,8.7,95.91a106,106,0,0,0,32.22,16.29,80.06,80.06,0,0,0,6.77-11A68.86,68.86,0,0,1,37,95.34c1.1-.81,2.17-1.67,3.2-2.56a75.14,75.14,0,0,0,93.82,0c1,1,2.1,1.75,3.2,2.56a69,69,0,0,1-10.74,5.92,80.13,80.13,0,0,0,6.77,11,106,106,0,0,0,32.22-16.29C129.2,76.06,131,42.48,107.7,8.07ZM42.45,75.64c-6.3,0-11.48-5.78-11.48-12.83S36.08,50,42.45,50s11.53,5.78,11.48,12.83S48.75,75.64,42.45,75.64Zm42.24,0c-6.3,0-11.48-5.78-11.48-12.83S78.32,50,84.69,50s11.53,5.78,11.48,12.83S91,75.64,84.69,75.64Z"/>
       </svg>
     )
-  },
-  {
-    id: "gallery", label: "Gallery", url: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <circle cx="8.5" cy="8.5" r="1.5"/>
-        <polyline points="21 15 16 10 5 21"/>
-      </svg>
-    )
-  },
+  }
 ]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -106,38 +102,33 @@ function NavBar({ page, onBack, onHome, urlBar, t }: {
   urlBar: string
   t: ReturnType<typeof useTheme>
 }) {
-  const accent = t.isDark ? "rgba(74,222,128,1)" : "rgba(37,99,235,1)"
   return (
     <div style={{
       background: t.bgToolbar,
       borderBottom: "1px solid " + t.border,
-      padding: "7px 12px",
+      padding: "6px 12px",
       display: "flex",
       alignItems: "center",
       gap: 6,
       flexShrink: 0,
       transition: t.transition,
     }}>
-      {/* Back */}
       <NavBtn onClick={onBack} disabled={page === "home"} t={t}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </NavBtn>
-      {/* Forward (decorative) */}
       <NavBtn onClick={() => {}} disabled t={t}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </NavBtn>
-      {/* Refresh */}
       <NavBtn onClick={onHome} t={t}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M13.5 2.5A7 7 0 102 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-          <path d="M2 4v4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M13.5 2.5A7 7 0 102 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M2 4v4h4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </NavBtn>
-      {/* Address bar */}
       <div style={{
         flex: 1,
         background: t.bgInput,
@@ -184,6 +175,12 @@ function NavBtn({ onClick, disabled, children, t }: {
         color: disabled ? t.textFaint : t.textMuted,
         transition: t.transition,
       }}
+      onMouseEnter={e => {
+        if (!disabled) e.currentTarget.style.background = t.bgHover
+      }}
+      onMouseLeave={e => {
+        if (!disabled) e.currentTarget.style.background = "none"
+      }}
     >
       {children}
     </button>
@@ -192,32 +189,34 @@ function NavBtn({ onClick, disabled, children, t }: {
 
 function ShortcutIcon({ s, t }: { s: typeof SHORTCUTS[0]; t: ReturnType<typeof useTheme> }) {
   const [hovered, setHovered] = useState(false)
-  const accent = t.isDark ? "rgba(74,222,128,0.12)" : "rgba(37,99,235,0.1)"
-  const accentBorder = t.isDark ? "rgba(74,222,128,0.3)" : "rgba(37,99,235,0.3)"
+  const accent = t.isDark ? "rgba(74,222,128,0.12)" : "rgba(37,99,235,0.08)"
+  const accentBorder = t.isDark ? "rgba(74,222,128,0.3)" : "rgba(37,99,235,0.25)"
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, cursor: "pointer" }}
-      onClick={() => { if (s.url !== "#") window.open(s.url, "_blank", "noopener,noreferrer") }}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 7, cursor: "pointer", width: 72 }}
+      onClick={() => window.open(s.url, "_blank", "noopener,noreferrer")}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <div style={{
-        width: 52,
-        height: 52,
+        width: 48,
+        height: 48,
         borderRadius: "50%",
-        background: hovered ? accent : (t.isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)"),
+        background: hovered ? accent : (t.isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"),
         border: "1px solid " + (hovered ? accentBorder : t.border),
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         color: hovered ? (t.isDark ? "rgba(74,222,128,1)" : "rgba(37,99,235,1)") : t.textMuted,
-        transform: hovered ? "translateY(-2px) scale(1.06)" : "none",
-        transition: "all 200ms ease",
-        boxShadow: hovered ? (t.isDark ? "0 4px 16px rgba(74,222,128,0.15)" : "0 4px 16px rgba(37,99,235,0.12)") : "none",
+        transform: hovered ? "translateY(-2px)" : "none",
+        transition: "all 180ms cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: hovered ? (t.isDark ? "0 4px 12px rgba(74,222,128,0.12)" : "0 4px 12px rgba(37,99,235,0.08)") : "none",
       }}>
         {s.icon}
       </div>
-      <span style={{ fontSize: "0.7rem", color: t.textMuted, transition: t.transition }}>{s.label}</span>
+      <span style={{ fontSize: "0.68rem", color: t.textMuted, fontWeight: 500, transition: t.transition, textAlign: "center" }}>
+        {s.label}
+      </span>
     </div>
   )
 }
@@ -228,8 +227,8 @@ function NewsCard({ entry, onClick, t }: {
   t: ReturnType<typeof useTheme>
 }) {
   const [hovered, setHovered] = useState(false)
-  const accent = t.isDark ? "rgba(74,222,128,0.8)" : "rgba(37,99,235,0.85)"
-  const accentBg = t.isDark ? "rgba(74,222,128,0.10)" : "rgba(37,99,235,0.08)"
+  const accent = t.isDark ? "rgba(74,222,128,0.9)" : "rgba(37,99,235,0.9)"
+  const accentBg = t.isDark ? "rgba(74,222,128,0.12)" : "rgba(37,99,235,0.06)"
 
   return (
     <div
@@ -238,44 +237,84 @@ function NewsCard({ entry, onClick, t }: {
       onMouseLeave={() => setHovered(false)}
       style={{
         flexShrink: 0,
-        width: 260,
-        borderRadius: 12,
+        width: 250,
+        borderRadius: 10,
         overflow: "hidden",
-        background: t.isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-        border: "1px solid " + (hovered ? (t.isDark ? "rgba(74,222,128,0.2)" : "rgba(37,99,235,0.25)") : t.border),
+        background: t.isDark ? "#212124" : "#ffffff",
+        border: "1px solid " + (hovered ? (t.isDark ? "rgba(74,222,128,0.22)" : "rgba(37,99,235,0.25)") : t.border),
         cursor: "pointer",
         transform: hovered ? "translateY(-2px)" : "none",
-        transition: "all 200ms ease",
-        boxShadow: hovered ? (t.isDark ? "0 8px 24px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.12)") : "none",
+        transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: hovered 
+          ? (t.isDark ? "0 8px 24px rgba(0,0,0,0.3)" : "0 8px 20px rgba(0,0,0,0.06)") 
+          : "none",
       }}
     >
-      {/* Mini image */}
-      <div style={{ width: "100%", height: 130, overflow: "hidden", background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.06)" }}>
+      <div style={{ width: "100%", height: 120, overflow: "hidden", background: t.isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.03)" }}>
         <img
           src={entry.miniImage}
-          alt={entry.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 300ms ease", transform: hovered ? "scale(1.04)" : "scale(1)" }}
+          alt=""
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform 400ms ease", transform: hovered ? "scale(1.03)" : "scale(1)" }}
           onError={e => { (e.target as HTMLImageElement).style.display = "none" }}
         />
       </div>
-      {/* Content */}
-      <div style={{ padding: "12px 14px 14px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 7 }}>
+      <div style={{ padding: "10px 12px 12px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
           <span style={{
-            fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase",
-            color: accent, background: accentBg, padding: "2px 7px", borderRadius: 10,
+            fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+            color: accent, background: accentBg, padding: "2px 6px", borderRadius: 4,
           }}>
             {entry.category}
           </span>
-          <span style={{ color: t.textFaint, fontSize: "0.67rem" }}>{entry.readingTime}</span>
+          <span style={{ color: t.textFaint, fontSize: "0.64rem" }}>{entry.readingTime}</span>
         </div>
-        <div style={{ color: t.text, fontSize: "0.82rem", fontWeight: 600, lineHeight: 1.35, marginBottom: 6, transition: t.transition }}>
+        <div style={{ color: t.text, fontSize: "0.8rem", fontWeight: 600, lineHeight: 1.35, marginBottom: 5, transition: t.transition }}>
           {entry.title}
         </div>
-        <div style={{ color: t.textMuted, fontSize: "0.72rem", lineHeight: 1.5, transition: t.transition }}>
+        <div style={{ color: t.textMuted, fontSize: "0.72rem", lineHeight: 1.4, transition: t.transition, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
           {entry.summary}
         </div>
-        <div style={{ color: t.textFaint, fontSize: "0.67rem", marginTop: 10 }}>{entry.date}</div>
+        <div style={{ color: t.textFaint, fontSize: "0.65rem", marginTop: 8 }}>{entry.date}</div>
+      </div>
+    </div>
+  )
+}
+
+function SponsoredCard({ title, desc, tag, t }: { title: string; desc: string; tag: string; t: ReturnType<typeof useTheme> }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: 12,
+        borderRadius: 8,
+        background: t.isDark ? "#212124" : "#ffffff",
+        border: "1px solid " + t.border,
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        boxShadow: hovered ? (t.isDark ? "0 4px 12px rgba(0,0,0,0.2)" : "0 4px 12px rgba(0,0,0,0.04)") : "none",
+        transition: "all 150ms ease",
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "0.55rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: t.textFaint }}>Sponsored</span>
+        <span style={{ fontSize: "0.55rem", background: t.isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)", padding: "1px 5px", borderRadius: 3, color: t.textMuted }}>{tag}</span>
+      </div>
+      <div style={{ fontSize: "0.78rem", fontWeight: 600, color: t.text, lineHeight: 1.3 }}>{title}</div>
+      <div style={{ fontSize: "0.68rem", color: t.textMuted, lineHeight: 1.4 }}>{desc}</div>
+      <div style={{
+        marginTop: 4,
+        textAlign: "center",
+        fontSize: "0.7rem",
+        fontWeight: 600,
+        padding: "4px 8px",
+        borderRadius: 4,
+        background: t.isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
+        color: t.text,
+      }}>
+        Claim Offer
       </div>
     </div>
   )
@@ -293,13 +332,11 @@ export default function Browser() {
   const [articleLoading, setArticleLoading] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
 
-  // Load feed on mount for home page news cards
   useEffect(() => {
     setFeedLoading(true)
     fetchFeed().then(setFeed).catch(() => {}).finally(() => setFeedLoading(false))
   }, [])
 
-  // Focus search on home page
   useEffect(() => {
     if (page === "home") setTimeout(() => searchRef.current?.focus(), 100)
   }, [page])
@@ -330,7 +367,7 @@ export default function Browser() {
   }, [])
 
   const accent = t.isDark ? "rgba(74,222,128,1)" : "rgba(37,99,235,1)"
-  const accentBg = t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.07)"
+  const accentBg = t.isDark ? "rgba(74,222,128,0.1)" : "rgba(37,99,235,0.06)"
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: t.bg, transition: t.transition }}>
@@ -341,50 +378,50 @@ export default function Browser() {
 
         {/* ── HOME ── */}
         {page === "home" && (
-          <div style={{ display: "flex", flexDirection: "column", padding: "32px 32px 40px", minHeight: "100%", gap: 32 }}>
+          <div style={{ display: "flex", flexDirection: "column", padding: "40px 32px", minHeight: "100%", justifyContent: "space-between", boxSizing: "border-box" }}>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 36, maxWidth: 860, margin: "0 auto", width: "100%" }}>
+              
+              {/* Search */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, paddingTop: 10 }}>
+                <div style={{ fontSize: "1.45rem", fontWeight: 700, color: t.text, letterSpacing: "-0.02em", transition: t.transition }}>
+                  Search the Web
+                </div>
+                <div style={{
+                  width: "100%", maxWidth: 500,
+                  display: "flex", alignItems: "center", gap: 10,
+                  background: t.isDark ? "#212124" : "#ffffff",
+                  border: "1px solid " + t.border,
+                  borderRadius: 28,
+                  padding: "10px 18px",
+                  boxShadow: t.isDark ? "0 4px 16px rgba(0,0,0,0.3)" : "0 4px 12px rgba(0,0,0,0.04)",
+                  transition: t.transition,
+                }}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={t.textFaint} strokeWidth="2.2" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                  </svg>
+                  <input
+                    ref={searchRef}
+                    placeholder="Search the portfolio or the web..."
+                    style={{
+                      flex: 1, background: "none", border: "none", outline: "none",
+                      color: t.text, fontSize: "0.85rem", fontFamily: "inherit",
+                    }}
+                  />
+                </div>
+              </div>
 
-            {/* Search */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, paddingTop: 8 }}>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: t.text, letterSpacing: "-0.02em", transition: t.transition }}>
-                Good evening
-              </div>
-              <div style={{
-                width: "100%", maxWidth: 520,
-                display: "flex", alignItems: "center", gap: 10,
-                background: t.isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-                border: "1px solid " + t.borderStrong,
-                borderRadius: 28,
-                padding: "10px 18px",
-                boxShadow: t.isDark ? "0 2px 12px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.08)",
-              }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={t.textFaint} strokeWidth="2" strokeLinecap="round">
-                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-                </svg>
-                <input
-                  ref={searchRef}
-                  placeholder="Search the portfolio or the web..."
-                  style={{
-                    flex: 1, background: "none", border: "none", outline: "none",
-                    color: t.text, fontSize: "0.85rem", fontFamily: "inherit",
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Shortcuts */}
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
-              <div style={{ color: t.textFaint, fontSize: "0.68rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>
-                Quick access
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px 28px" }}>
+              {/* Shortcuts */}
+              <div style={{ display: "flex", justifyContent: "center", gap: 16, flexWrap: "wrap" }}>
                 {SHORTCUTS.map(s => <ShortcutIcon key={s.id} s={s} t={t} />)}
               </div>
+
             </div>
 
-            {/* News section */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            {/* News Row (Footer aligned layout) */}
+            <div style={{ maxWidth: 860, margin: "40px auto 0", width: "100%", display: "flex", flexDirection: "column", gap: 12 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ color: t.textFaint, fontSize: "0.68rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>
+                <div style={{ color: t.textMuted, fontSize: "0.66rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
                   Latest News
                 </div>
                 <button
@@ -401,7 +438,7 @@ export default function Browser() {
               {feedLoading ? (
                 <div style={{ color: t.textFaint, fontSize: "0.8rem" }}>Loading…</div>
               ) : (
-                <div style={{ display: "flex", gap: 14, overflowX: "auto", paddingBottom: 8, scrollbarWidth: "none" }}>
+                <div style={{ display: "flex", gap: 12, overflowX: "auto", paddingBottom: 6, scrollbarWidth: "none" }}>
                   {feed.map(entry => (
                     <NewsCard key={entry.id} entry={entry} onClick={() => openArticle(entry)} t={t} />
                   ))}
@@ -414,39 +451,39 @@ export default function Browser() {
 
         {/* ── NEWS LIST ── */}
         {page === "news" && (
-          <div style={{ padding: "28px 32px" }}>
-            <div style={{ color: t.textFaint, fontSize: "0.68rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600, marginBottom: 20 }}>
-              HYK News
+          <div style={{ padding: "32px", maxWidth: 800, margin: "0 auto" }}>
+            <div style={{ color: t.textFaint, fontSize: "0.68rem", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700, marginBottom: 20 }}>
+              HYK News Feed
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {feed.map(entry => (
                 <div
                   key={entry.id}
                   onClick={() => openArticle(entry)}
                   style={{
-                    display: "flex", alignItems: "center", gap: 14, padding: "12px 16px",
-                    borderRadius: 10, background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+                    display: "flex", alignItems: "center", gap: 14, padding: "12px",
+                    borderRadius: 8, background: t.isDark ? "#212124" : "#ffffff",
                     border: "1px solid " + t.border, cursor: "pointer", transition: t.transition,
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.background = t.bgHover
-                    el.style.borderColor = t.isDark ? "rgba(74,222,128,0.2)" : "rgba(37,99,235,0.3)"
+                    el.style.borderColor = t.isDark ? "rgba(74,222,128,0.25)" : "rgba(37,99,235,0.25)"
+                    el.style.transform = "translateX(2px)"
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLElement
-                    el.style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"
                     el.style.borderColor = t.border
+                    el.style.transform = "none"
                   }}
                 >
-                  <img src={entry.miniImage} alt="" style={{ width: 52, height: 52, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} onError={e => { (e.target as HTMLImageElement).style.display = "none" }} />
+                  <img src={entry.miniImage} alt="" style={{ width: 56, height: 56, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} onError={e => { (e.target as HTMLImageElement).style.display = "none" }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                      <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: accent }}>{entry.category}</span>
-                      <span style={{ color: t.textFaint, fontSize: "0.68rem" }}>{entry.date} · {entry.readingTime}</span>
+                      <span style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: accent }}>{entry.category}</span>
+                      <span style={{ color: t.textFaint, fontSize: "0.66rem" }}>{entry.date} · {entry.readingTime}</span>
                     </div>
-                    <div style={{ color: t.text, fontSize: "0.84rem", fontWeight: 500, transition: t.transition }}>{entry.title}</div>
-                    <div style={{ color: t.textMuted, fontSize: "0.74rem", marginTop: 3, lineHeight: 1.4, transition: t.transition }}>{entry.summary}</div>
+                    <div style={{ color: t.text, fontSize: "0.82rem", fontWeight: 600, transition: t.transition }}>{entry.title}</div>
+                    <div style={{ color: t.textMuted, fontSize: "0.72rem", marginTop: 2, lineHeight: 1.4, transition: t.transition }}>{entry.summary}</div>
                   </div>
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
                     <path d="M3 8h10M9 4l4 4-4 4" stroke={t.textFaint} strokeWidth="1.5" strokeLinecap="round"/>
@@ -457,30 +494,118 @@ export default function Browser() {
           </div>
         )}
 
-        {/* ── ARTICLE ── */}
+        {/* ── ARTICLE READER ── */}
         {page === "article" && (
-          <div style={{ padding: "28px 32px", maxWidth: 640 }}>
+          <div style={{ padding: "32px", maxWidth: 1000, margin: "0 auto", boxSizing: "border-box" }}>
             {articleLoading || !article ? (
-              <div style={{ color: t.textFaint, fontSize: "0.8rem" }}>Loading…</div>
+              <div style={{ color: t.textFaint, fontSize: "0.8rem", textAlign: "center" }}>Loading…</div>
             ) : (
-              <>
-                {article.cover && (
-                  <img src={article.cover} alt={article.title} style={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 10, marginBottom: 20 }} />
-                )}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-                  <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: accent, background: accentBg, padding: "2px 8px", borderRadius: 10 }}>{article.category}</span>
-                  <span style={{ color: t.textFaint, fontSize: "0.68rem" }}>{article.date} · {article.readingTime}</span>
-                </div>
-                <div style={{ color: t.text, fontSize: "1.05rem", fontWeight: 700, lineHeight: 1.35, marginBottom: 20, transition: t.transition }}>{article.title}</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                  {article.content.map((block, i) =>
-                    block.type === "heading"
-                      ? <div key={i} style={{ color: t.text, fontSize: "0.9rem", fontWeight: 700, marginTop: 6, transition: t.transition }}>{block.text}</div>
-                      : <div key={i} style={{ color: t.textMuted, fontSize: "0.83rem", lineHeight: 1.68, transition: t.transition }}>{block.text}</div>
+              <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
+                
+                {/* Main Content Column */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {article.cover && (
+                    <img 
+                      src={article.cover} 
+                      alt="" 
+                      style={{ 
+                        width: "100%", 
+                        maxHeight: 340, 
+                        objectFit: "cover", 
+                        borderRadius: 12, 
+                        marginBottom: 24,
+                        boxShadow: t.isDark ? "0 4px 20px rgba(0,0,0,0.25)" : "0 4px 16px rgba(0,0,0,0.06)" 
+                      }} 
+                    />
                   )}
+                  
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                    <span style={{ 
+                      fontSize: "0.62rem", 
+                      fontWeight: 700, 
+                      letterSpacing: "0.08em", 
+                      textTransform: "uppercase", 
+                      color: accent, 
+                      background: accentBg, 
+                      padding: "3px 8px", 
+                      borderRadius: 4 
+                    }}>
+                      {article.category}
+                    </span>
+                    <span style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 500 }}>{article.date} · {article.readingTime}</span>
+                  </div>
+
+                  <h1 style={{ 
+                    color: t.text, 
+                    fontSize: "1.75rem", 
+                    fontWeight: 800, 
+                    lineHeight: 1.25, 
+                    margin: "0 0 16px 0", 
+                    letterSpacing: "-0.02em",
+                    transition: t.transition 
+                  }}>
+                    {article.title}
+                  </h1>
+
+                  <div style={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    gap: 8, 
+                    marginBottom: 28, 
+                    paddingBottom: 16, 
+                    borderBottom: "1px solid " + t.border 
+                  }}>
+                    <div style={{
+                      width: 24, height: 24, borderRadius: "50%", 
+                      background: t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "0.68rem", fontWeight: 700, color: t.textMuted
+                    }}>
+                      {article.author.charAt(0)}
+                    </div>
+                    <span style={{ fontSize: "0.74rem", color: t.textMuted, fontWeight: 500 }}>
+                      By {article.author}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    {article.content.map((block, i) =>
+                      block.type === "heading"
+                        ? <h2 key={i} style={{ color: t.text, fontSize: "1.1rem", fontWeight: 700, marginTop: 12, marginBottom: 4, transition: t.transition }}>{block.text}</h2>
+                        : <p key={i} style={{ color: t.textMuted, fontSize: "0.88rem", lineHeight: 1.68, margin: 0, transition: t.transition }}>{block.text}</p>
+                    )}
+                  </div>
                 </div>
-                <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid " + t.border, color: t.textFaint, fontSize: "0.72rem" }}>By {article.author}</div>
-              </>
+
+                {/* Decorative Right Sidebar (Ad Parody) - Visible only on Desktop screens */}
+                <div className="browser-ad-sidebar" style={{ width: 260, flexShrink: 0, display: "flex", flexDirection: "column", gap: 16 }}>
+                  <style>{`
+                    @media (max-width: 900px) {
+                      .browser-ad-sidebar { display: none !important; }
+                    }
+                  `}</style>
+                  
+                  <SponsoredCard 
+                    title="Spin the Wheel and Win an iPhone 17 Pro!" 
+                    desc="You have been randomly selected as our lucky visitor. Guaranteed prizes!"
+                    tag="Win Big"
+                    t={t}
+                  />
+                  <SponsoredCard 
+                    title="This One VS Code Extension Will Change Your Career" 
+                    desc="Senior engineers hate this secret tool. Learn how to write 10x code in seconds."
+                    tag="Extension"
+                    t={t}
+                  />
+                  <SponsoredCard 
+                    title="Top 10 AI Tools Developers Can't Stop Using" 
+                    desc="Build entire apps without writing a single line of logic. Number 7 will shock you."
+                    tag="Trends"
+                    t={t}
+                  />
+                </div>
+
+              </div>
             )}
           </div>
         )}
