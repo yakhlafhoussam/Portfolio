@@ -12,6 +12,7 @@ import TextEditor from "../../apps/TextEditor"
 import Trash from "../../apps/Trash"
 import Dock from "./Dock"
 import { ThemeContext, getTheme } from "../../context/ThemeContext"
+import { storageManager } from "../../lib/storage"
 import lightWallpaper from "@/assets/wallpapers/light.png"
 import darkWallpaper from "@/assets/wallpapers/dark.png"
 
@@ -72,7 +73,15 @@ const TITLES: Record<AppId, string> = {
 let idCounter = 0
 
 export default function Desktop() {
-  const [isDark, setIsDark] = useState(false)
+  // Initialize storage state on first visit
+  useEffect(() => {
+    storageManager.initialize()
+  }, [])
+
+  const [isDark, setIsDark] = useState(() => {
+    storageManager.initialize()
+    return storageManager.read().theme === "dark"
+  })
   const [icons, setIcons] = useState<{ id: AppId; label: string; type: IconType }[]>([])
   const [windows, setWindows] = useState<WindowState[]>([])
   const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
@@ -269,7 +278,16 @@ export default function Desktop() {
       />
       {/* TopBar — stop click propagation to avoid deselecting icons */}
       <div onClick={e => e.stopPropagation()}>
-        <TopBar isDark={isDark} onToggleTheme={() => setIsDark(d => !d)} />
+        <TopBar
+          isDark={isDark}
+          onToggleTheme={() => {
+            setIsDark(d => {
+              const next = !d
+              storageManager.update({ theme: next ? "dark" : "light" })
+              return next
+            })
+          }}
+        />
       </div>
 
       {/* Desktop icons — flex column wrap for responsive grid */}
