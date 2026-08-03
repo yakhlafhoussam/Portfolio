@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react"
 import { useTheme } from "@/context/ThemeContext"
 import { storageManager } from "@/lib/storage"
+import { useHykExperience } from "@/hooks/useHykExperience"
 import FingerprintJS from "@fingerprintjs/fingerprintjs"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -215,12 +216,14 @@ function NavBar({
   onBack,
   onHome,
   urlBar,
+  disableNavigation,
   t,
 }: {
   page: PageState
   onBack: () => void
   onHome: () => void
   urlBar: string
+  disableNavigation?: boolean
   t: ReturnType<typeof useTheme>
 }) {
   return (
@@ -236,7 +239,11 @@ function NavBar({
         transition: t.transition,
       }}
     >
-      <NavBtn onClick={onBack} disabled={page === "home"} t={t}>
+      <NavBtn
+        onClick={onBack}
+        disabled={page === "home" || disableNavigation}
+        t={t}
+      >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path
             d="M10 3L5 8l5 5"
@@ -258,7 +265,7 @@ function NavBar({
           />
         </svg>
       </NavBtn>
-      <NavBtn onClick={onHome} t={t}>
+      <NavBtn onClick={onHome} disabled={disableNavigation} t={t}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
           <path
             d="M13.5 2.5A7 7 0 102 8"
@@ -657,7 +664,17 @@ export default function Browser() {
   const [feedLoading, setFeedLoading] = useState(false)
   const [article, setArticle] = useState<NewsArticle | null>(null)
   const [articleLoading, setArticleLoading] = useState(false)
+  const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+
+  const {
+    showStarted,
+    remainingTime,
+    countdownActive,
+    startCountdown,
+    resetCountdown,
+    forceStartShow,
+  } = useHykExperience()
 
   useEffect(() => {
     setFeedLoading(true)
@@ -671,48 +688,85 @@ export default function Browser() {
     if (page === "home") setTimeout(() => searchRef.current?.focus(), 100)
   }, [page])
 
+  const guardNavigation = useCallback(
+    (navigate: () => void | Promise<void>) => {
+      if (countdownActive && currentArticle?.source === "hyk") {
+        console.log("[HYK] forceStartShow() called via guardNavigation")
+        forceStartShow()
+        return
+      }
+      void navigate()
+    },
+    [countdownActive, currentArticle, forceStartShow],
+  )
+
   const goHome = useCallback(() => {
-    setPage("home")
-    setUrlBar("hyk://new-tab")
-  }, [])
+    guardNavigation(() => {
+      setPage("home")
+      setUrlBar("hyk://new-tab")
+    })
+  }, [guardNavigation])
 
   const goBack = useCallback(() => {
-    if (page === "article") {
-      setPage("news")
-      setUrlBar("news://hyk.internal/feed")
-    } else goHome()
-  }, [page, goHome])
+    guardNavigation(() => {
+      if (page === "article") {
+        setPage("news")
+        setUrlBar("news://hyk.internal/feed")
+      } else {
+        setPage("home")
+        setUrlBar("hyk://new-tab")
+      }
+    })
+  }, [page, guardNavigation])
 
   const openNews = useCallback(async () => {
-    setPage("news")
-    setUrlBar("news://hyk.internal/feed")
-  }, [])
+    guardNavigation(() => {
+      setPage("news")
+      setUrlBar("news://hyk.internal/feed")
+    })
+  }, [guardNavigation])
 
-  const openArticle = useCallback(async (entry: NewsFeedEntry) => {
-    setPage("article")
-    setUrlBar(`news://hyk.internal/${entry.id}`)
-    setArticle(null)
-    setArticleLoading(true)
-    try {
-      const data = await fetchArticle(entry)
-      setArticle(data)
-      if (entry.source === "hyk") {
-        markArticleAsRead(entry.id).then((success) => {
-          if (success) {
-            storageManager.update({
-              hyk: {
-                viewed: true,
-              },
+  const openArticle = useCallback(
+    async (entry: NewsFeedEntry) => {
+      console.log("[HYK] HYK article opened", entry.id, entry.source)
+      guardNavigation(async () => {
+        setPage("article")
+        setUrlBar(`news://hyk.internal/${entry.id}`)
+        setCurrentArticle(entry)
+        setArticle(null)
+        setArticleLoading(true)
+        if (entry.source === "hyk") {
+          console.log("[HYK] Countdown started for article", entry.id)
+          startCountdown()
+        } else {
+          resetCountdown()
+        }
+
+        try {
+          const data = await fetchArticle(entry)
+          setArticle({ ...data, source: entry.source })
+          if (entry.source === "hyk") {
+            markArticleAsRead(entry.id).then((success) => {
+              if (success) {
+                storageManager.update({
+                  hyk: {
+                    viewed: true,
+                  },
+                })
+              }
             })
           }
-        })
-      }
-    } catch {
-      setPage("404")
-    } finally {
-      setArticleLoading(false)
-    }
-  }, [])
+        } catch {
+          resetCountdown()
+          setCurrentArticle(null)
+          setPage("404")
+        } finally {
+          setArticleLoading(false)
+        }
+      })
+    },
+    [guardNavigation, resetCountdown, startCountdown],
+  )
 
   const accent = t.isDark ? "rgba(74,222,128,1)" : "rgba(37,99,235,1)"
   const accentBg = t.isDark ? "rgba(74,222,128,0.1)" : "rgba(37,99,235,0.06)"
@@ -733,6 +787,7 @@ export default function Browser() {
         onBack={goBack}
         onHome={goHome}
         urlBar={urlBar}
+        disableNavigation={countdownActive}
         t={t}
       />
 
@@ -1106,6 +1161,44 @@ export default function Browser() {
                       {article.date} · {article.readingTime}
                     </span>
                   </div>
+
+                  {article.source === "hyk" && countdownActive && (
+                    <div
+                      style={{
+                        marginBottom: 24,
+                        padding: "18px 20px",
+                        borderRadius: 14,
+                        background: t.isDark
+                          ? "rgba(74,222,128,0.12)"
+                          : "rgba(37,99,235,0.10)",
+                        border:
+                          "1px solid " +
+                          (t.isDark
+                            ? "rgba(74,222,128,0.22)"
+                            : "rgba(37,99,235,0.15)"),
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: accent,
+                          fontSize: "0.82rem",
+                          fontWeight: 700,
+                          marginBottom: 8,
+                        }}
+                      >
+                        HYK Experience starts in
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "2rem",
+                          fontWeight: 800,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {remainingTime}...
+                      </div>
+                    </div>
+                  )}
 
                   <h1
                     style={{
