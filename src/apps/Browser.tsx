@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react"
 import { useTheme } from "@/context/ThemeContext"
+import { storageManager } from "@/lib/storage"
+import FingerprintJS from "@fingerprintjs/fingerprintjs"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,42 +29,92 @@ type PageState = "home" | "news" | "article" | "404"
 
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
+async function getFingerprint(): Promise<string> {
+  const fp = await FingerprintJS.load()
+  const result = await fp.get()
+  return result.visitorId
+}
+
 async function fetchLocalFeed(): Promise<NewsFeedEntry[]> {
   try {
     const r = await fetch("/content/news/feed.json")
     if (!r.ok) return []
     const data = await r.json()
     if (!Array.isArray(data)) return []
-    return (data as NewsFeedEntry[]).map((e) => ({ ...e, source: "local" as const }))
+    return (data as NewsFeedEntry[]).map((e) => ({
+      ...e,
+      source: "local" as const,
+    }))
   } catch {
     return []
   }
 }
 
-async function fetchHykFeed(): Promise<NewsFeedEntry[]> {
+async function fetchHykFeed(fingerprint: string): Promise<NewsFeedEntry[]> {
   try {
-    const r = await fetch("/api/news/hyk")
+    const r = await fetch("/api/news/hyk/feed", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fingerprint }),
+    })
+    if (r.status === 403) {
+      return []
+    }
     if (!r.ok) return []
     const data = await r.json()
     if (!Array.isArray(data)) {
-      console.error("[Browser] /api/news/hyk did not return an array:", data)
+      console.error(
+        "[Browser] /api/news/hyk/feed did not return an array:",
+        data,
+      )
       return []
     }
-    return (data as NewsFeedEntry[]).map((e) => ({ ...e, source: "hyk" as const }))
+    return (data as NewsFeedEntry[]).map((e) => ({
+      ...e,
+      source: "hyk" as const,
+    }))
   } catch {
     return []
   }
 }
 
 async function loadFeed(): Promise<NewsFeedEntry[]> {
-  const [local, hyk] = await Promise.all([fetchLocalFeed(), fetchHykFeed()])
-  const merged = [...local, ...hyk]
-  merged.sort((a, b) => {
-    const da = new Date(a.publishedAt ?? a.date).getTime()
-    const db = new Date(b.publishedAt ?? b.date).getTime()
-    return db - da
-  })
-  return merged
+  const local = await fetchLocalFeed()
+  try {
+    const fingerprint = await getFingerprint()
+    const hyk = await fetchHykFeed(fingerprint)
+    const sortedHyk = [...hyk].sort((a, b) => {
+      const da = new Date(a.publishedAt ?? a.date).getTime()
+      const db = new Date(b.publishedAt ?? b.date).getTime()
+      return db - da
+    })
+    return [...local, ...sortedHyk]
+  } catch (err) {
+    console.error("Failed to load news feed:", err)
+    return local
+  }
+}
+
+async function markArticleAsRead(articleId: string): Promise<boolean> {
+  try {
+    const fingerprint = await getFingerprint()
+    const r = await fetch("/api/news/hyk/read", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fingerprint, articleId }),
+    })
+    if (r.ok) {
+      const res = await r.json()
+      return !!res.success
+    }
+  } catch (err) {
+    console.error("Failed to mark article as read:", err)
+  }
+  return false
 }
 
 async function fetchArticle(entry: NewsFeedEntry): Promise<NewsArticle> {
@@ -642,7 +694,19 @@ export default function Browser() {
     setArticle(null)
     setArticleLoading(true)
     try {
-      setArticle(await fetchArticle(entry))
+      const data = await fetchArticle(entry)
+      setArticle(data)
+      if (entry.source === "hyk") {
+        markArticleAsRead(entry.id).then((success) => {
+          if (success) {
+            storageManager.update({
+              hyk: {
+                viewed: true,
+              },
+            })
+          }
+        })
+      }
     } catch {
       setPage("404")
     } finally {
