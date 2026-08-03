@@ -843,7 +843,7 @@ export default function Browser() {
             {/* News Row (Footer aligned layout) */}
             <div
               style={{
-                maxWidth: 860,
+                maxWidth: 1040,
                 margin: "40px auto 0",
                 width: "100%",
                 display: "flex",
@@ -915,7 +915,7 @@ export default function Browser() {
 
         {/* ── NEWS LIST ── */}
         {page === "news" && (
-          <div style={{ padding: "32px", maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto" }}>
             <div
               style={{
                 color: t.textFaint,
@@ -1036,7 +1036,7 @@ export default function Browser() {
           <div
             style={{
               padding: "32px",
-              maxWidth: 1000,
+              maxWidth: 1200,
               margin: "0 auto",
               boxSizing: "border-box",
             }}

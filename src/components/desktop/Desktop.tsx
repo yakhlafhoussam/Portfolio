@@ -39,7 +39,7 @@ const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
   education: { width: 840, height: 550 },
   gallery: { width: 900, height: 600 },
   resume: { width: 700, height: 780 },
-  browser: { width: 820, height: 580 },
+  browser: { width: 960, height: 580 },
   terminal: { width: 720, height: 460 },
   profile: { width: 800, height: 580 },
   recycle: { width: 520, height: 400 },
