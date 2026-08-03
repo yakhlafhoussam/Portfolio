@@ -9,7 +9,9 @@ type Props = {
 export default function Gallery({ initialImageSrc }: Props) {
   const t = useTheme()
   const [selected, setSelected] = useState<string | null>(null)
-  const [customImage, setCustomImage] = useState<string | null>(initialImageSrc || null)
+  const [customImage, setCustomImage] = useState<string | null>(
+    initialImageSrc || null,
+  )
 
   // Sync state if initialImageSrc changes while the component is mounted
   useEffect(() => {
@@ -20,7 +22,7 @@ export default function Gallery({ initialImageSrc }: Props) {
 
   const active = customImage
     ? { src: customImage, alt: "Preview", caption: "Project Preview" }
-    : GALLERY_IMAGES.find(img => img.id === selected)
+    : GALLERY_IMAGES.find((img) => img.id === selected)
 
   const handleClose = () => {
     setSelected(null)
@@ -60,7 +62,7 @@ export default function Gallery({ initialImageSrc }: Props) {
           <img
             src={active.src}
             alt={active.alt || "Preview"}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             style={{
               maxWidth: "100%",
               maxHeight: "80vh",
@@ -109,7 +111,14 @@ export default function Gallery({ initialImageSrc }: Props) {
           transition: t.transition,
         }}
       >
-        <span style={{ color: t.textFaint, fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+        <span
+          style={{
+            color: t.textFaint,
+            fontSize: "0.72rem",
+            fontFamily: "'JetBrains Mono', monospace",
+            transition: t.transition,
+          }}
+        >
           {GALLERY_IMAGES.length} items · Grid view
         </span>
       </div>
@@ -126,7 +135,7 @@ export default function Gallery({ initialImageSrc }: Props) {
           alignContent: "start",
         }}
       >
-        {GALLERY_IMAGES.map(img => (
+        {GALLERY_IMAGES.map((img) => (
           <div
             key={img.id}
             onClick={() => setSelected(img.id)}
@@ -135,17 +144,22 @@ export default function Gallery({ initialImageSrc }: Props) {
               overflow: "hidden",
               cursor: "zoom-in",
               position: "relative",
-              background: t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+              background: t.isDark
+                ? "rgba(255,255,255,0.03)"
+                : "rgba(0,0,0,0.02)",
               border: "1px solid " + t.border,
-              transition: "transform 0.15s, border-color 0.15s, background 0.15s",
+              transition:
+                "transform 0.15s, border-color 0.15s, background 0.15s",
               userSelect: "none",
             }}
-            onMouseEnter={e => {
+            onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLElement
               el.style.transform = "scale(1.02)"
-              el.style.borderColor = t.isDark ? "rgba(74,222,128,0.3)" : "rgba(37,99,235,0.3)"
+              el.style.borderColor = t.isDark
+                ? "rgba(74,222,128,0.3)"
+                : "rgba(37,99,235,0.3)"
             }}
-            onMouseLeave={e => {
+            onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLElement
               el.style.transform = "scale(1)"
               el.style.borderColor = t.border

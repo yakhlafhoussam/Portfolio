@@ -14,10 +14,7 @@ if (getApps().length === 0) {
 
 const db = getFirestore()
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     await db.collection("test").add({
       message: "Hello from Vercel",

@@ -3,35 +3,41 @@ import { useTheme } from "@/context/ThemeContext"
 
 type SkillLevel = "Expert" | "Proficient" | "Learning"
 
-type Skill = { name: string; level: SkillLevel }
+type Skill = { name: string level: SkillLevel }
 
 const SKILLS: Skill[] = [
-  { name: "TypeScript",    level: "Expert" },
-  { name: "Python",        level: "Expert" },
-  { name: "Rust",          level: "Proficient" },
-  { name: "Go",            level: "Proficient" },
-  { name: "React",         level: "Expert" },
-  { name: "Node.js",       level: "Expert" },
-  { name: "PostgreSQL",    level: "Proficient" },
-  { name: "Kubernetes",    level: "Proficient" },
-  { name: "PyTorch",       level: "Proficient" },
-  { name: "WebAssembly",   level: "Learning" },
-  { name: "Zig",           level: "Learning" },
-  { name: "WebGPU",        level: "Learning" },
+  { name: "TypeScript", level: "Expert" },
+  { name: "Python", level: "Expert" },
+  { name: "Rust", level: "Proficient" },
+  { name: "Go", level: "Proficient" },
+  { name: "React", level: "Expert" },
+  { name: "Node.js", level: "Expert" },
+  { name: "PostgreSQL", level: "Proficient" },
+  { name: "Kubernetes", level: "Proficient" },
+  { name: "PyTorch", level: "Proficient" },
+  { name: "WebAssembly", level: "Learning" },
+  { name: "Zig", level: "Learning" },
+  { name: "WebGPU", level: "Learning" },
 ]
 
 function getLevelColor(level: SkillLevel, isDark: boolean): string {
   if (isDark) {
     switch (level) {
-      case "Expert": return "#4ade80"
-      case "Proficient": return "#60a5fa"
-      case "Learning": return "#fbbf24"
+      case "Expert":
+        return "#4ade80"
+      case "Proficient":
+        return "#60a5fa"
+      case "Learning":
+        return "#fbbf24"
     }
   } else {
     switch (level) {
-      case "Expert": return "#16a34a"
-      case "Proficient": return "#2563eb"
-      case "Learning": return "#d97706"
+      case "Expert":
+        return "#16a34a"
+      case "Proficient":
+        return "#2563eb"
+      case "Learning":
+        return "#d97706"
     }
   }
 }
@@ -63,7 +69,11 @@ function SkillBadge({ name, level }: Skill) {
           transition: t.transition,
         }}
       />
-      <span style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}>{name}</span>
+      <span
+        style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}
+      >
+        {name}
+      </span>
       <span
         style={{
           marginLeft: "auto",
@@ -80,7 +90,13 @@ function SkillBadge({ name, level }: Skill) {
   )
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
   const t = useTheme()
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -131,15 +147,26 @@ export default function Profile() {
         }}
       >
         {/* Avatar */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
           <div
             style={{
               width: 88,
               height: 88,
               borderRadius: "50%",
               overflow: "hidden",
-              border: t.isDark ? "2px solid rgba(74,222,128,0.3)" : "2px solid rgba(37,99,235,0.3)",
-              boxShadow: t.isDark ? "0 0 20px rgba(74,222,128,0.15)" : "0 0 20px rgba(37,99,235,0.1)",
+              border: t.isDark
+                ? "2px solid rgba(74,222,128,0.3)"
+                : "2px solid rgba(37,99,235,0.3)",
+              boxShadow: t.isDark
+                ? "0 0 20px rgba(74,222,128,0.15)"
+                : "0 0 20px rgba(37,99,235,0.1)",
               background: t.isDark ? "#111" : "#fff",
               display: "flex",
               alignItems: "center",
@@ -158,31 +185,43 @@ export default function Profile() {
             />
           </div>
           <div style={{ textAlign: "center" }}>
-            <div style={{ color: t.text, fontWeight: 600, fontSize: "1rem", transition: t.transition }}>HYK</div>
-            <div style={{ color: t.textMuted, fontSize: "0.75rem", marginTop: 2, transition: t.transition }}>
+            <div
+              style={{
+                color: t.text,
+                fontWeight: 600,
+                fontSize: "1rem",
+                transition: t.transition,
+              }}
+            >
+              HYK
+            </div>
+            <div
+              style={{
+                color: t.textMuted,
+                fontSize: "0.75rem",
+                marginTop: 2,
+                transition: t.transition,
+              }}
+            >
               Software Engineer
             </div>
           </div>
         </div>
 
         {/* Nav items */}
-        {[
-          "Profile",
-          "Skills",
-          "Languages",
-          "Contact",
-        ].map((item, i) => (
+        {["Profile", "Skills", "Languages", "Contact"].map((item, i) => (
           <div
             key={item}
             style={{
               padding: "7px 12px",
               borderRadius: 6,
-              color: i === 0 
-                ? (t.isDark ? "#4ade80" : "#2563eb") 
-                : t.textMuted,
-              background: i === 0 
-                ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)") 
-                : "transparent",
+              color: i === 0 ? (t.isDark ? "#4ade80" : "#2563eb") : t.textMuted,
+              background:
+                i === 0
+                  ? t.isDark
+                    ? "rgba(74,222,128,0.08)"
+                    : "rgba(37,99,235,0.08)"
+                  : "transparent",
               fontSize: "0.82rem",
               cursor: "default",
               transition: t.transition,
@@ -221,9 +260,10 @@ export default function Profile() {
               transition: t.transition,
             }}
           >
-            I build systems that handle complexity at scale — from low-level performance tooling
-            in Rust to ML infrastructure and browser-based creative technology. I care deeply
-            about correctness, clarity, and the craft of writing software that lasts.
+            I build systems that handle complexity at scale — from low-level
+            performance tooling in Rust to ML infrastructure and browser-based
+            creative technology. I care deeply about correctness, clarity, and
+            the craft of writing software that lasts.
           </p>
         </Section>
 
@@ -235,19 +275,34 @@ export default function Profile() {
               gap: 6,
             }}
           >
-            {SKILLS.map(s => <SkillBadge key={s.name} {...s} />)}
+            {SKILLS.map((s) => (
+              <SkillBadge key={s.name} {...s} />
+            ))}
           </div>
           <div style={{ display: "flex", gap: 16, marginTop: 4 }}>
-            {(["Expert", "Proficient", "Learning"] as SkillLevel[]).map(l => (
-              <div key={l} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            {(["Expert", "Proficient", "Learning"] as SkillLevel[]).map((l) => (
+              <div
+                key={l}
+                style={{ display: "flex", alignItems: "center", gap: 5 }}
+              >
                 <div
                   style={{
-                    width: 6, height: 6, borderRadius: "50%",
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
                     background: getLevelColor(l, t.isDark),
                     transition: t.transition,
                   }}
                 />
-                <span style={{ color: t.textFaint, fontSize: "0.7rem", transition: t.transition }}>{l}</span>
+                <span
+                  style={{
+                    color: t.textFaint,
+                    fontSize: "0.7rem",
+                    transition: t.transition,
+                  }}
+                >
+                  {l}
+                </span>
               </div>
             ))}
           </div>
@@ -264,16 +319,39 @@ export default function Profile() {
         </Section>
 
         <Section title="Contact">
-          <ContactRow icon="✉" label="Email" value="hyk@proton.me" href="mailto:hyk@proton.me" />
-          <ContactRow icon="⌨" label="GitHub" value="github.com/hyk" href="https://github.com/hyk" />
-          <ContactRow icon="◈" label="LinkedIn" value="linkedin.com/in/hyk" href="https://linkedin.com/in/hyk" />
+          <ContactRow
+            icon="✉"
+            label="Email"
+            value="hyk@proton.me"
+            href="mailto:hyk@proton.me"
+          />
+          <ContactRow
+            icon="⌨"
+            label="GitHub"
+            value="github.com/hyk"
+            href="https://github.com/hyk"
+          />
+          <ContactRow
+            icon="◈"
+            label="LinkedIn"
+            value="linkedin.com/in/hyk"
+            href="https://linkedin.com/in/hyk"
+          />
         </Section>
       </div>
     </div>
   )
 }
 
-function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+function Row({
+  label,
+  value,
+  accent,
+}: {
+  label: string
+  value: string
+  accent?: boolean
+}) {
   const t = useTheme()
   return (
     <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
@@ -290,9 +368,7 @@ function Row({ label, value, accent }: { label: string; value: string; accent?: 
       </span>
       <span
         style={{
-          color: accent 
-            ? (t.isDark ? "#4ade80" : "#16a34a") 
-            : t.textMuted,
+          color: accent ? (t.isDark ? "#4ade80" : "#16a34a") : t.textMuted,
           fontSize: "0.82rem",
           transition: t.transition,
         }}
@@ -304,9 +380,15 @@ function Row({ label, value, accent }: { label: string; value: string; accent?: 
 }
 
 function ContactRow({
-  icon, label, value, href,
+  icon,
+  label,
+  value,
+  href,
 }: {
-  icon: string; label: string; value: string; href: string
+  icon: string
+  label: string
+  value: string
+  href: string
 }) {
   const t = useTheme()
   return (
@@ -325,12 +407,39 @@ function ContactRow({
         textDecoration: "none",
         transition: t.transition,
       }}
-      onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = t.bgHover}
-      onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = t.isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"}
+      onMouseEnter={(e) =>
+        ((e.currentTarget as HTMLElement).style.background = t.bgHover)
+      }
+      onMouseLeave={(e) =>
+        ((e.currentTarget as HTMLElement).style.background = t.isDark
+          ? "rgba(255,255,255,0.03)"
+          : "rgba(0,0,0,0.02)")
+      }
     >
-      <span style={{ fontSize: "0.9rem", color: t.textFaint, transition: t.transition }}>{icon}</span>
-      <span style={{ color: t.textMuted, fontSize: "0.75rem", minWidth: 60, transition: t.transition }}>{label}</span>
-      <span style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}>{value}</span>
+      <span
+        style={{
+          fontSize: "0.9rem",
+          color: t.textFaint,
+          transition: t.transition,
+        }}
+      >
+        {icon}
+      </span>
+      <span
+        style={{
+          color: t.textMuted,
+          fontSize: "0.75rem",
+          minWidth: 60,
+          transition: t.transition,
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{ color: t.text, fontSize: "0.8rem", transition: t.transition }}
+      >
+        {value}
+      </span>
     </a>
   )
 }

@@ -1,46 +1,54 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react"
 
-type Line = { type: "input" | "output" | "error" | "blank"; text: string }
+type Line = { type: "input" | "output" | "error" | "blank" text: string }
 
 const HOSTNAME = "hyk@localhost"
 
 const FS: Record<string, Record<string, string>> = {
   "~": {
-    "projects/":    "directory",
-    "experience/":  "directory",
-    "gallery/":     "directory",
-    "???/":         "directory",
-    ".bashrc":      "file",
-    ".gitconfig":   "file",
+    "projects/": "directory",
+    "experience/": "directory",
+    "gallery/": "directory",
+    "???/": "directory",
+    ".bashrc": "file",
+    ".gitconfig": "file",
   },
   "~/projects": {
     "neural-canvas/": "directory",
-    "void-sync/":     "directory",
-    "spectral/":      "directory",
-    "kernel-drift/":  "directory",
+    "void-sync/": "directory",
+    "spectral/": "directory",
+    "kernel-drift/": "directory",
   },
   "~/experience": {
-    "meridian-systems.md":  "file",
+    "meridian-systems.md": "file",
     "university-ml-lab.md": "file",
-    "freelance.md":         "file",
+    "freelance.md": "file",
   },
   "~/gallery": {
-    "workspace.jpg":     "file",
+    "workspace.jpg": "file",
     "debugging-2am.jpg": "file",
-    "hardware.jpg":      "file",
+    "hardware.jpg": "file",
     "neural-canvas-47.png": "file",
   },
 }
 
 const FILE_CONTENTS: Record<string, string> = {
-  ".bashrc": "# ~/.bashrc\nexport PATH=$PATH:~/.local/bin\nalias ll='ls -la'\nalias gs='git status'",
-  ".gitconfig": "[user]\n  name = HYK\n  email = hyk@localhost\n[core]\n  editor = nvim",
-  "meridian-systems.md": "# Meridian Systems\nRole: Software Engineering Intern\nPeriod: May 2024 — Aug 2024\nReduced deploy pipeline by 34%.",
-  "university-ml-lab.md": "# University ML Lab\nRole: Research Assistant\nPeriod: Sep 2023 — Apr 2024\nLoRA adapter training. NeurIPS workshop paper.",
-  "freelance.md": "# Independent\nRole: Freelance Developer\nPeriod: Jun 2022 — Aug 2023\n6 clients. 100% on-time delivery.",
+  ".bashrc":
+    "# ~/.bashrc\nexport PATH=$PATH:~/.local/bin\nalias ll='ls -la'\nalias gs='git status'",
+  ".gitconfig":
+    "[user]\n  name = HYK\n  email = hyk@localhost\n[core]\n  editor = nvim",
+  "meridian-systems.md":
+    "# Meridian Systems\nRole: Software Engineering Intern\nPeriod: May 2024 — Aug 2024\nReduced deploy pipeline by 34%.",
+  "university-ml-lab.md":
+    "# University ML Lab\nRole: Research Assistant\nPeriod: Sep 2023 — Apr 2024\nLoRA adapter training. NeurIPS workshop paper.",
+  "freelance.md":
+    "# Independent\nRole: Freelance Developer\nPeriod: Jun 2022 — Aug 2023\n6 clients. 100% on-time delivery.",
 }
 
-function processCommand(cmd: string, cwd: string): { output: Line[]; nextCwd?: string } {
+function processCommand(
+  cmd: string,
+  cwd: string,
+): { output: Line[] nextCwd?: string } {
   const parts = cmd.trim().split(/\s+/)
   const bin = parts[0]
   const args = parts.slice(1)
@@ -52,14 +60,23 @@ function processCommand(cmd: string, cwd: string): { output: Line[]; nextCwd?: s
       return { output: [{ type: "blank", text: "__CLEAR__" }] }
 
     case "pwd":
-      return { output: [{ type: "output", text: cwd.replace("~", "/home/hyk") }] }
+      return {
+        output: [{ type: "output", text: cwd.replace("~", "/home/hyk") }],
+      }
 
     case "whoami":
       return { output: [{ type: "output", text: "hyk" }] }
 
     case "uname": {
       if (args[0] === "-a") {
-        return { output: [{ type: "output", text: "Linux localhost 6.8.0-hyk #1 SMP x86_64 GNU/Linux" }] }
+        return {
+          output: [
+            {
+              type: "output",
+              text: "Linux localhost 6.8.0-hyk #1 SMP x86_64 GNU/Linux",
+            },
+          ],
+        }
       }
       return { output: [{ type: "output", text: "Linux" }] }
     }
@@ -81,7 +98,9 @@ function processCommand(cmd: string, cwd: string): { output: Line[]; nextCwd?: s
           const isDir = name.endsWith("/")
           lines.push({
             type: "output",
-            text: `${isDir ? "d" : "-"}rwxr-xr-x  hyk  hyk  ${isDir ? "4096" : "  256"} Jul 31 02:17 ${name}`,
+            text: `${isDir ? "d" : "-"}rwxr-xr-x  hyk  hyk  ${
+              isDir ? "4096" : "  256"
+            } Jul 31 02:17 ${name}`,
           })
         }
         return { output: lines }
@@ -112,39 +131,79 @@ function processCommand(cmd: string, cwd: string): { output: Line[]; nextCwd?: s
       if (FS[normalised] !== undefined) {
         return { output: [], nextCwd: normalised }
       }
-      return { output: [{ type: "error", text: `cd: ${target}: No such file or directory` }] }
+      return {
+        output: [
+          { type: "error", text: `cd: ${target}: No such file or directory` },
+        ],
+      }
     }
 
     case "cat": {
       const file = args[0]
-      if (!file) return { output: [{ type: "error", text: "cat: missing operand" }] }
+      if (!file)
+        return { output: [{ type: "error", text: "cat: missing operand" }] }
       const content = FILE_CONTENTS[file]
       if (!content) {
-        return { output: [{ type: "error", text: `cat: ${file}: No such file or directory` }] }
+        return {
+          output: [
+            { type: "error", text: `cat: ${file}: No such file or directory` },
+          ],
+        }
       }
       return {
-        output: content.split("\n").map(line => ({ type: "output" as const, text: line })),
+        output: content
+          .split("\n")
+          .map((line) => ({ type: "output" as const, text: line })),
       }
     }
 
     case "sudo": {
       if (args.join(" ").includes("rm -rf")) {
-        return { output: [{ type: "error", text: "sudo: Permission denied. Nice try." }] }
+        return {
+          output: [
+            { type: "error", text: "sudo: Permission denied. Nice try." },
+          ],
+        }
       }
-      return { output: [{ type: "error", text: `sudo: ${args[0]}: command not found` }] }
+      return {
+        output: [
+          { type: "error", text: `sudo: ${args[0]}: command not found` },
+        ],
+      }
     }
 
     case "git":
-      return { output: [{ type: "output", text: "fatal: not a git repository (use 'cd' into a project first)" }] }
+      return {
+        output: [
+          {
+            type: "output",
+            text: "fatal: not a git repository (use 'cd' into a project first)",
+          },
+        ],
+      }
 
     case "nvim":
     case "vim":
     case "nano":
-      return { output: [{ type: "error", text: `${bin}: GUI not available in this terminal. Use the editor application.` }] }
+      return {
+        output: [
+          {
+            type: "error",
+            text: `${bin}: GUI not available in this terminal. Use the editor application.`,
+          },
+        ],
+      }
 
     case "htop":
     case "top":
-      return { output: [{ type: "error", text: "Some processes are not visible here. By design." }] }
+      return {
+        output: [
+          {
+            type: "error",
+            text: "Some processes are not visible here. By design.",
+          },
+        ],
+      }
 
     case "help":
       return {
@@ -190,7 +249,7 @@ export default function Terminal() {
     const prompt: Line = { type: "input", text: `${HOSTNAME}:${cwd}$ ${cmd}` }
 
     if (!cmd) {
-      setLines(l => [...l, prompt, { type: "blank", text: "" }])
+      setLines((l) => [...l, prompt, { type: "blank", text: "" }])
       setInput("")
       return
     }
@@ -200,11 +259,11 @@ export default function Terminal() {
     if (output[0]?.text === "__CLEAR__") {
       setLines([])
     } else {
-      setLines(l => [...l, prompt, ...output, { type: "blank", text: "" }])
+      setLines((l) => [...l, prompt, ...output, { type: "blank", text: "" }])
     }
 
     if (nextCwd !== undefined) setCwd(nextCwd)
-    setHistory(h => [cmd, ...h])
+    setHistory((h) => [cmd, ...h])
     setHistIdx(-1)
     setInput("")
   }
@@ -241,7 +300,8 @@ export default function Terminal() {
       }}
     >
       {lines.map((line, i) => {
-        if (line.type === "blank") return <div key={i} style={{ height: "0.4em" }} />
+        if (line.type === "blank")
+          return <div key={i} style={{ height: "0.4em" }} />
         return (
           <div
             key={i}
@@ -250,31 +310,37 @@ export default function Terminal() {
                 line.type === "input"
                   ? "rgba(255,255,255,0.85)"
                   : line.type === "error"
-                  ? "#f87171"
-                  : "rgba(255,255,255,0.55)",
+                    ? "#f87171"
+                    : "rgba(255,255,255,0.55)",
               whiteSpace: "pre-wrap",
               wordBreak: "break-all",
             }}
           >
             {line.type === "input" && (
-              <span style={{ color: "#4ade80" }}>{line.text.split("$")[0]}$</span>
+              <span style={{ color: "#4ade80" }}>
+                {line.text.split("$")[0]}$
+              </span>
             )}
-            {line.type === "input"
-              ? <span>{" " + line.text.split("$ ").slice(1).join("$ ")}</span>
-              : line.text}
+            {line.type === "input" ? (
+              <span>{" " + line.text.split("$ ").slice(1).join("$ ")}</span>
+            ) : (
+              line.text
+            )}
           </div>
         )
       })}
 
       {/* Input row */}
       <div style={{ display: "flex", alignItems: "center", marginTop: 2 }}>
-        <span style={{ color: "#4ade80", marginRight: 4, whiteSpace: "nowrap" }}>
+        <span
+          style={{ color: "#4ade80", marginRight: 4, whiteSpace: "nowrap" }}
+        >
           {HOSTNAME}:{cwd}$
         </span>
         <input
           ref={inputRef}
           value={input}
-          onChange={e => setInput(e.target.value)}
+          onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKey}
           autoFocus
           spellCheck={false}

@@ -4,24 +4,40 @@ export const PROJECTS = [
     name: "neural-canvas",
     description:
       "An AI-powered generative art tool that transforms textual prompts into layered visual compositions. Built on diffusion models with a custom post-processing pipeline for style transfer, depth-aware compositing, and resolution upscaling.",
-    technologies: ["Python", "PyTorch", "FastAPI", "React", "WebGL", "Canvas API"],
+    technologies: [
+      "Python",
+      "PyTorch",
+      "FastAPI",
+      "React",
+      "WebGL",
+      "Canvas API",
+    ],
     github: "https://github.com/hyk/neural-canvas",
     demo: "https://neural-canvas.dev",
     year: "2024",
     status: "Active",
-    image: "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=760&h=380&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=760&h=380&fit=crop&auto=format",
   },
   {
     id: "void-sync",
     name: "void-sync",
     description:
       "Real-time collaboration engine built on CRDTs and WebSockets. Allows concurrent editing of shared state with conflict-free resolution, persistent session recovery, and optional end-to-end encryption.",
-    technologies: ["TypeScript", "Node.js", "WebSocket", "CRDTs", "Redis", "PostgreSQL"],
+    technologies: [
+      "TypeScript",
+      "Node.js",
+      "WebSocket",
+      "CRDTs",
+      "Redis",
+      "PostgreSQL",
+    ],
     github: "https://github.com/hyk/void-sync",
     demo: null,
     year: "2024",
     status: "Beta",
-    image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=760&h=380&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=760&h=380&fit=crop&auto=format",
   },
   {
     id: "spectral",
@@ -33,7 +49,8 @@ export const PROJECTS = [
     demo: "https://spectral.hyk.dev",
     year: "2023",
     status: "Stable",
-    image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=760&h=380&fit=crop&auto=format",
+    image:
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=760&h=380&fit=crop&auto=format",
   },
   {
     id: "kernel-drift",
@@ -107,7 +124,11 @@ export const EDUCATION = [
     degree: "Machine Learning Specialization",
     period: "2023",
     gpa: null,
-    relevant: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning"],
+    relevant: [
+      "Supervised Learning",
+      "Unsupervised Learning",
+      "Reinforcement Learning",
+    ],
   },
   {
     id: "cert-rust",

@@ -2,25 +2,17 @@ import React from "react"
 import { useTheme } from "@/context/ThemeContext"
 
 // ─── Papirus icon imports ───────────────────────────────────────────────────
-import folderSvg     from "@/assets/icons/folder.svg"
-import trashSvg      from "@/assets/icons/trash.svg"
-import terminalSvg   from "@/assets/icons/terminal.svg"
-import browserSvg    from "@/assets/icons/browser.svg"
-import profileSvg    from "@/assets/icons/profile.svg"
-import pdfSvg        from "@/assets/icons/pdf.svg"
+import folderSvg from "@/assets/icons/folder.svg"
+import trashSvg from "@/assets/icons/trash.svg"
+import terminalSvg from "@/assets/icons/terminal.svg"
+import browserSvg from "@/assets/icons/browser.svg"
+import profileSvg from "@/assets/icons/profile.svg"
+import pdfSvg from "@/assets/icons/pdf.svg"
 import graduationSvg from "@/assets/icons/graduation.svg"
-import briefcaseSvg  from "@/assets/icons/briefcase.svg"
+import briefcaseSvg from "@/assets/icons/briefcase.svg"
 
 // ─── Types ──────────────────────────────────────────────────────────────────
-export type IconType =
-  | "folder"
-  | "pdf"
-  | "browser"
-  | "terminal"
-  | "person"
-  | "trash"
-  | "graduation"
-  | "briefcase"
+export type IconType = "folder" | "pdf" | "browser" | "terminal" | "person" | "trash" | "graduation" | "briefcase"
 
 type Props = {
   id: string
@@ -34,57 +26,71 @@ type Props = {
 
 // ─── Icon colour tints for folder variants ──────────────────────────────────
 const FOLDER_TINT: Record<string, string> = {
-  projects: "hue-rotate(0deg)",         // default blue
-  gallery:  "hue-rotate(280deg) saturate(1.3)", // pink/magenta
+  projects: "hue-rotate(0deg)", // default blue
+  gallery: "hue-rotate(280deg) saturate(1.3)", // pink/magenta
 }
 
 // ─── SVG icon map ────────────────────────────────────────────────────────────
 const ICON_SRC: Record<IconType, string> = {
-  folder:     folderSvg,
-  pdf:        pdfSvg,
-  browser:    browserSvg,
-  terminal:   terminalSvg,
-  person:     profileSvg,
-  trash:      trashSvg,
+  folder: folderSvg,
+  pdf: pdfSvg,
+  browser: browserSvg,
+  terminal: terminalSvg,
+  person: profileSvg,
+  trash: trashSvg,
   graduation: graduationSvg,
-  briefcase:  briefcaseSvg,
+  briefcase: briefcaseSvg,
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
-export default function DesktopIcon({ id, label, type, selected, onClick, onDoubleClick }: Props) {
+export default function DesktopIcon({
+  id,
+  label,
+  type,
+  selected,
+  onClick,
+  onDoubleClick,
+}: Props) {
   const t = useTheme()
-  const src    = ICON_SRC[type]
-  const filter = type === "folder" ? (FOLDER_TINT[id] ?? FOLDER_TINT["projects"]) : undefined
+  const src = ICON_SRC[type]
+  const filter =
+    type === "folder" ? (FOLDER_TINT[id] ?? FOLDER_TINT["projects"]) : undefined
 
   return (
     <div
       onClick={onClick}
       onDoubleClick={onDoubleClick}
       style={{
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
-        gap:            4,
-        padding:        "8px 6px",
-        borderRadius:   8,
-        cursor:         "default",
-        width:          76,
-        background:     selected 
-          ? (t.isDark ? "rgba(59, 130, 246, 0.2)" : "rgba(37, 99, 235, 0.15)") 
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 4,
+        padding: "8px 6px",
+        borderRadius: 8,
+        cursor: "default",
+        width: 76,
+        background: selected
+          ? t.isDark
+            ? "rgba(59, 130, 246, 0.2)"
+            : "rgba(37, 99, 235, 0.15)"
           : "transparent",
-        border:         selected 
-          ? (t.isDark ? "1px solid rgba(59, 130, 246, 0.45)" : "1px solid rgba(37, 99, 235, 0.4)") 
+        border: selected
+          ? t.isDark
+            ? "1px solid rgba(59, 130, 246, 0.45)"
+            : "1px solid rgba(37, 99, 235, 0.4)"
           : "1px solid transparent",
-        transition:     "background 0.12s ease, border-color 0.12s ease, transform 0.12s ease",
-        userSelect:     "none",
+        transition:
+          "background 0.12s ease, border-color 0.12s ease, transform 0.12s ease",
+        userSelect: "none",
       }}
-      onMouseEnter={e => {
-        if (!selected) e.currentTarget.style.background = t.isDark
-          ? "rgba(255, 255, 255, 0.07)"
-          : "rgba(0, 0, 0, 0.06)"
+      onMouseEnter={(e) => {
+        if (!selected)
+          e.currentTarget.style.background = t.isDark
+            ? "rgba(255, 255, 255, 0.07)"
+            : "rgba(0, 0, 0, 0.06)"
         e.currentTarget.style.transform = "translateY(-2px)"
       }}
-      onMouseLeave={e => {
+      onMouseLeave={(e) => {
         if (!selected) e.currentTarget.style.background = "transparent"
         e.currentTarget.style.transform = "translateY(0)"
       }}
@@ -95,10 +101,10 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
         alt={label}
         draggable={false}
         style={{
-          width:          44,
-          height:         44,
-          objectFit:      "contain",
-          pointerEvents:  "none",
+          width: 44,
+          height: 44,
+          objectFit: "contain",
+          pointerEvents: "none",
           filter,
         }}
       />
@@ -106,25 +112,30 @@ export default function DesktopIcon({ id, label, type, selected, onClick, onDoub
       {/* Label */}
       <span
         style={{
-          color:              t.isDark
-                                ? (selected ? "#ffffff" : "rgba(255, 255, 255, 0.95)")
-                                : (selected ? "#000000" : "#1c1c1e"),
-          fontSize:           "0.72rem",
-          fontWeight:         selected ? 600 : 500,
-          textAlign:          "center",
-          lineHeight:         1.3,
-          maxWidth:           72,
-          wordBreak:          "break-word",
-          pointerEvents:      "none",
-          transition:         t.transition,
+          color: t.isDark
+            ? selected
+              ? "#ffffff"
+              : "rgba(255, 255, 255, 0.95)"
+            : selected
+              ? "#000000"
+              : "#1c1c1e",
+          fontSize: "0.72rem",
+          fontWeight: selected ? 600 : 500,
+          textAlign: "center",
+          lineHeight: 1.3,
+          maxWidth: 72,
+          wordBreak: "break-word",
+          pointerEvents: "none",
+          transition: t.transition,
           // Dark Mode: outline shadow & thin text-stroke; Light Mode: clean text
-          textShadow:         t.isDark ? "0 0 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 0.95)" : "none",
-          WebkitTextStroke:   t.isDark ? "0.15px rgba(0, 0, 0, 0.6)" : "none",
+          textShadow: t.isDark
+            ? "0 0 3px rgba(0, 0, 0, 0.95), 0 0 1px rgba(0, 0, 0, 0.95)"
+            : "none",
+          WebkitTextStroke: t.isDark ? "0.15px rgba(0, 0, 0, 0.6)" : "none",
         }}
       >
         {label}
       </span>
-
     </div>
   )
 }

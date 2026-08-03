@@ -27,8 +27,20 @@ function FolderIcon() {
 
 function FileTextIcon() {
   return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="rgba(30, 41, 59, 0.5)" />
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#93c5fd"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path
+        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        fill="rgba(30, 41, 59, 0.5)"
+      />
       <polyline points="14 2 14 8 20 8" />
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
@@ -39,8 +51,25 @@ function FileTextIcon() {
 
 function FileImageIcon() {
   return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#f472b6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="rgba(80, 20, 50, 0.4)" />
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#f472b6"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="2"
+        ry="2"
+        fill="rgba(80, 20, 50, 0.4)"
+      />
       <circle cx="8.5" cy="8.5" r="1.5" />
       <polyline points="21 15 16 10 5 21" />
     </svg>
@@ -49,8 +78,20 @@ function FileImageIcon() {
 
 function FileCodeIcon() {
   return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="rgba(60, 40, 10, 0.4)" />
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#fbbf24"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path
+        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        fill="rgba(60, 40, 10, 0.4)"
+      />
       <polyline points="14 2 14 8 20 8" />
       <path d="M8 13a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1V9.5A1.5 1.5 0 0 0 9.5 8h-.5" />
       <path d="M8 15a1 1 0 0 0 1 1h1a1 1 0 0 1 1 1v1.5A1.5 1.5 0 0 1 9.5 20h-.5" />
@@ -60,8 +101,20 @@ function FileCodeIcon() {
 
 function LinkIcon() {
   return (
-    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" fill="rgba(10, 50, 30, 0.4)" />
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="#4ade80"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path
+        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+        fill="rgba(10, 50, 30, 0.4)"
+      />
       <polyline points="15 3 21 3 21 9" />
       <line x1="10" y1="14" x2="21" y2="3" />
     </svg>
@@ -77,8 +130,16 @@ type FileItem = {
   children?: FileItem[]
 }
 
-const col: React.CSSProperties = { display: "flex", flexDirection: "column", overflow: "hidden" }
-const row: React.CSSProperties = { display: "flex", alignItems: "center", gap: 8 }
+const col: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
+}
+const row: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+}
 
 function Tag({ label }: { label: string }) {
   const t = useTheme()
@@ -87,7 +148,9 @@ function Tag({ label }: { label: string }) {
       style={{
         background: t.isDark ? "rgba(74,222,128,0.1)" : "rgba(22,163,74,0.08)",
         color: t.isDark ? "#4ade80" : "#16a34a",
-        border: t.isDark ? "1px solid rgba(74,222,128,0.2)" : "1px solid rgba(22,163,74,0.15)",
+        border: t.isDark
+          ? "1px solid rgba(74,222,128,0.2)"
+          : "1px solid rgba(22,163,74,0.15)",
         borderRadius: 4,
         padding: "1px 7px",
         fontSize: "0.7rem",
@@ -112,39 +175,41 @@ const buildProjectFiles = (project: typeof PROJECTS[0]): FileItem[] => {
 ${project.description}
 
 ## Technologies
-${project.technologies.map(t => `- ${t}`).join("\n")}
+${project.technologies.map((t) => `- ${t}`).join("\n")}
 
 ## Details
 - Year: ${project.year}
 - Status: ${project.status}
-`
+`,
     },
     {
       name: "Technologies.json",
       type: "json",
-      content: JSON.stringify(project.technologies, null, 2)
+      content: JSON.stringify(project.technologies, null, 2),
     },
     {
       name: "GitHub.url",
       type: "url",
-      url: project.github
-    }
+      url: project.github,
+    },
   ]
 
   if (project.demo) {
     files.push({
       name: "Live Demo.url",
       type: "url",
-      url: project.demo
+      url: project.demo,
     })
   }
 
   // Preview Image
-  const previewImg = project.image || "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format"
+  const previewImg =
+    project.image ||
+    "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format"
   files.push({
     name: "Preview.png",
     type: "image",
-    imageSrc: previewImg
+    imageSrc: previewImg,
   })
 
   // Screenshots Subfolder
@@ -152,34 +217,53 @@ ${project.technologies.map(t => `- ${t}`).join("\n")}
     {
       name: "home.png",
       type: "image",
-      imageSrc: previewImg
-    }
+      imageSrc: previewImg,
+    },
   ]
 
   // Add extra mockup screenshots based on project
   if (project.id === "neural-canvas") {
     screenshotsList.push(
-      { name: "canvas.png", type: "image", imageSrc: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&h=600&fit=crop&auto=format" },
-      { name: "details.png", type: "image", imageSrc: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&h=600&fit=crop&auto=format" }
+      {
+        name: "canvas.png",
+        type: "image",
+        imageSrc:
+          "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&h=600&fit=crop&auto=format",
+      },
+      {
+        name: "details.png",
+        type: "image",
+        imageSrc:
+          "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&h=600&fit=crop&auto=format",
+      },
     )
   } else if (project.id === "void-sync") {
-    screenshotsList.push(
-      { name: "editor.png", type: "image", imageSrc: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?w=900&h=600&fit=crop&auto=format" }
-    )
+    screenshotsList.push({
+      name: "editor.png",
+      type: "image",
+      imageSrc:
+        "https://images.unsplash.com/photo-1618401471353-b98aedd07871?w=900&h=600&fit=crop&auto=format",
+    })
   } else if (project.id === "spectral") {
-    screenshotsList.push(
-      { name: "visualizer.png", type: "image", imageSrc: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&h=600&fit=crop&auto=format" }
-    )
+    screenshotsList.push({
+      name: "visualizer.png",
+      type: "image",
+      imageSrc:
+        "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&h=600&fit=crop&auto=format",
+    })
   } else {
-    screenshotsList.push(
-      { name: "terminal.png", type: "image", imageSrc: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format" }
-    )
+    screenshotsList.push({
+      name: "terminal.png",
+      type: "image",
+      imageSrc:
+        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format",
+    })
   }
 
   files.push({
     name: "Screenshots",
     type: "folder",
-    children: screenshotsList
+    children: screenshotsList,
   })
 
   return files
@@ -189,7 +273,7 @@ ${project.technologies.map(t => `- ${t}`).join("\n")}
 function ProjectsExplorer({
   openWindow,
   currentPath,
-  setCurrentPath
+  setCurrentPath,
 }: {
   openWindow?: (appId: any, params?: any) => void
   currentPath: string[]
@@ -202,10 +286,10 @@ function ProjectsExplorer({
   const displayItems = useMemo((): FileItem[] => {
     if (currentPath.length === 0) {
       // Root level: show project folders + Archive
-      const rootFolders: FileItem[] = PROJECTS.map(p => ({
+      const rootFolders: FileItem[] = PROJECTS.map((p) => ({
         name: p.name,
         type: "folder",
-        children: buildProjectFiles(p)
+        children: buildProjectFiles(p),
       }))
       rootFolders.push({
         name: "Archive",
@@ -214,9 +298,10 @@ function ProjectsExplorer({
           {
             name: "restricted.tar.gz",
             type: "file",
-            content: "Classification restricted. [EPERM: 0x4F]\n\nUnauthorized decryption attempt logged."
-          }
-        ]
+            content:
+              "Classification restricted. [EPERM: 0x4F]\n\nUnauthorized decryption attempt logged.",
+          },
+        ],
       })
       return rootFolders
     }
@@ -228,11 +313,12 @@ function ProjectsExplorer({
           {
             name: "restricted.tar.gz",
             type: "file",
-            content: "Classification restricted. [EPERM: 0x4F]\n\nUnauthorized decryption attempt logged."
-          }
+            content:
+              "Classification restricted. [EPERM: 0x4F]\n\nUnauthorized decryption attempt logged.",
+          },
         ]
       }
-      const project = PROJECTS.find(p => p.name === projId)
+      const project = PROJECTS.find((p) => p.name === projId)
       if (project) {
         return buildProjectFiles(project)
       }
@@ -241,10 +327,12 @@ function ProjectsExplorer({
     if (currentPath.length === 2) {
       const [projId, subFolder] = currentPath
       if (projId === "Archive") return []
-      const project = PROJECTS.find(p => p.name === projId)
+      const project = PROJECTS.find((p) => p.name === projId)
       if (project) {
         const files = buildProjectFiles(project)
-        const folder = files.find(f => f.name === subFolder && f.type === "folder")
+        const folder = files.find(
+          (f) => f.name === subFolder && f.type === "folder",
+        )
         if (folder && folder.children) {
           return folder.children
         }
@@ -261,11 +349,15 @@ function ProjectsExplorer({
 
   const handleItemDoubleClick = (item: FileItem) => {
     if (item.type === "folder") {
-      setCurrentPath(prev => [...prev, item.name])
+      setCurrentPath((prev) => [...prev, item.name])
       setSelectedItem(null)
     } else if (item.type === "url" && item.url) {
       window.open(item.url, "_blank", "noopener,noreferrer")
-    } else if (item.type === "markdown" || item.type === "json" || item.type === "file") {
+    } else if (
+      item.type === "markdown" ||
+      item.type === "json" ||
+      item.type === "file"
+    ) {
       if (openWindow) {
         openWindow("editor", { content: item.content, title: item.name })
       }
@@ -278,17 +370,30 @@ function ProjectsExplorer({
 
   const renderItemIcon = (item: FileItem) => {
     switch (item.type) {
-      case "folder": return <FolderIcon />
-      case "markdown": return <FileTextIcon />
-      case "json": return <FileCodeIcon />
-      case "image": return <FileImageIcon />
-      case "url": return <LinkIcon />
-      default: return <FileTextIcon />
+      case "folder":
+        return <FolderIcon />
+      case "markdown":
+        return <FileTextIcon />
+      case "json":
+        return <FileCodeIcon />
+      case "image":
+        return <FileImageIcon />
+      case "url":
+        return <LinkIcon />
+      default:
+        return <FileTextIcon />
     }
   }
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden", transition: t.transition }}>
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        overflow: "hidden",
+        transition: t.transition,
+      }}
+    >
       {/* Sidebar */}
       <div
         style={{
@@ -323,32 +428,47 @@ function ProjectsExplorer({
           style={{
             padding: "7px 14px",
             cursor: "default",
-            background: currentPath.length === 0
-              ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)")
-              : "transparent",
-            borderLeft: currentPath.length === 0
-              ? (t.isDark ? "2px solid #4ade80" : "2px solid #2563eb")
-              : "2px solid transparent",
+            background:
+              currentPath.length === 0
+                ? t.isDark
+                  ? "rgba(74,222,128,0.08)"
+                  : "rgba(37,99,235,0.08)"
+                : "transparent",
+            borderLeft:
+              currentPath.length === 0
+                ? t.isDark
+                  ? "2px solid #4ade80"
+                  : "2px solid #2563eb"
+                : "2px solid transparent",
             display: "flex",
             alignItems: "center",
             gap: 8,
             transition: t.transition,
           }}
-          onMouseEnter={e => {
-            if (currentPath.length !== 0) e.currentTarget.style.background = t.bgHover
+          onMouseEnter={(e) => {
+            if (currentPath.length !== 0)
+              e.currentTarget.style.background = t.bgHover
           }}
-          onMouseLeave={e => {
-            if (currentPath.length !== 0) e.currentTarget.style.background = "transparent"
+          onMouseLeave={(e) => {
+            if (currentPath.length !== 0)
+              e.currentTarget.style.background = "transparent"
           }}
         >
           <FolderIcon />
-          <span style={{ color: currentPath.length === 0 ? t.text : t.textMuted, fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+          <span
+            style={{
+              color: currentPath.length === 0 ? t.text : t.textMuted,
+              fontSize: "0.8rem",
+              fontFamily: "'JetBrains Mono', monospace",
+              transition: t.transition,
+            }}
+          >
             All Projects
           </span>
         </div>
 
         {/* Individual Project Sidebar buttons */}
-        {PROJECTS.map(p => {
+        {PROJECTS.map((p) => {
           const isActive = currentPath[0] === p.name
           return (
             <div
@@ -361,20 +481,24 @@ function ProjectsExplorer({
                 padding: "7px 14px",
                 cursor: "default",
                 background: isActive
-                  ? (t.isDark ? "rgba(74,222,128,0.08)" : "rgba(37,99,235,0.08)")
+                  ? t.isDark
+                    ? "rgba(74,222,128,0.08)"
+                    : "rgba(37,99,235,0.08)"
                   : "transparent",
                 borderLeft: isActive
-                  ? (t.isDark ? "2px solid #4ade80" : "2px solid #2563eb")
+                  ? t.isDark
+                    ? "2px solid #4ade80"
+                    : "2px solid #2563eb"
                   : "2px solid transparent",
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
                 transition: t.transition,
               }}
-              onMouseEnter={e => {
+              onMouseEnter={(e) => {
                 if (!isActive) e.currentTarget.style.background = t.bgHover
               }}
-              onMouseLeave={e => {
+              onMouseLeave={(e) => {
                 if (!isActive) e.currentTarget.style.background = "transparent"
               }}
             >
@@ -415,15 +539,21 @@ function ProjectsExplorer({
             display: "flex",
             alignItems: "center",
             gap: 8,
-            background: currentPath[0] === "Archive" ? t.bgHover : "transparent",
-            borderLeft: currentPath[0] === "Archive" ? "2px solid " + t.borderStrong : "2px solid transparent",
+            background:
+              currentPath[0] === "Archive" ? t.bgHover : "transparent",
+            borderLeft:
+              currentPath[0] === "Archive"
+                ? "2px solid " + t.borderStrong
+                : "2px solid transparent",
             transition: t.transition,
           }}
-          onMouseEnter={e => {
-            if (currentPath[0] !== "Archive") e.currentTarget.style.background = t.bgHover
+          onMouseEnter={(e) => {
+            if (currentPath[0] !== "Archive")
+              e.currentTarget.style.background = t.bgHover
           }}
-          onMouseLeave={e => {
-            if (currentPath[0] !== "Archive") e.currentTarget.style.background = "transparent"
+          onMouseLeave={(e) => {
+            if (currentPath[0] !== "Archive")
+              e.currentTarget.style.background = "transparent"
           }}
         >
           <svg width="14" height="14" viewBox="0 0 16 14" fill="none">
@@ -432,7 +562,14 @@ function ProjectsExplorer({
               fill={t.isDark ? "#555" : "#888"}
             />
           </svg>
-          <span style={{ color: t.textFaint, fontSize: "0.8rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+          <span
+            style={{
+              color: t.textFaint,
+              fontSize: "0.8rem",
+              fontFamily: "'JetBrains Mono', monospace",
+              transition: t.transition,
+            }}
+          >
             Archive
           </span>
         </div>
@@ -454,16 +591,26 @@ function ProjectsExplorer({
         }}
       >
         {displayItems.length === 0 ? (
-          <div style={{ gridColumn: "1/-1", textAlign: "center", color: t.textFaint, fontSize: "0.8rem", marginTop: 40, fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+          <div
+            style={{
+              gridColumn: "1/-1",
+              textAlign: "center",
+              color: t.textFaint,
+              fontSize: "0.8rem",
+              marginTop: 40,
+              fontFamily: "'JetBrains Mono', monospace",
+              transition: t.transition,
+            }}
+          >
             Empty Folder
           </div>
         ) : (
-          displayItems.map(item => {
+          displayItems.map((item) => {
             const isSelected = selectedItem === item.name
             return (
               <div
                 key={item.name}
-                onClick={e => handleItemClick(e, item.name)}
+                onClick={(e) => handleItemClick(e, item.name)}
                 onDoubleClick={() => handleItemDoubleClick(item)}
                 style={{
                   display: "flex",
@@ -474,29 +621,35 @@ function ProjectsExplorer({
                   borderRadius: 6,
                   cursor: "default",
                   background: isSelected
-                    ? (t.isDark ? "rgba(59, 130, 246, 0.16)" : "rgba(37, 99, 235, 0.12)")
+                    ? t.isDark
+                      ? "rgba(59, 130, 246, 0.16)"
+                      : "rgba(37, 99, 235, 0.12)"
                     : "transparent",
                   border: isSelected
-                    ? (t.isDark ? "1px solid rgba(59, 130, 246, 0.4)" : "1px solid rgba(37, 99, 235, 0.3)")
+                    ? t.isDark
+                      ? "1px solid rgba(59, 130, 246, 0.4)"
+                      : "1px solid rgba(37, 99, 235, 0.3)"
                     : "1px solid transparent",
                   transition: t.transition,
                   minWidth: 84,
                   maxWidth: 110,
                 }}
-                onMouseEnter={e => {
+                onMouseEnter={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.background = t.bgHover
                     e.currentTarget.style.borderColor = t.border
                   }
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   if (!isSelected) {
                     e.currentTarget.style.background = "transparent"
                     e.currentTarget.style.borderColor = "transparent"
                   }
                 }}
               >
-                <div style={{ pointerEvents: "none" }}>{renderItemIcon(item)}</div>
+                <div style={{ pointerEvents: "none" }}>
+                  {renderItemIcon(item)}
+                </div>
                 <span
                   style={{
                     color: isSelected ? t.text : t.textMuted,
@@ -525,10 +678,18 @@ function ProjectsExplorer({
 function ExperienceExplorer() {
   const t = useTheme()
   const [selected, setSelected] = useState(EXPERIENCE[0].id)
-  const item = EXPERIENCE.find(e => e.id === selected)
+  const item = EXPERIENCE.find((e) => e.id === selected)
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden", background: t.bg, transition: t.transition }}>
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        overflow: "hidden",
+        background: t.bg,
+        transition: t.transition,
+      }}
+    >
       <div
         style={{
           width: 200,
@@ -552,7 +713,7 @@ function ExperienceExplorer() {
         >
           Experience
         </div>
-        {EXPERIENCE.map(e => {
+        {EXPERIENCE.map((e) => {
           const isActive = selected === e.id
           return (
             <div
@@ -562,24 +723,42 @@ function ExperienceExplorer() {
                 padding: "8px 14px",
                 cursor: "default",
                 background: isActive
-                  ? (t.isDark ? "rgba(167,139,250,0.08)" : "rgba(124,58,237,0.08)")
+                  ? t.isDark
+                    ? "rgba(167,139,250,0.08)"
+                    : "rgba(124,58,237,0.08)"
                   : "transparent",
                 borderLeft: isActive
-                  ? (t.isDark ? "2px solid #a78bfa" : "2px solid #7c3aed")
+                  ? t.isDark
+                    ? "2px solid #a78bfa"
+                    : "2px solid #7c3aed"
                   : "2px solid transparent",
                 transition: t.transition,
               }}
-              onMouseEnter={ev => {
+              onMouseEnter={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = t.bgHover
               }}
-              onMouseLeave={ev => {
+              onMouseLeave={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = "transparent"
               }}
             >
-              <div style={{ color: isActive ? t.text : t.textMuted, fontSize: "0.79rem", fontWeight: 500, transition: t.transition }}>
+              <div
+                style={{
+                  color: isActive ? t.text : t.textMuted,
+                  fontSize: "0.79rem",
+                  fontWeight: 500,
+                  transition: t.transition,
+                }}
+              >
                 {e.company}
               </div>
-              <div style={{ color: t.textFaint, fontSize: "0.72rem", marginTop: 1, transition: t.transition }}>
+              <div
+                style={{
+                  color: t.textFaint,
+                  fontSize: "0.72rem",
+                  marginTop: 1,
+                  transition: t.transition,
+                }}
+              >
                 {e.period.split(" — ")[0]}
               </div>
             </div>
@@ -591,29 +770,78 @@ function ExperienceExplorer() {
         {item && (
           <div style={{ ...col, gap: 18 }}>
             <div>
-              <div style={{ ...row, gap: 10, flexWrap: "wrap", justifyContent: "space-between" }}>
-                <h2 style={{ margin: 0, color: t.text, fontWeight: 600, fontSize: "1.1rem", transition: t.transition }}>
+              <div
+                style={{
+                  ...row,
+                  gap: 10,
+                  flexWrap: "wrap",
+                  justifyContent: "space-between",
+                }}
+              >
+                <h2
+                  style={{
+                    margin: 0,
+                    color: t.text,
+                    fontWeight: 600,
+                    fontSize: "1.1rem",
+                    transition: t.transition,
+                  }}
+                >
                   {item.role}
                 </h2>
-                <span style={{ color: t.textFaint, fontSize: "0.75rem", fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+                <span
+                  style={{
+                    color: t.textFaint,
+                    fontSize: "0.75rem",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    transition: t.transition,
+                  }}
+                >
                   {item.period}
                 </span>
               </div>
-              <div style={{ color: t.isDark ? "#a78bfa" : "#7c3aed", fontSize: "0.85rem", marginTop: 4, transition: t.transition }}>
+              <div
+                style={{
+                  color: t.isDark ? "#a78bfa" : "#7c3aed",
+                  fontSize: "0.85rem",
+                  marginTop: 4,
+                  transition: t.transition,
+                }}
+              >
                 {item.company} · {item.location}
               </div>
             </div>
 
-            <p style={{ color: t.textMuted, fontSize: "0.85rem", lineHeight: 1.7, margin: 0, transition: t.transition }}>
+            <p
+              style={{
+                color: t.textMuted,
+                fontSize: "0.85rem",
+                lineHeight: 1.7,
+                margin: 0,
+                transition: t.transition,
+              }}
+            >
               {item.description}
             </p>
 
             <div>
-              <div style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, transition: t.transition }}>
+              <div
+                style={{
+                  color: t.textFaint,
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  letterSpacing: "0.07em",
+                  textTransform: "uppercase",
+                  marginBottom: 8,
+                  transition: t.transition,
+                }}
+              >
                 Technologies
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {item.technologies.map(t => <Tag key={t} label={t} />)}
+                {item.technologies.map((t) => (
+                  <Tag key={t} label={t} />
+                ))}
               </div>
             </div>
           </div>
@@ -627,10 +855,18 @@ function ExperienceExplorer() {
 function EducationExplorer() {
   const t = useTheme()
   const [selected, setSelected] = useState(EDUCATION[0].id)
-  const item = EDUCATION.find(e => e.id === selected)
+  const item = EDUCATION.find((e) => e.id === selected)
 
   return (
-    <div style={{ flex: 1, display: "flex", overflow: "hidden", background: t.bg, transition: t.transition }}>
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        overflow: "hidden",
+        background: t.bg,
+        transition: t.transition,
+      }}
+    >
       <div
         style={{
           width: 200,
@@ -654,7 +890,7 @@ function EducationExplorer() {
         >
           Education
         </div>
-        {EDUCATION.map(e => {
+        {EDUCATION.map((e) => {
           const isActive = selected === e.id
           return (
             <div
@@ -664,24 +900,42 @@ function EducationExplorer() {
                 padding: "8px 14px",
                 cursor: "default",
                 background: isActive
-                  ? (t.isDark ? "rgba(251,191,36,0.08)" : "rgba(217,119,6,0.08)")
+                  ? t.isDark
+                    ? "rgba(251,191,36,0.08)"
+                    : "rgba(217,119,6,0.08)"
                   : "transparent",
                 borderLeft: isActive
-                  ? (t.isDark ? "2px solid #fbbf24" : "2px solid #d97706")
+                  ? t.isDark
+                    ? "2px solid #fbbf24"
+                    : "2px solid #d97706"
                   : "2px solid transparent",
                 transition: t.transition,
               }}
-              onMouseEnter={ev => {
+              onMouseEnter={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = t.bgHover
               }}
-              onMouseLeave={ev => {
+              onMouseLeave={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = "transparent"
               }}
             >
-              <div style={{ color: isActive ? t.text : t.textMuted, fontSize: "0.79rem", fontWeight: 500, transition: t.transition }}>
+              <div
+                style={{
+                  color: isActive ? t.text : t.textMuted,
+                  fontSize: "0.79rem",
+                  fontWeight: 500,
+                  transition: t.transition,
+                }}
+              >
                 {e.degree}
               </div>
-              <div style={{ color: t.textFaint, fontSize: "0.72rem", marginTop: 1, transition: t.transition }}>
+              <div
+                style={{
+                  color: t.textFaint,
+                  fontSize: "0.72rem",
+                  marginTop: 1,
+                  transition: t.transition,
+                }}
+              >
                 {e.period}
               </div>
             </div>
@@ -693,14 +947,37 @@ function EducationExplorer() {
         {item && (
           <div style={{ ...col, gap: 18 }}>
             <div>
-              <h2 style={{ margin: 0, color: t.text, fontWeight: 600, fontSize: "1.1rem", transition: t.transition }}>
+              <h2
+                style={{
+                  margin: 0,
+                  color: t.text,
+                  fontWeight: 600,
+                  fontSize: "1.1rem",
+                  transition: t.transition,
+                }}
+              >
                 {item.degree}
               </h2>
-              <div style={{ color: t.isDark ? "#fbbf24" : "#d97706", fontSize: "0.85rem", marginTop: 4, transition: t.transition }}>
+              <div
+                style={{
+                  color: t.isDark ? "#fbbf24" : "#d97706",
+                  fontSize: "0.85rem",
+                  marginTop: 4,
+                  transition: t.transition,
+                }}
+              >
                 {item.institution} · {item.period}
               </div>
               {item.gpa && (
-                <div style={{ color: t.textMuted, fontSize: "0.78rem", marginTop: 4, fontFamily: "'JetBrains Mono', monospace", transition: t.transition }}>
+                <div
+                  style={{
+                    color: t.textMuted,
+                    fontSize: "0.78rem",
+                    marginTop: 4,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    transition: t.transition,
+                  }}
+                >
                   GPA: {item.gpa}
                 </div>
               )}
@@ -708,17 +985,31 @@ function EducationExplorer() {
 
             {item.relevant.length > 0 && (
               <div>
-                <div style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 600, letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: 8, transition: t.transition }}>
+                <div
+                  style={{
+                    color: t.textFaint,
+                    fontSize: "0.7rem",
+                    fontWeight: 600,
+                    letterSpacing: "0.07em",
+                    textTransform: "uppercase",
+                    marginBottom: 8,
+                    transition: t.transition,
+                  }}
+                >
                   Relevant Coursework
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {item.relevant.map(r => (
+                  {item.relevant.map((r) => (
                     <span
                       key={r}
                       style={{
-                        background: t.isDark ? "rgba(251,191,36,0.08)" : "rgba(217,119,6,0.06)",
+                        background: t.isDark
+                          ? "rgba(251,191,36,0.08)"
+                          : "rgba(217,119,6,0.06)",
                         color: t.isDark ? "rgba(251,191,36,0.8)" : "#d97706",
-                        border: t.isDark ? "1px solid rgba(251,191,36,0.18)" : "1px solid rgba(217,119,6,0.15)",
+                        border: t.isDark
+                          ? "1px solid rgba(251,191,36,0.18)"
+                          : "1px solid rgba(217,119,6,0.15)",
                         borderRadius: 4,
                         padding: "2px 8px",
                         fontSize: "0.75rem",
@@ -742,7 +1033,7 @@ function EducationExplorer() {
 function Toolbar({
   path,
   currentPath,
-  setCurrentPath
+  setCurrentPath,
 }: {
   path: string
   currentPath: string[]
@@ -753,7 +1044,7 @@ function Toolbar({
 
   const handleBackClick = () => {
     if (canGoBack) {
-      setCurrentPath(prev => prev.slice(0, -1))
+      setCurrentPath((prev) => prev.slice(0, -1))
     }
   }
 
@@ -761,7 +1052,7 @@ function Toolbar({
     if (index === -1) {
       setCurrentPath([])
     } else {
-      setCurrentPath(prev => prev.slice(0, index + 1))
+      setCurrentPath((prev) => prev.slice(0, index + 1))
     }
   }
 
@@ -796,22 +1087,32 @@ function Toolbar({
           color: canGoBack ? t.text : t.textFaint,
           transition: t.transition,
         }}
-        onMouseEnter={e => {
+        onMouseEnter={(e) => {
           if (canGoBack) e.currentTarget.style.background = t.bgHover
         }}
-        onMouseLeave={e => {
+        onMouseLeave={(e) => {
           if (canGoBack) e.currentTarget.style.background = "transparent"
         }}
       >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path
+            d="M10 3L5 8L10 13"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
         </svg>
       </button>
 
       {/* Forward placeholder icon */}
       <div style={{ color: t.textFaint, padding: 4, transition: t.transition }}>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-          <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path
+            d="M6 3L11 8L6 13"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
         </svg>
       </div>
 
@@ -833,18 +1134,27 @@ function Toolbar({
           transition: t.transition,
         }}
       >
-        <span style={{ color: t.textFaint, transition: t.transition }}>~/desktop/</span>
-        
+        <span style={{ color: t.textFaint, transition: t.transition }}>
+          ~/desktop/
+        </span>
+
         {/* Main section tag (e.g. projects) */}
         <span
           onClick={() => handleBreadcrumbClick(-1)}
           style={{
-            color: currentPath.length === 0 ? t.textMuted : (t.isDark ? "#4ade80" : "#16a34a"),
+            color:
+              currentPath.length === 0
+                ? t.textMuted
+                : t.isDark
+                  ? "#4ade80"
+                  : "#16a34a",
             cursor: "pointer",
             transition: t.transition,
           }}
-          onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-          onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.textDecoration = "underline")
+          }
+          onMouseLeave={(e) => (e.currentTarget.style.textDecoration = "none")}
         >
           {path}
         </span>
@@ -852,19 +1162,25 @@ function Toolbar({
         {currentPath.map((seg, i) => {
           const isLast = i === currentPath.length - 1
           return (
-            <div key={seg} style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <span style={{ color: t.textFaint, transition: t.transition }}>/</span>
+            <div
+              key={seg}
+              style={{ display: "flex", alignItems: "center", gap: 4 }}
+            >
+              <span style={{ color: t.textFaint, transition: t.transition }}>
+                /
+              </span>
               <span
                 onClick={() => !isLast && handleBreadcrumbClick(i)}
                 style={{
-                  color: isLast ? t.text : (t.isDark ? "#3b82f6" : "#2563eb"),
+                  color: isLast ? t.text : t.isDark ? "#3b82f6" : "#2563eb",
                   cursor: isLast ? "default" : "pointer",
                   transition: t.transition,
                 }}
-                onMouseEnter={e => {
-                  if (!isLast) e.currentTarget.style.textDecoration = "underline"
+                onMouseEnter={(e) => {
+                  if (!isLast)
+                    e.currentTarget.style.textDecoration = "underline"
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   if (!isLast) e.currentTarget.style.textDecoration = "none"
                 }}
               >
@@ -878,13 +1194,29 @@ function Toolbar({
   )
 }
 
-export default function FileExplorer({ section, openWindow }: FileExplorerProps) {
+export default function FileExplorer({
+  section,
+  openWindow,
+}: FileExplorerProps) {
   const t = useTheme()
   const [currentPath, setCurrentPath] = useState<string[]>([])
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: t.bg, transition: t.transition }}>
-      <Toolbar path={section} currentPath={currentPath} setCurrentPath={setCurrentPath} />
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        background: t.bg,
+        transition: t.transition,
+      }}
+    >
+      <Toolbar
+        path={section}
+        currentPath={currentPath}
+        setCurrentPath={setCurrentPath}
+      />
       {section === "projects" && (
         <ProjectsExplorer
           openWindow={openWindow}

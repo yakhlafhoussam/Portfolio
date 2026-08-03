@@ -34,8 +34,14 @@ const DEFAULT_STORAGE: StorageState = {
 export const storageManager = {
   initialize(): void {
     try {
-      if (typeof window !== "undefined" && !window.localStorage.getItem(STORAGE_KEY)) {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STORAGE))
+      if (
+        typeof window !== "undefined" &&
+        !window.localStorage.getItem(STORAGE_KEY)
+      ) {
+        window.localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(DEFAULT_STORAGE),
+        )
       }
     } catch (e) {
       console.error("StorageManager: failed to initialize storage:", e)
@@ -53,12 +59,17 @@ export const storageManager = {
       }
       return JSON.parse(data) as StorageState
     } catch (e) {
-      console.error("StorageManager: failed to read storage, returning default:", e)
+      console.error(
+        "StorageManager: failed to read storage, returning default:",
+        e,
+      )
       return DEFAULT_STORAGE
     }
   },
 
-  update(updater: Partial<StorageState> | ((prev: StorageState) => StorageState)): StorageState {
+  update(
+    updater: Partial<StorageState> | ((prev: StorageState) => StorageState),
+  ): StorageState {
     try {
       if (typeof window === "undefined") return DEFAULT_STORAGE
       const current = this.read()
@@ -89,7 +100,10 @@ export const storageManager = {
   reset(): void {
     try {
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_STORAGE))
+        window.localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(DEFAULT_STORAGE),
+        )
       }
     } catch (e) {
       console.error("StorageManager: failed to reset storage:", e)

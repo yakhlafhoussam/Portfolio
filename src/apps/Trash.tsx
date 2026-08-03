@@ -16,8 +16,25 @@ export default function Trash() {
         transition: t.transition,
       }}
     >
-      <h1 style={{ fontSize: "1.4rem", fontWeight: 600, margin: 0, color: t.text, transition: t.transition }}>Trash</h1>
-      <hr style={{ border: "none", borderTop: "1px solid " + t.border, margin: "16px 0 32px 0", transition: t.transition }} />
+      <h1
+        style={{
+          fontSize: "1.4rem",
+          fontWeight: 600,
+          margin: 0,
+          color: t.text,
+          transition: t.transition,
+        }}
+      >
+        Trash
+      </h1>
+      <hr
+        style={{
+          border: "none",
+          borderTop: "1px solid " + t.border,
+          margin: "16px 0 32px 0",
+          transition: t.transition,
+        }}
+      />
       <div
         style={{
           flex: 1,
@@ -45,7 +62,15 @@ export default function Trash() {
           <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
           <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
         </svg>
-        <span style={{ fontSize: "0.92rem", fontWeight: 400, letterSpacing: "0.01em" }}>This folder is empty.</span>
+        <span
+          style={{
+            fontSize: "0.92rem",
+            fontWeight: 400,
+            letterSpacing: "0.01em",
+          }}
+        >
+          This folder is empty.
+        </span>
       </div>
     </div>
   )

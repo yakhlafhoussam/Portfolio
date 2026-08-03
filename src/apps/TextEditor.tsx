@@ -6,10 +6,15 @@ type Props = {
   title?: string
 }
 
-export default function TextEditor({ content: initialContent = "", title = "untitled.txt" }: Props) {
+export default function TextEditor({
+  content: initialContent = "",
+  title = "untitled.txt",
+}: Props) {
   const t = useTheme()
   const [content, setContent] = useState(initialContent)
-  const [mode, setMode] = useState<"edit" | "preview">(title.endsWith(".md") ? "preview" : "edit")
+  const [mode, setMode] = useState<"edit" | "preview">(
+    title.endsWith(".md") ? "preview" : "edit",
+  )
 
   // Simple Markdown parser for previewing README.md files
   const renderMarkdown = (text: string) => {
@@ -156,8 +161,18 @@ export default function TextEditor({ content: initialContent = "", title = "unti
             <button
               onClick={() => setMode("edit")}
               style={{
-                background: mode === "edit" ? (t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") : "transparent",
-                color: mode === "edit" ? (t.isDark ? "#4ade80" : "#2563eb") : t.textFaint,
+                background:
+                  mode === "edit"
+                    ? t.isDark
+                      ? "rgba(255,255,255,0.08)"
+                      : "rgba(0,0,0,0.06)"
+                    : "transparent",
+                color:
+                  mode === "edit"
+                    ? t.isDark
+                      ? "#4ade80"
+                      : "#2563eb"
+                    : t.textFaint,
                 border: "none",
                 borderRadius: 3,
                 padding: "2px 8px",
@@ -172,8 +187,18 @@ export default function TextEditor({ content: initialContent = "", title = "unti
             <button
               onClick={() => setMode("preview")}
               style={{
-                background: mode === "preview" ? (t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)") : "transparent",
-                color: mode === "preview" ? (t.isDark ? "#4ade80" : "#2563eb") : t.textFaint,
+                background:
+                  mode === "preview"
+                    ? t.isDark
+                      ? "rgba(255,255,255,0.08)"
+                      : "rgba(0,0,0,0.06)"
+                    : "transparent",
+                color:
+                  mode === "preview"
+                    ? t.isDark
+                      ? "#4ade80"
+                      : "#2563eb"
+                    : t.textFaint,
                 border: "none",
                 borderRadius: 3,
                 padding: "2px 8px",
@@ -217,14 +242,17 @@ export default function TextEditor({ content: initialContent = "", title = "unti
                 transition: t.transition,
               }}
             >
-              {(content.split("\n").length > 0 ? content.split("\n") : [""]).map((_, i) => (
+              {(content.split("\n").length > 0
+                ? content.split("\n")
+                : [""]
+              ).map((_, i) => (
                 <div key={i}>{i + 1}</div>
               ))}
             </div>
             {/* Editor textarea */}
             <textarea
               value={content}
-              onChange={e => setContent(e.target.value)}
+              onChange={(e) => setContent(e.target.value)}
               style={{
                 flex: 1,
                 background: "transparent",

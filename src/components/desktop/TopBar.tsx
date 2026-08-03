@@ -32,7 +32,11 @@ const VolumeIcon = () => (
     strokeLinejoin="round"
     style={{ opacity: 0.8 }}
   >
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" fillOpacity="0.3" />
+    <polygon
+      points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"
+      fill="currentColor"
+      fillOpacity="0.3"
+    />
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
   </svg>
@@ -56,7 +60,13 @@ const BatteryIcon = () => (
   </svg>
 )
 
-const ThemeToggleIcon = ({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) => {
+const ThemeToggleIcon = ({
+  isDark,
+  onToggle,
+}: {
+  isDark: boolean
+  onToggle: () => void
+}) => {
   const t = useTheme()
   return (
     <div
@@ -70,8 +80,12 @@ const ThemeToggleIcon = ({ isDark, onToggle }: { isDark: boolean; onToggle: () =
         borderRadius: 4,
         transition: "background 0.2s",
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = t.isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)")}
-      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.background = t.isDark
+          ? "rgba(255,255,255,0.08)"
+          : "rgba(0,0,0,0.06)")
+      }
+      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       title="Toggle Theme"
     >
       {isDark ? (
@@ -147,7 +161,9 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
         height: 30,
         background: t.isDark ? "rgba(18,18,20,0.92)" : "rgba(240,240,243,0.92)",
         backdropFilter: "blur(12px)",
-        borderBottom: t.isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.08)",
+        borderBottom: t.isDark
+          ? "1px solid rgba(255,255,255,0.06)"
+          : "1px solid rgba(0,0,0,0.08)",
         display: "flex",
         alignItems: "center",
         zIndex: 9000,
@@ -158,24 +174,26 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
       {/* Left: HYK Typography — clean and minimal GNOME-style */}
       <div
         style={{
-          position:    "absolute",
-          left:        14,
-          display:     "flex",
-          alignItems:  "center",
-          cursor:      "default",
-          userSelect:  "none",
+          position: "absolute",
+          left: 14,
+          display: "flex",
+          alignItems: "center",
+          cursor: "default",
+          userSelect: "none",
         }}
       >
         <span
           style={{
-            color:         t.isDark ? "rgba(255, 255, 255, 0.95)" : "rgba(0, 0, 0, 0.95)",
-            fontSize:      "0.82rem",
-            fontWeight:    800,
-            fontFamily:    "'Inter', sans-serif",
+            color: t.isDark
+              ? "rgba(255, 255, 255, 0.95)"
+              : "rgba(0, 0, 0, 0.95)",
+            fontSize: "0.82rem",
+            fontWeight: 800,
+            fontFamily: "'Inter', sans-serif",
             letterSpacing: "0.22em",
-            userSelect:    "none",
-            cursor:        "default",
-            transition:    t.transition,
+            userSelect: "none",
+            cursor: "default",
+            transition: t.transition,
           }}
         >
           HYK
@@ -206,7 +224,15 @@ export default function TopBar({ isDark, onToggleTheme }: TopBarProps) {
         >
           {hh}:{mm}
         </span>
-        <span style={{ color: t.isDark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.16)", fontSize: "0.75rem", transition: t.transition }}>|</span>
+        <span
+          style={{
+            color: t.isDark ? "rgba(255,255,255,0.16)" : "rgba(0,0,0,0.16)",
+            fontSize: "0.75rem",
+            transition: t.transition,
+          }}
+        >
+          |
+        </span>
         <span
           style={{
             color: t.isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",

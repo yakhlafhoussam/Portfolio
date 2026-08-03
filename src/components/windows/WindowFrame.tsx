@@ -37,7 +37,12 @@ export default function WindowFrame({
   children,
 }: Props) {
   const t = useTheme()
-  const [drag, setDrag] = useState<{ sx: number; sy: number; ox: number; oy: number } | null>(null)
+  const [drag, setDrag] = useState<{
+    sx: number
+    sy: number
+    ox: number
+    oy: number
+  } | null>(null)
   const [hoverClose, setHoverClose] = useState(false)
   const [hoverMin, setHoverMin] = useState(false)
   const [hoverMax, setHoverMax] = useState(false)
@@ -60,7 +65,13 @@ export default function WindowFrame({
   const handleTitleUp = () => setDrag(null)
 
   const pos = maximized
-    ? { top: 30, left: 0, width: "100vw", height: "calc(100vh - 30px)", borderRadius: 0 }
+    ? {
+        top: 30,
+        left: 0,
+        width: "100vw",
+        height: "calc(100vh - 30px)",
+        borderRadius: 0,
+      }
     : { top: y, left: x, width, height, borderRadius: 10 }
 
   return (
@@ -70,14 +81,16 @@ export default function WindowFrame({
         position: "fixed",
         ...pos,
         zIndex,
-        background:   t.windowBg,
-        border:       `1px solid ${isFocused ? t.windowBorderFocused : t.windowBorder}`,
-        boxShadow:    isFocused ? t.windowShadowFocused : t.windowShadow,
-        display:      minimized ? "none" : "flex",
+        background: t.windowBg,
+        border: `1px solid ${
+          isFocused ? t.windowBorderFocused : t.windowBorder
+        }`,
+        boxShadow: isFocused ? t.windowShadowFocused : t.windowShadow,
+        display: minimized ? "none" : "flex",
         flexDirection: "column",
-        overflow:     "hidden",
-        animation:    "windowOpen 0.18s ease",
-        transition:   t.transition,
+        overflow: "hidden",
+        animation: "windowOpen 0.18s ease",
+        transition: t.transition,
       }}
     >
       {/* Title bar */}
@@ -87,31 +100,41 @@ export default function WindowFrame({
         onPointerUp={handleTitleUp}
         onDoubleClick={onMaximize}
         style={{
-          height:       38,
-          flexShrink:   0,
-          background:   isFocused ? t.titleBarBgFocused : t.titleBarBg,
+          height: 38,
+          flexShrink: 0,
+          background: isFocused ? t.titleBarBgFocused : t.titleBarBg,
           borderBottom: `1px solid ${t.border}`,
-          display:      "flex",
-          alignItems:   "center",
-          paddingLeft:  12,
+          display: "flex",
+          alignItems: "center",
+          paddingLeft: 12,
           paddingRight: 12,
-          cursor:       maximized ? "default" : drag ? "grabbing" : "grab",
-          userSelect:   "none",
-          transition:   t.transition,
+          cursor: maximized ? "default" : drag ? "grabbing" : "grab",
+          userSelect: "none",
+          transition: t.transition,
         }}
       >
         {/* Traffic lights */}
         <div style={{ display: "flex", gap: 7, zIndex: 1 }}>
           <button
-            onPointerDown={e => e.stopPropagation()}
-            onClick={e => { e.stopPropagation(); onClose() }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation()
+              onClose()
+            }}
             onMouseEnter={() => setHoverClose(true)}
             onMouseLeave={() => setHoverClose(false)}
             style={{
-              width: 13, height: 13, borderRadius: "50%",
-              background: "#ff5f57", border: "none", cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 8, color: "#7a0000",
+              width: 13,
+              height: 13,
+              borderRadius: "50%",
+              background: "#ff5f57",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 8,
+              color: "#7a0000",
               opacity: hoverClose ? 1 : 0.85,
               boxShadow: hoverClose ? "0 0 0 2px rgba(255,95,87,0.3)" : "none",
               transition: "box-shadow 0.12s, opacity 0.12s",
@@ -120,15 +143,25 @@ export default function WindowFrame({
             {hoverClose && "×"}
           </button>
           <button
-            onPointerDown={e => e.stopPropagation()}
-            onClick={e => { e.stopPropagation(); onMinimize() }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation()
+              onMinimize()
+            }}
             onMouseEnter={() => setHoverMin(true)}
             onMouseLeave={() => setHoverMin(false)}
             style={{
-              width: 13, height: 13, borderRadius: "50%",
-              background: "#ffbd2e", border: "none", cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 8, color: "#7a4800",
+              width: 13,
+              height: 13,
+              borderRadius: "50%",
+              background: "#ffbd2e",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 8,
+              color: "#7a4800",
               opacity: hoverMin ? 1 : 0.85,
               boxShadow: hoverMin ? "0 0 0 2px rgba(255,189,46,0.3)" : "none",
               transition: "box-shadow 0.12s, opacity 0.12s",
@@ -137,15 +170,25 @@ export default function WindowFrame({
             {hoverMin && "−"}
           </button>
           <button
-            onPointerDown={e => e.stopPropagation()}
-            onClick={e => { e.stopPropagation(); onMaximize() }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation()
+              onMaximize()
+            }}
             onMouseEnter={() => setHoverMax(true)}
             onMouseLeave={() => setHoverMax(false)}
             style={{
-              width: 13, height: 13, borderRadius: "50%",
-              background: "#28c840", border: "none", cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 8, color: "#005200",
+              width: 13,
+              height: 13,
+              borderRadius: "50%",
+              background: "#28c840",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 8,
+              color: "#005200",
               opacity: hoverMax ? 1 : 0.85,
               boxShadow: hoverMax ? "0 0 0 2px rgba(40,200,64,0.3)" : "none",
               transition: "box-shadow 0.12s, opacity 0.12s",
@@ -174,7 +217,14 @@ export default function WindowFrame({
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          flex: 1,
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {children}
       </div>
     </div>
