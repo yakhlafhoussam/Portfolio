@@ -12,9 +12,11 @@ type NewsFeedEntry = {
   readingTime: string
   cover: string
   miniImage: string
+  publishedAt?: string | null
+  source?: "local" | "hyk"
 }
 
-type ContentBlock = { type: "paragraph" | "heading", text: string }
+type ContentBlock = { type: "paragraph" | "heading"; text: string }
 
 type NewsArticle = NewsFeedEntry & {
   author: string
@@ -23,21 +25,56 @@ type NewsArticle = NewsFeedEntry & {
 
 type PageState = "home" | "news" | "article" | "404"
 
-async function fetchFeed(): Promise<NewsFeedEntry[]> {
-  const r = await fetch("/api/news/hyk")
-  if (!r.ok) throw new Error("feed")
-  const data = await r.json()
-  if (!Array.isArray(data)) {
-    console.error("[Browser] /api/news/hyk did not return an array:", data)
+// ─── Fetch helpers ────────────────────────────────────────────────────────────
+
+async function fetchLocalFeed(): Promise<NewsFeedEntry[]> {
+  try {
+    const r = await fetch("/content/news/feed.json")
+    if (!r.ok) return []
+    const data = await r.json()
+    if (!Array.isArray(data)) return []
+    return (data as NewsFeedEntry[]).map((e) => ({ ...e, source: "local" as const }))
+  } catch {
     return []
   }
-  return data
 }
 
-async function fetchArticle(id: string): Promise<NewsArticle> {
-  const r = await fetch(`/api/news/hyk/${id}`)
-  if (!r.ok) throw new Error("article")
-  return r.json()
+async function fetchHykFeed(): Promise<NewsFeedEntry[]> {
+  try {
+    const r = await fetch("/api/news/hyk")
+    if (!r.ok) return []
+    const data = await r.json()
+    if (!Array.isArray(data)) {
+      console.error("[Browser] /api/news/hyk did not return an array:", data)
+      return []
+    }
+    return (data as NewsFeedEntry[]).map((e) => ({ ...e, source: "hyk" as const }))
+  } catch {
+    return []
+  }
+}
+
+async function loadFeed(): Promise<NewsFeedEntry[]> {
+  const [local, hyk] = await Promise.all([fetchLocalFeed(), fetchHykFeed()])
+  const merged = [...local, ...hyk]
+  merged.sort((a, b) => {
+    const da = new Date(a.publishedAt ?? a.date).getTime()
+    const db = new Date(b.publishedAt ?? b.date).getTime()
+    return db - da
+  })
+  return merged
+}
+
+async function fetchArticle(entry: NewsFeedEntry): Promise<NewsArticle> {
+  if (entry.source === "hyk") {
+    const r = await fetch(`/api/news/hyk/${entry.id}`)
+    if (!r.ok) throw new Error("article")
+    return r.json()
+  } else {
+    const r = await fetch(`/content/news/${entry.id}/index.json`)
+    if (!r.ok) throw new Error("article")
+    return r.json()
+  }
 }
 
 // ─── Shortcuts ────────────────────────────────────────────────────────────────
@@ -572,7 +609,7 @@ export default function Browser() {
 
   useEffect(() => {
     setFeedLoading(true)
-    fetchFeed()
+    loadFeed()
       .then(setFeed)
       .catch(() => {})
       .finally(() => setFeedLoading(false))
@@ -605,7 +642,7 @@ export default function Browser() {
     setArticle(null)
     setArticleLoading(true)
     try {
-      setArticle(await fetchArticle(entry.id))
+      setArticle(await fetchArticle(entry))
     } catch {
       setPage("404")
     } finally {
