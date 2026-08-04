@@ -242,9 +242,10 @@ type TerminalProps = {
   cinematicActions?: CinematicAction[]  // New: cinematic story script (no parser)
   demoAppend?: boolean
   hostname?: string
+  storyId?: string
 }
 
-export default function Terminal({ autoCommands, demoLines, cinematicActions, demoAppend, hostname }: TerminalProps = {}) {
+export default function Terminal({ autoCommands, demoLines, cinematicActions, demoAppend, hostname, storyId }: TerminalProps = {}) {
   if (import.meta.env.DEV) {
     console.debug("[DEBUG] Terminal mount", { hostname, demoLines, cinematicActions, demoAppend })
   }
@@ -261,6 +262,7 @@ export default function Terminal({ autoCommands, demoLines, cinematicActions, de
   const inputRef = useRef<HTMLInputElement>(null)
   const autoRef = useRef({ started: false, commandIndex: 0, charIndex: 0, timeouts: [] as number[] })
   const cwdRef = useRef(cwd)
+  const storyCompleteRef = useRef(false)
   
   // Cinematic or demo mode: story-driven, no parser
   const cinematicMode = !!cinematicActions?.length
@@ -439,13 +441,22 @@ export default function Terminal({ autoCommands, demoLines, cinematicActions, de
       }
     }
 
-    run()
+    run().then(() => {
+      if (storyId && !storyCompleteRef.current) {
+        storyCompleteRef.current = true
+        window.dispatchEvent(
+          new CustomEvent("hyk-terminal-scene-finished", {
+            detail: { storyId },
+          }),
+        )
+      }
+    })
 
     return () => {
       localRef.timeouts.forEach((id) => window.clearTimeout(id))
       localRef.timeouts = []
     }
-  }, [cinematicActions, hostname])
+  }, [cinematicActions, hostname, storyId])
 
   // Legacy demo mode: backward compatibility with string-based demoLines
   // (This remains for backward compatibility if older demos use demoLines format)

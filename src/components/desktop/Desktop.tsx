@@ -572,6 +572,7 @@ export default function Desktop() {
             autoCommands={w.params?.autoCommands as string[] | undefined}
             demoLines={w.params?.demoLines as string[] | undefined}
             cinematicActions={w.params?.cinematicActions as any[] | undefined}
+            storyId={w.params?.storyId as string | undefined}
             demoAppend={w.params?.append as boolean | undefined}
             hostname={w.params?.hostname as string | undefined}
           />
