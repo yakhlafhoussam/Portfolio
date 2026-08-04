@@ -670,6 +670,13 @@ export default function Browser({
   const [articleLoading, setArticleLoading] = useState(false)
   const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+  const stageRef = useRef<HTMLDivElement | null>(null)
+  const browserWindowRef = useRef<HTMLDivElement | null>(null)
+  const glitchLayersRef = useRef<HTMLDivElement | null>(null)
+  const rgbLayersRef = useRef<HTMLDivElement | null>(null)
+  const noiseCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const scanlinesRef = useRef<HTMLDivElement | null>(null)
+  const screenFlashRef = useRef<HTMLDivElement | null>(null)
 
   const {
     showStarted,
@@ -711,6 +718,247 @@ export default function Browser({
     },
     [countdownActive, takeoverActive, currentArticle, forceStartShow],
   )
+
+  useEffect(() => {
+    const stage = stageRef.current
+    const windowEl = browserWindowRef.current
+    const glitchLayers = glitchLayersRef.current
+    const rgbLayers = rgbLayersRef.current
+    const noiseCanvas = noiseCanvasRef.current
+    const scanlines = scanlinesRef.current
+    const screenFlash = screenFlashRef.current
+    if (
+      !stage ||
+      !windowEl ||
+      !glitchLayers ||
+      !rgbLayers ||
+      !noiseCanvas ||
+      !scanlines ||
+      !screenFlash
+    ) {
+      return
+    }
+
+    const timers: number[] = []
+    let running = false
+    let intensity = 0.18
+
+    const rand = (min: number, max: number) => Math.random() * (max - min) + min
+    const randInt = (min: number, max: number) => Math.floor(rand(min, max + 1))
+    const chance = (p: number) => Math.random() < p
+    const pick = <T,>(arr: T[]) => arr[randInt(0, arr.length - 1)]
+    const schedule = (fn: () => void, delay: number) => {
+      const id = window.setTimeout(fn, delay)
+      timers.push(id)
+      return id
+    }
+
+    const clearTimers = () => {
+      timers.forEach((id) => window.clearTimeout(id))
+      timers.length = 0
+    }
+
+    const clearGlitchState = () => {
+      glitchLayers.innerHTML = ""
+      rgbLayers.innerHTML = ""
+      noiseCanvas.style.opacity = "0"
+      scanlines.style.opacity = "0"
+      screenFlash.style.opacity = "0"
+      windowEl.style.filter = "none"
+      stage.style.transform = ""
+      stage.style.transition = ""
+    }
+
+    const sizeNoiseCanvas = () => {
+      const scale = 0.35
+      noiseCanvas.width = Math.max(64, Math.floor(window.innerWidth * scale))
+      noiseCanvas.height = Math.max(64, Math.floor(window.innerHeight * scale))
+    }
+
+    const sliceGlitch = () => {
+      const sliceCount = randInt(2, 5)
+      for (let i = 0; i < sliceCount; i++) {
+        const clone = windowEl.cloneNode(true) as HTMLElement
+        clone.classList.add("glitch-clone")
+        clone.removeAttribute("id")
+
+        const bandTop = rand(0, 92)
+        const bandHeight = rand(2, 16)
+        const bandBottom = Math.max(0, 100 - bandTop - bandHeight)
+        clone.style.clipPath = `inset(${bandTop}% 0 ${bandBottom}% 0)`
+
+        const dir = chance(0.5) ? 1 : -1
+        const dist = rand(6, 46) * dir
+        const skew = rand(-3, 3)
+        clone.style.transform = `translateX(${dist}px) skewX(${skew}deg)`
+        if (chance(0.35)) {
+          clone.style.filter = `hue-rotate(${randInt(-70, 70)}deg) saturate(${rand(1.4, 3)}) contrast(${rand(1, 1.6)})`
+        }
+        clone.style.opacity = String(rand(0.75, 1))
+
+        glitchLayers.appendChild(clone)
+        schedule(() => clone.remove(), rand(50, 160) * 10)
+      }
+    }
+
+    const rgbSplit = () => {
+      rgbLayers.innerHTML = ""
+      const offset = rand(3, 16)
+      const channels = [
+        { id: "red-channel", dx: -offset, dy: rand(-3, 3) },
+        { id: "green-channel", dx: rand(-2, 2), dy: rand(-2, 2) },
+        { id: "blue-channel", dx: offset, dy: rand(-3, 3) },
+      ]
+
+      channels.forEach((ch) => {
+        const clone = windowEl.cloneNode(true) as HTMLElement
+        clone.classList.add("glitch-clone", "channel-clone")
+        clone.removeAttribute("id")
+        clone.style.filter = `url(#${ch.id})`
+        clone.style.mixBlendMode = "screen"
+        clone.style.transform = `translate(${ch.dx}px, ${ch.dy}px)`
+        rgbLayers.appendChild(clone)
+      })
+
+      rgbLayers.style.opacity = "1"
+      schedule(() => {
+        rgbLayers.style.opacity = "0"
+        schedule(() => {
+          rgbLayers.innerHTML = ""
+          rgbLayers.style.opacity = "0"
+        }, 120)
+      }, 150)
+    }
+
+    const windowJolt = () => {
+      const jx = rand(-16, 16)
+      const jy = rand(-10, 10)
+      const sx = rand(0.9, 1.14)
+      const sy = rand(0.88, 1.12)
+      const skx = rand(-7, 7)
+      const sky = rand(-2, 2)
+
+      stage.style.transition = "transform 0.09s ease-out"
+      stage.style.transform = `translate(${jx}px, ${jy}px) scale(${sx}, ${sy}) skewX(${skx}deg) skewY(${sky}deg)`
+      schedule(() => {
+        stage.style.transition = "transform 0.14s cubic-bezier(0.5, 1.5, 0.5, 1)"
+        stage.style.transform = "translate(0, 0) scale(1, 1) skewX(0deg) skewY(0deg)"
+      }, rand(90, 120))
+    }
+
+    const cornerStretch = () => {
+      const origins = ["top left", "top right", "bottom left", "bottom right"]
+      const origin = pick(origins)
+      stage.style.transformOrigin = origin
+      stage.style.transition = "transform 0.12s ease-out"
+      stage.style.transform = `scaleX(${rand(1.04, 1.32)}) scaleY(${rand(0.82, 1.05)})`
+      schedule(() => {
+        stage.style.transition = "transform 0.16s ease-out"
+        stage.style.transform = "scale(1, 1)"
+        schedule(() => {
+          stage.style.transformOrigin = "center center"
+        }, 180)
+      }, rand(50, 130))
+    }
+
+    const displaceWarp = () => {
+      const turb = stage.querySelector<SVGElement>("#turbNoise")
+      const filterEl = stage.querySelector<SVGElement>("#corrupt-displace feDisplacementMap")
+      if (!turb || !filterEl) return
+
+      windowEl.style.filter = "url(#corrupt-displace)"
+      const scale = randInt(12, 55)
+      turb.setAttribute("seed", String(randInt(1, 999)))
+      filterEl.setAttribute("scale", String(scale))
+      schedule(() => {
+        filterEl.setAttribute("scale", "0")
+        windowEl.style.filter = "none"
+      }, 180)
+    }
+
+    const screenFlashFn = (black: boolean) => {
+      screenFlash.style.background = black ? "#000" : "#fff"
+      screenFlash.style.transition = "opacity 0.08s ease-in"
+      screenFlash.style.opacity = black ? String(rand(0.7, 1)) : String(rand(0.18, 0.55))
+      schedule(() => {
+        screenFlash.style.opacity = "0"
+      }, rand(30, 90))
+    }
+
+    const noiseBurst = () => {
+      const w = noiseCanvas.width
+      const h = noiseCanvas.height
+      const imgData = noiseCanvas.getContext("2d")?.createImageData(w, h)
+      if (!imgData) return
+      const data = imgData.data
+      for (let i = 0; i < data.length; i += 4) {
+        const v = Math.random() * 255
+        data[i] = v
+        data[i + 1] = v
+        data[i + 2] = v
+        data[i + 3] = Math.random() * 90
+      }
+      noiseCanvas.getContext("2d")?.putImageData(imgData, 0, 0)
+      noiseCanvas.style.transition = "opacity 0.2s ease-in"
+      noiseCanvas.style.opacity = String(rand(0.18, 0.55))
+      schedule(() => {
+        noiseCanvas.style.opacity = "0"
+      }, rand(70, 220))
+    }
+
+    const scanlineRoll = () => {
+      scanlines.style.transition = "background-position 0.35s linear, opacity 0.4s ease"
+      scanlines.style.backgroundPositionY = `${rand(220, 640)}px`
+      scanlines.style.opacity = String(rand(0.35, 0.7))
+      schedule(() => {
+        scanlines.style.opacity = "0.12"
+      }, rand(180, 400))
+    }
+
+    const updateIntensity = () => {
+      intensity += rand(-0.16, 0.22)
+      intensity = Math.min(1, Math.max(0.08, intensity))
+    }
+
+    const glitchTick = () => {
+      if (!running) return
+      updateIntensity()
+
+      if (chance(0.55 + intensity * 0.3)) sliceGlitch()
+      if (chance(0.28 + intensity * 0.3)) rgbSplit()
+      if (chance(0.3 + intensity * 0.32)) windowJolt()
+      if (chance(0.07 + intensity * 0.16)) cornerStretch()
+      if (chance(0.1 + intensity * 0.18)) displaceWarp()
+      if (chance(0.16 + intensity * 0.22)) noiseBurst()
+      if (chance(0.12 + intensity * 0.18)) scanlineRoll()
+      if (chance(0.035 + intensity * 0.08)) screenFlashFn(chance(0.5))
+
+      const calm = chance(0.12)
+      const base = calm ? rand(500, 1400) : rand(45, 420)
+      const next = base / (0.5 + intensity)
+      schedule(glitchTick, next)
+    }
+
+    const startCorruption = () => {
+      running = true
+      sizeNoiseCanvas()
+      glitchTick()
+    }
+
+    if (takeoverActive) {
+      startCorruption()
+    }
+
+    const handleResize = () => sizeNoiseCanvas()
+    window.addEventListener("resize", handleResize)
+
+    return () => {
+      running = false
+      clearTimers()
+      clearGlitchState()
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [takeoverActive])
 
   const goHome = useCallback(() => {
     guardNavigation(() => {
@@ -783,27 +1031,39 @@ export default function Browser({
 
   return (
     <div
-      className={takeoverActive ? "browser browser--takeover" : "browser"}
+      ref={stageRef}
+      className="browser"
       style={{
         position: "relative",
         flex: 1,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
-        background: t.bg,
-        transition: t.transition,
       }}
     >
-      <NavBar
-        page={page}
-        onBack={goBack}
-        onHome={goHome}
-        urlBar={urlBar}
-        t={t}
-      />
+      <div
+        ref={browserWindowRef}
+        id="browserWindow"
+        className="browser-window"
+        style={{
+          position: "relative",
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          background: t.bg,
+          transition: t.transition,
+        }}
+      >
+        <NavBar
+          page={page}
+          onBack={goBack}
+          onHome={goHome}
+          urlBar={urlBar}
+          t={t}
+        />
 
-
-      <div style={{ flex: 1, overflowY: "auto" }}>
+        <div style={{ flex: 1, overflowY: "auto" }}>
         {/* ── HOME ── */}
         {page === "home" && (
           <div
@@ -1346,6 +1606,42 @@ export default function Browser({
           </div>
         )}
       </div>
+      </div>
+      <div ref={glitchLayersRef} className="glitch-layers" />
+      <div ref={rgbLayersRef} className="rgb-layers" />
+      <canvas ref={noiseCanvasRef} className="noise-canvas" />
+      <div ref={scanlinesRef} className="scanlines" />
+      <div ref={screenFlashRef} className="screen-flash" />
+      <svg className="svg-defs" width="0" height="0" aria-hidden="true">
+        <defs>
+          <filter id="red-channel" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" />
+          </filter>
+          <filter id="green-channel" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0" />
+          </filter>
+          <filter id="blue-channel" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0" />
+          </filter>
+          <filter id="corrupt-displace" x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence
+              id="turbNoise"
+              type="fractalNoise"
+              baseFrequency="0.01 0.09"
+              numOctaves="2"
+              seed="7"
+              result="noise"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="noise"
+              scale="0"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
     </div>
   )
 }

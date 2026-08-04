@@ -92,7 +92,6 @@ export default function Desktop() {
   const [logoFlash, setLogoFlash] = useState(false)
   const [breachMessage, setBreachMessage] = useState(false)
   const [screenBlack, setScreenBlack] = useState(false)
-  const [gpuDistortion, setGpuDistortion] = useState(false)
   const [desktopInstable, setDesktopInstable] = useState(false)
   const [browserTransform, setBrowserTransform] = useState<{
     width: number
@@ -355,13 +354,6 @@ export default function Desktop() {
           break
         case "close-terminal":
           // Persist terminals for the investigation board — do not destroy them
-          break
-        case "gpu-distortion":
-
-          setGpuDistortion(true)
-          breachTimers.current.push(
-            window.setTimeout(() => setGpuDistortion(false), 1500),
-          )
           break
         case "browser-resize":
           // Resize browser window to 70% of normal size
@@ -657,18 +649,6 @@ export default function Desktop() {
               inset: 0,
               background: "rgba(255,255,255,0.8)",
               zIndex: 99,
-              pointerEvents: "none",
-            }}
-          />
-        )}
-        {gpuDistortion && (
-          <div
-            className="hyk-gpu-distortion"
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(100, 100, 200, 0.02)",
-              zIndex: 98,
               pointerEvents: "none",
             }}
           />

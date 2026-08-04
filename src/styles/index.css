@@ -38,37 +38,85 @@ body {
 }
 
 .browser--takeover {
-  animation: browserShake 0.08s ease-in-out infinite alternate;
 }
 
-.browser-takeover-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.03);
-  mix-blend-mode: screen;
+.browser-window {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-.browser-takeover-overlay::before,
-.browser-takeover-overlay::after {
-  content: "";
+.svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.glitch-layers,
+.rgb-layers {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 3;
 }
 
-.browser-takeover-overlay::before {
-  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 20%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0) 100%);
-  opacity: 0.22;
-  animation: glitchFlicker 0.18s infinite;
+.glitch-clone {
+  position: absolute;
+  inset: 0;
+  will-change: transform, clip-path, filter;
 }
 
-.browser-takeover-overlay::after {
-  background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18), transparent 25%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.12), transparent 20%);
-  opacity: 0.18;
-  animation: glitchPulse 0.7s ease-in-out infinite;
+.glitch-clone .titlebar-spacer {
+  width: 24px;
+}
+
+.rgb-layers {
+  opacity: 0;
+  z-index: 4;
+}
+
+.channel-clone {
+  position: absolute;
+  inset: 0;
+}
+
+.noise-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0.12;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0px,
+    rgba(0, 0, 0, 0.55) 1px,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0) 3px
+  );
+  mix-blend-mode: multiply;
+}
+
+.screen-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 0;
+  background: #fff;
 }
 
 @keyframes browserShake {
