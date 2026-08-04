@@ -90,7 +90,8 @@ export default function Desktop() {
   const [iconsFlicker, setIconsFlicker] = useState(false)
   const [flashScreen, setFlashScreen] = useState(false)
   const [logoFlash, setLogoFlash] = useState(false)
-  const [breachMessage, setBreachMessage] = useState(false)
+  const [popup, setPopup] = useState<{ title: string; body: string[] } | null>(null)
+  const popupTimerRef = useRef<number | null>(null)
   const [screenBlack, setScreenBlack] = useState(false)
   const [desktopInstable, setDesktopInstable] = useState(false)
   const [browserTransform, setBrowserTransform] = useState<{
@@ -447,12 +448,6 @@ export default function Desktop() {
             window.setTimeout(() => setLogoFlash(false), 220),
           )
           break
-        case "breach-message":
-          setBreachMessage(true)
-          breachTimers.current.push(
-            window.setTimeout(() => setBreachMessage(false), 900),
-          )
-          break
         case "screen-black":
           setScreenBlack(true)
           break
@@ -468,10 +463,14 @@ export default function Desktop() {
 
     const handleDemoPopup = (event: Event) => {
       const d = (event as CustomEvent).detail as { title: string; body: string[]; duration?: number }
-      setBreachMessage(true)
-      breachTimers.current.push(
-        window.setTimeout(() => setBreachMessage(false), d.duration ?? 1800),
-      )
+      if (popupTimerRef.current) {
+        window.clearTimeout(popupTimerRef.current)
+      }
+      setPopup({ title: d.title, body: d.body })
+      popupTimerRef.current = window.setTimeout(() => {
+        setPopup(null)
+        popupTimerRef.current = null
+      }, d.duration ?? 1800)
     }
 
     window.addEventListener("hyk-breach-countdown", handleCountdown)
@@ -654,33 +653,60 @@ export default function Desktop() {
             }}
           />
         )}
-        {breachMessage && (
+        {popup && (
           <div
             style={{
-              position: "absolute",
+              position: "fixed",
               inset: 0,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "rgba(0,0,0,0.74)",
-              zIndex: 99,
+              zIndex: 100000,
               pointerEvents: "none",
             }}
           >
             <div
               style={{
-                color: "#f87171",
-                fontSize: "2rem",
-                fontWeight: 800,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                padding: "12px 18px",
-                border: "1px solid rgba(248,113,113,0.18)",
-                borderRadius: 14,
-                background: "rgba(0,0,0,0.45)",
+                background: "rgba(15,15,15,0.96)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: 18,
+                boxShadow: "0 30px 80px rgba(0,0,0,0.45)",
+                padding: "24px 28px",
+                maxWidth: 420,
+                width: "min(100%, 420px)",
+                color: "#f8fafc",
+                fontFamily: "'Inter', sans-serif",
+                pointerEvents: "none",
               }}
             >
-              SYSTEM BREACH
+              <div
+                style={{
+                  fontSize: "1rem",
+                  fontWeight: 700,
+                  marginBottom: 14,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  color: "#f8fafc",
+                }}
+              >
+                {popup.title}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {popup.body.map((line, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      color: "#e2e8f0",
+                      fontSize: "0.95rem",
+                      lineHeight: 1.6,
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
+                    {line}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
