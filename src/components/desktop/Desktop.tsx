@@ -1,37 +1,46 @@
-import { useRef, useState, useCallback, useEffect } from "react"
-import TopBar from "./TopBar"
-import DesktopIcon, { IconType } from "./DesktopIcon"
-import WindowFrame from "../windows/WindowFrame"
-import Terminal from "../../apps/Terminal"
-import FileExplorer from "../../apps/FileExplorer"
-import Browser from "../../apps/Browser"
-import Profile from "../../apps/Profile"
-import Resume from "../../apps/Resume"
-import Gallery from "../../apps/Gallery"
-import TextEditor from "../../apps/TextEditor"
-import Trash from "../../apps/Trash"
-import Dock from "./Dock"
-import { ThemeContext, getTheme } from "../../context/ThemeContext"
-import { storageManager } from "../../lib/storage"
-import { initVisitor } from "../../services/visitor"
-import lightWallpaper from "@/assets/wallpapers/light.png"
-import darkWallpaper from "@/assets/wallpapers/dark.png"
+import { Fragment, useRef, useState, useCallback, useEffect } from "react";
+import TopBar from "./TopBar";
+import DesktopIcon, { IconType } from "./DesktopIcon";
+import WindowFrame from "../windows/WindowFrame";
+import Terminal from "../../apps/Terminal";
+import FileExplorer from "../../apps/FileExplorer";
+import Browser from "../../apps/Browser";
+import Profile from "../../apps/Profile";
+import Resume from "../../apps/Resume";
+import Gallery from "../../apps/Gallery";
+import TextEditor from "../../apps/TextEditor";
+import Trash from "../../apps/Trash";
+import { ThemeContext, getTheme } from "../../context/ThemeContext";
+import { storageManager } from "../../lib/storage";
+import { initVisitor } from "../../services/visitor";
+import lightWallpaper from "@/assets/wallpapers/light.png";
+import darkWallpaper from "@/assets/wallpapers/dark.png";
 
-export type AppId = "projects" | "experience" | "education" | "gallery" | "resume" | "browser" | "terminal" | "profile" | "recycle" | "editor"
+export type AppId =
+  | "projects"
+  | "experience"
+  | "education"
+  | "gallery"
+  | "resume"
+  | "browser"
+  | "terminal"
+  | "profile"
+  | "recycle"
+  | "editor";
 
 type WindowState = {
-  id: string
-  appId: AppId
-  title: string
-  x: number
-  y: number
-  width: number
-  height: number
-  minimized: boolean
-  maximized: boolean
-  zIndex: number
-  params?: Record<string, unknown>
-}
+  id: string;
+  appId: AppId;
+  title: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  minimized: boolean;
+  maximized: boolean;
+  zIndex: number;
+  params?: Record<string, unknown>;
+};
 
 const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
   projects: { width: 840, height: 550 },
@@ -44,7 +53,7 @@ const DEFAULT_SIZES: Record<AppId, { width: number; height: number }> = {
   profile: { width: 800, height: 580 },
   recycle: { width: 520, height: 400 },
   editor: { width: 740, height: 520 },
-}
+};
 
 const TITLES: Record<AppId, string> = {
   projects: "Projects — File Explorer",
@@ -57,103 +66,111 @@ const TITLES: Record<AppId, string> = {
   profile: "Profile & Settings",
   recycle: "Trash",
   editor: "Text Editor",
-}
+};
 
-let idCounter = 0
+let idCounter = 0;
 
 type SpawnWindowOptions = {
-  position?: "center" | "cascade"
-  force?: boolean
-}
+  position?: "center" | "cascade";
+  force?: boolean;
+};
 
 export default function Desktop() {
   // Initialize storage state and register visitor on first visit
   useEffect(() => {
-    storageManager.initialize()
-    initVisitor()
-  }, [])
+    storageManager.initialize();
+    initVisitor();
+  }, []);
 
   const [isDark, setIsDark] = useState(() => {
-    storageManager.initialize()
-    return storageManager.read().theme === "dark"
-  })
-  const [icons, setIcons] = useState<{
-    id: AppId
-    label: string
-    type: IconType
-  }[]>([])
-  const [windows, setWindows] = useState<WindowState[]>([])
-  const [activeWindowId, setActiveWindowId] = useState<string | null>(null)
-  const [selectedIconId, setSelectedIconId] = useState<string | null>(null)
-  const [blockDesktopInput, setBlockDesktopInput] = useState(false)
-  const [wallpaperGlitch, setWallpaperGlitch] = useState(false)
-  const [iconsFlicker, setIconsFlicker] = useState(false)
-  const [flashScreen, setFlashScreen] = useState(false)
-  const [logoFlash, setLogoFlash] = useState(false)
-  const [popup, setPopup] = useState<{ title: string; body: string[] } | null>(null)
-  const popupTimerRef = useRef<number | null>(null)
-  const [screenBlack, setScreenBlack] = useState(false)
-  const [desktopInstable, setDesktopInstable] = useState(false)
+    storageManager.initialize();
+    return storageManager.read().theme === "dark";
+  });
+  const [icons, setIcons] = useState<
+    {
+      id: AppId;
+      label: string;
+      type: IconType;
+    }[]
+  >([]);
+  const [windows, setWindows] = useState<WindowState[]>([]);
+  const [activeWindowId, setActiveWindowId] = useState<string | null>(null);
+  const [selectedIconId, setSelectedIconId] = useState<string | null>(null);
+  const [blockDesktopInput, setBlockDesktopInput] = useState(false);
+  const [wallpaperGlitch, setWallpaperGlitch] = useState(false);
+  const [iconsFlicker, setIconsFlicker] = useState(false);
+  const [flashScreen, setFlashScreen] = useState(false);
+  const [logoFlash, setLogoFlash] = useState(false);
+  const [popup, setPopup] = useState<{ title: string; body: string[] } | null>(
+    null,
+  );
+  const popupTimerRef = useRef<number | null>(null);
+  const [screenBlack, setScreenBlack] = useState(false);
+  const [desktopInstable, setDesktopInstable] = useState(false);
   const [browserTransform, setBrowserTransform] = useState<{
-    width: number
-    height: number
-    x: number
-    y: number
-    scale: number
-  } | null>(null)
-  const [focusedWindow, setFocusedWindow] = useState<"browser" | "terminal" | null>(null)
-  const zRef = useRef(100)
-  const breachTimers = useRef<number[]>([])
-  const windowsRef = useRef<WindowState[]>([])
-  const browserCloseRequestRef = useRef<() => boolean>(() => true)
+    width: number;
+    height: number;
+    x: number;
+    y: number;
+    scale: number;
+  } | null>(null);
+  const [focusedWindow, setFocusedWindow] = useState<
+    "browser" | "terminal" | null
+  >(null);
+  const zRef = useRef(100);
+  const breachTimers = useRef<number[]>([]);
+  const windowsRef = useRef<WindowState[]>([]);
+  const browserCloseRequestRef = useRef<() => boolean>(() => true);
 
   // Keep windowsRef in sync with windows state (for ref access in callbacks)
   useEffect(() => {
-    windowsRef.current = windows
-  }, [windows])
+    windowsRef.current = windows;
+  }, [windows]);
 
   useEffect(() => {
     fetch("/content/desktop.json")
       .then((res) => res.json())
       .then((data) => setIcons(data))
-      .catch((err) => console.error("Failed to load desktop icons:", err))
-  }, [])
+      .catch((err) => console.error("Failed to load desktop icons:", err));
+  }, []);
 
   useEffect(() => {
     if (isDark) {
-      document.documentElement.classList.add("dark")
-      document.documentElement.classList.remove("light")
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
       document.documentElement.style.setProperty(
         "--scrollbar-thumb",
         "rgba(255,255,255,0.12)",
-      )
+      );
       document.documentElement.style.setProperty(
         "--scrollbar-thumb-hover",
         "rgba(255,255,255,0.22)",
-      )
+      );
     } else {
-      document.documentElement.classList.add("light")
-      document.documentElement.classList.remove("dark")
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
       document.documentElement.style.setProperty(
         "--scrollbar-thumb",
         "rgba(0,0,0,0.15)",
-      )
+      );
       document.documentElement.style.setProperty(
         "--scrollbar-thumb-hover",
         "rgba(0,0,0,0.25)",
-      )
+      );
     }
-  }, [isDark])
+  }, [isDark]);
 
   const bringToFront = useCallback(
     (id: string, options?: { force?: boolean }) => {
-      if (blockDesktopInput && !options?.force) return
-      const z = ++zRef.current
-      setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, zIndex: z } : w)))
-      setActiveWindowId(id)
+      if (blockDesktopInput && !options?.force) return;
+      const z = ++zRef.current;
+      setWindows((ws) =>
+        ws.map((w) => (w.id === id ? { ...w, zIndex: z } : w)),
+      );
+      setActiveWindowId(id);
     },
     [blockDesktopInput],
-  )
+  );
 
   // spawnWindow: Always creates a new independent instance, never checks for existing windows
   const spawnWindow = useCallback(
@@ -163,36 +180,44 @@ export default function Desktop() {
       options?: SpawnWindowOptions,
     ) => {
       if (blockDesktopInput && !options?.force) {
-        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
-        return { id: "" }
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
+        return { id: "" };
       }
 
-      const size = DEFAULT_SIZES[appId]
-      const id = `win-${++idCounter}`
-      const z = ++zRef.current
-      const vw = window.innerWidth
-      const vh = window.innerHeight
+      const size = DEFAULT_SIZES[appId];
+      const id = `win-${++idCounter}`;
+      const z = ++zRef.current;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
 
-      let cx = Math.max(90, (vw - size.width) / 2)
-      let cy = Math.max(40, (vh - size.height) / 2)
+      let cx = Math.max(90, (vw - size.width) / 2);
+      let cy = Math.max(40, (vh - size.height) / 2);
 
       // Calculate position based on strategy
       if (options?.position === "cascade") {
         // Find the last opened window of the same type and cascade from it
         const lastSameType = windowsRef.current
           .filter((w) => w.appId === appId)
-          .pop()
+          .pop();
         if (lastSameType) {
-          const dx = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.floor(Math.random() * 31))
-          const dy = 15 + Math.floor(Math.random() * 21)
-          cx = Math.max(10, Math.min(vw - size.width - 20, lastSameType.x + dx))
-          cy = Math.max(40, Math.min(vh - size.height - 90, lastSameType.y + dy))
+          const dx =
+            (Math.random() > 0.5 ? 1 : -1) *
+            (20 + Math.floor(Math.random() * 31));
+          const dy = 15 + Math.floor(Math.random() * 21);
+          cx = Math.max(
+            10,
+            Math.min(vw - size.width - 20, lastSameType.x + dx),
+          );
+          cy = Math.max(
+            40,
+            Math.min(vh - size.height - 90, lastSameType.y + dy),
+          );
         }
       } else {
         // Default scatter offset based on window count
-        const offset = (idCounter % 5) * 28
-        cx = Math.max(90, (vw - size.width) / 2 + offset)
-        cy = Math.max(40, (vh - size.height) / 2 + offset)
+        const offset = (idCounter % 5) * 28;
+        cx = Math.max(90, (vw - size.width) / 2 + offset);
+        cy = Math.max(40, (vh - size.height) / 2 + offset);
       }
 
       const newWindow: WindowState = {
@@ -207,20 +232,28 @@ export default function Desktop() {
         maximized: false,
         zIndex: z,
         params,
-      }
+      };
 
       if (import.meta.env.DEV) {
-        console.debug("[DEBUG] spawnWindow", { id, appId, title: newWindow.title, x: cx, y: cy, z, params })
+        console.debug("[DEBUG] spawnWindow", {
+          id,
+          appId,
+          title: newWindow.title,
+          x: cx,
+          y: cy,
+          z,
+          params,
+        });
       }
 
-      setWindows((ws) => [...ws, newWindow])
-      setActiveWindowId(id)
-      return { id }
+      setWindows((ws) => [...ws, newWindow]);
+      setActiveWindowId(id);
+      return { id };
     },
     [blockDesktopInput],
-  )
+  );
 
-  const debugSpawnedRef = useRef(false)
+  const debugSpawnedRef = useRef(false);
 
   useEffect(() => {
     if (
@@ -228,14 +261,14 @@ export default function Desktop() {
       window.location.search.includes("spawn-debug") &&
       !debugSpawnedRef.current
     ) {
-      debugSpawnedRef.current = true
+      debugSpawnedRef.current = true;
       const titles = [
         "Terminal #1",
         "Terminal #2",
         "Terminal #3",
         "Terminal #4",
         "Terminal #5",
-      ]
+      ];
       titles.forEach((title, index) => {
         window.setTimeout(() => {
           spawnWindow(
@@ -245,11 +278,11 @@ export default function Desktop() {
               hostname: `debug-${index + 1}`,
             },
             { position: "cascade", force: true },
-          )
-        }, index * 150)
-      })
+          );
+        }, index * 150);
+      });
     }
-  }, [spawnWindow])
+  }, [spawnWindow]);
 
   const openWindow = useCallback(
     (
@@ -258,67 +291,67 @@ export default function Desktop() {
       options?: { force?: boolean },
     ) => {
       if (blockDesktopInput && !options?.force) {
-        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
-        return
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
+        return;
       }
 
       // If opening an editor, focus existing instance for same file
       if (appId === "editor" && params) {
         const existing = windows.find(
           (w) => w.appId === "editor" && w.params?.title === params.title,
-        )
+        );
         if (existing) {
           if (existing.minimized) {
             setWindows((ws) =>
               ws.map((w) =>
                 w.id === existing.id ? { ...w, minimized: false } : w,
               ),
-            )
+            );
           }
-          bringToFront(existing.id)
-          return
+          bringToFront(existing.id);
+          return;
         }
       }
 
       // If opening gallery with a specific image and gallery is already open
       if (appId === "gallery" && params) {
-        const existing = windows.find((w) => w.appId === "gallery")
+        const existing = windows.find((w) => w.appId === "gallery");
         if (existing) {
           setWindows((ws) =>
             ws.map((w) =>
               w.id === existing.id ? { ...w, minimized: false, params } : w,
             ),
-          )
-          bringToFront(existing.id)
-          return
+          );
+          bringToFront(existing.id);
+          return;
         }
       }
 
       // For all other apps (except editor): focus existing instance if any
       if (appId !== "editor") {
-        const existing = windows.find((w) => w.appId === appId)
+        const existing = windows.find((w) => w.appId === appId);
         if (existing) {
           if (existing.minimized) {
             setWindows((ws) =>
               ws.map((w) =>
                 w.id === existing.id ? { ...w, minimized: false } : w,
               ),
-            )
+            );
           }
-          bringToFront(existing.id)
-          return
+          bringToFront(existing.id);
+          return;
         }
       }
 
       // Create new window instance with default centered positioning
-      const size = DEFAULT_SIZES[appId]
-      const id = `win-${++idCounter}`
-      const z = ++zRef.current
-      const vw = window.innerWidth
-      const vh = window.innerHeight
-      const offset = (idCounter % 5) * 28
-      const cx = Math.max(90, (vw - size.width) / 2 + offset)
-      const cy = Math.max(40, (vh - size.height) / 2 + offset)
+      const size = DEFAULT_SIZES[appId];
+      const id = `win-${++idCounter}`;
+      const z = ++zRef.current;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const offset = (idCounter % 5) * 28;
+      const cx = Math.max(90, (vw - size.width) / 2 + offset);
+      const cy = Math.max(40, (vh - size.height) / 2 + offset);
 
       setWindows((ws) => [
         ...ws,
@@ -335,27 +368,27 @@ export default function Desktop() {
           zIndex: z,
           params,
         },
-      ])
-      setActiveWindowId(id)
+      ]);
+      setActiveWindowId(id);
     },
     [windows, bringToFront, blockDesktopInput],
-  )
+  );
 
   useEffect(() => {
     const handleCountdown = (event: Event) => {
-      const detail = (event as CustomEvent).detail as { active: boolean }
-      setBlockDesktopInput(detail.active)
-    }
+      const detail = (event as CustomEvent).detail as { active: boolean };
+      setBlockDesktopInput(detail.active);
+    };
 
     const handlePhase = (event: Event) => {
-      const phase = (event as CustomEvent).detail.phase as string
+      const phase = (event as CustomEvent).detail.phase as string;
       switch (phase) {
         case "freeze":
-          setBlockDesktopInput(true)
-          break
+          setBlockDesktopInput(true);
+          break;
         case "close-terminal":
           // Persist terminals for the investigation board — do not destroy them
-          break
+          break;
         case "browser-resize":
           // Resize browser window to 70% of normal size
           setWindows((ws) =>
@@ -367,18 +400,18 @@ export default function Desktop() {
                   height: w.height * 0.7,
                   x: w.x + w.width * 0.15,
                   y: w.y + w.height * 0.15,
-                }
+                };
               }
-              return w
+              return w;
             }),
-          )
-          break
+          );
+          break;
         case "desktop-instability":
-          setDesktopInstable(true)
+          setDesktopInstable(true);
           breachTimers.current.push(
             window.setTimeout(() => setDesktopInstable(false), 1000),
-          )
-          break
+          );
+          break;
         case "browser-move":
           // Move browser window chaotically
           setWindows((ws) =>
@@ -388,183 +421,194 @@ export default function Desktop() {
                   ...w,
                   x: w.x + (Math.random() > 0.5 ? 24 : -24),
                   y: w.y + (Math.random() > 0.5 ? 16 : -16),
-                }
+                };
               }
-              return w
+              return w;
             }),
-          )
-          break
+          );
+          break;
         case "focus-terminal":
           // Switch focus from browser to terminal
           setWindows((ws) =>
             ws.map((w) => {
-              if (w.appId === "terminal" && !windows.find(x => x.appId === "terminal")) {
-                return w
+              if (
+                w.appId === "terminal" &&
+                !windows.find((x) => x.appId === "terminal")
+              ) {
+                return w;
               }
-              return w
+              return w;
             }),
-          )
-          const terminalWindow = windows.find((w) => w.appId === "terminal")
+          );
+          const terminalWindow = windows.find((w) => w.appId === "terminal");
           if (terminalWindow) {
-            bringToFront(terminalWindow.id, { force: true })
-            setFocusedWindow("terminal")
+            bringToFront(terminalWindow.id, { force: true });
+            setFocusedWindow("terminal");
           }
           breachTimers.current.push(
             window.setTimeout(() => setFocusedWindow(null), 300),
-          )
-          break
+          );
+          break;
         case "focus-browser":
           // Switch focus back to browser
-          const browserWindow = windows.find((w) => w.appId === "browser")
+          const browserWindow = windows.find((w) => w.appId === "browser");
           if (browserWindow) {
-            bringToFront(browserWindow.id, { force: true })
-            setFocusedWindow("browser")
+            bringToFront(browserWindow.id, { force: true });
+            setFocusedWindow("browser");
           }
           breachTimers.current.push(
             window.setTimeout(() => setFocusedWindow(null), 300),
-          )
-          break
+          );
+          break;
         case "wallpaper-glitch":
-          setWallpaperGlitch(true)
+          setWallpaperGlitch(true);
           breachTimers.current.push(
             window.setTimeout(() => setWallpaperGlitch(false), 600),
-          )
-          break
+          );
+          break;
         case "icon-flicker":
-          setIconsFlicker(true)
+          setIconsFlicker(true);
           breachTimers.current.push(
             window.setTimeout(() => setIconsFlicker(false), 600),
-          )
-          break
+          );
+          break;
         case "flash-screen":
-          setFlashScreen(true)
+          setFlashScreen(true);
           breachTimers.current.push(
             window.setTimeout(() => setFlashScreen(false), 220),
-          )
-          break
+          );
+          break;
         case "logo-flash":
-          setLogoFlash(true)
+          setLogoFlash(true);
           breachTimers.current.push(
             window.setTimeout(() => setLogoFlash(false), 220),
-          )
-          break
+          );
+          break;
         case "screen-black":
-          setScreenBlack(true)
-          break
+          setScreenBlack(true);
+          break;
         case "reload":
-          window.location.reload()
-          break
+          window.location.reload();
+          break;
         case "finished":
-          setBlockDesktopInput(false)
-          setScreenBlack(false)
-          break
+          setBlockDesktopInput(false);
+          setScreenBlack(false);
+          break;
       }
-    }
+    };
 
     const handleDemoPopup = (event: Event) => {
-      const d = (event as CustomEvent).detail as { title: string; body: string[]; duration?: number }
+      const d = (event as CustomEvent).detail as {
+        title: string;
+        body: string[];
+        duration?: number;
+      };
       if (popupTimerRef.current) {
-        window.clearTimeout(popupTimerRef.current)
+        window.clearTimeout(popupTimerRef.current);
       }
-      setPopup({ title: d.title, body: d.body })
+      setPopup({ title: d.title, body: d.body });
       popupTimerRef.current = window.setTimeout(() => {
-        setPopup(null)
-        popupTimerRef.current = null
-      }, d.duration ?? 1800)
-    }
+        setPopup(null);
+        popupTimerRef.current = null;
+      }, d.duration ?? 1800);
+    };
 
-    window.addEventListener("hyk-breach-countdown", handleCountdown)
-    window.addEventListener("hyk-breach-phase", handlePhase)
-    window.addEventListener("hyk-demo-popup", handleDemoPopup)
+    window.addEventListener("hyk-breach-countdown", handleCountdown);
+    window.addEventListener("hyk-breach-phase", handlePhase);
+    window.addEventListener("hyk-demo-popup", handleDemoPopup);
 
     return () => {
-      window.removeEventListener("hyk-breach-countdown", handleCountdown)
-      window.removeEventListener("hyk-breach-phase", handlePhase)
-      window.removeEventListener("hyk-demo-popup", handleDemoPopup)
-      breachTimers.current.forEach((id) => window.clearTimeout(id))
-      breachTimers.current = []
-    }
-  }, [openWindow, spawnWindow])
+      window.removeEventListener("hyk-breach-countdown", handleCountdown);
+      window.removeEventListener("hyk-breach-phase", handlePhase);
+      window.removeEventListener("hyk-demo-popup", handleDemoPopup);
+      breachTimers.current.forEach((id) => window.clearTimeout(id));
+      breachTimers.current = [];
+    };
+  }, [openWindow, spawnWindow]);
 
   // Expose spawnWindow to window object so HYK demo engine can call it
   useEffect(() => {
-    ;(window as any).spawnWindow = spawnWindow
+    (window as any).spawnWindow = spawnWindow;
     return () => {
-      delete (window as any).spawnWindow
-    }
-  }, [spawnWindow])
+      delete (window as any).spawnWindow;
+    };
+  }, [spawnWindow]);
 
   const closeWindow = useCallback((id: string) => {
-    setWindows((ws) => ws.filter((w) => w.id !== id))
-    setActiveWindowId((curr) => (curr === id ? null : curr))
-  }, [])
+    setWindows((ws) => ws.filter((w) => w.id !== id));
+    setActiveWindowId((curr) => (curr === id ? null : curr));
+  }, []);
 
   const minimizeWindow = useCallback((id: string) => {
     setWindows((ws) =>
       ws.map((w) => (w.id === id ? { ...w, minimized: true } : w)),
-    )
-    setActiveWindowId((curr) => (curr === id ? null : curr))
-  }, [])
+    );
+    setActiveWindowId((curr) => (curr === id ? null : curr));
+  }, []);
 
   const maximizeWindow = useCallback((id: string) => {
     setWindows((ws) =>
       ws.map((w) => (w.id === id ? { ...w, maximized: !w.maximized } : w)),
-    )
-  }, [])
+    );
+  }, []);
 
   const moveWindow = useCallback((id: string, x: number, y: number) => {
-    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, x, y } : w)))
-  }, [])
+    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, x, y } : w)));
+  }, []);
 
-  const handleDockItemClick = useCallback(
+  const handleTopBarAppClick = useCallback(
     (windowId: string) => {
       if (blockDesktopInput) {
-        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
-        return
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
+        return;
       }
 
-      const win = windows.find((w) => w.id === windowId)
-      if (!win) return
+      const win = windows.find((w) => w.id === windowId);
+      if (!win) return;
 
       if (win.minimized) {
         setWindows((ws) =>
           ws.map((w) => (w.id === windowId ? { ...w, minimized: false } : w)),
-        )
-        bringToFront(windowId)
+        );
+        bringToFront(windowId);
       } else if (activeWindowId === windowId) {
-        minimizeWindow(windowId)
+        minimizeWindow(windowId);
       } else {
-        bringToFront(windowId)
+        bringToFront(windowId);
       }
     },
     [windows, activeWindowId, bringToFront, minimizeWindow, blockDesktopInput],
-  )
+  );
 
   const renderApp = (w: WindowState) => {
     if (import.meta.env.DEV && w.appId === "terminal") {
-      console.debug("[DEBUG] renderApp Terminal", { id: w.id, title: w.title, params: w.params })
+      console.debug("[DEBUG] renderApp Terminal", {
+        id: w.id,
+        title: w.title,
+        params: w.params,
+      });
     }
     switch (w.appId) {
       case "projects":
-        return <FileExplorer section="projects" openWindow={openWindow} />
+        return <FileExplorer section="projects" openWindow={openWindow} />;
       case "experience":
-        return <FileExplorer section="experience" openWindow={openWindow} />
+        return <FileExplorer section="experience" openWindow={openWindow} />;
       case "education":
-        return <FileExplorer section="education" openWindow={openWindow} />
+        return <FileExplorer section="education" openWindow={openWindow} />;
       case "gallery":
         return (
           <Gallery initialImageSrc={w.params?.imageSrc as string | undefined} />
-        )
+        );
       case "resume":
-        return <Resume />
+        return <Resume />;
       case "browser":
         return (
           <Browser
             registerCloseRequest={(callback) => {
-              browserCloseRequestRef.current = callback
+              browserCloseRequestRef.current = callback;
             }}
           />
-        )
+        );
       case "terminal":
         return (
           <Terminal
@@ -575,32 +619,32 @@ export default function Desktop() {
             demoAppend={w.params?.append as boolean | undefined}
             hostname={w.params?.hostname as string | undefined}
           />
-        )
+        );
       case "profile":
-        return <Profile />
+        return <Profile />;
       case "recycle":
-        return <Trash />
+        return <Trash />;
       case "editor":
         return (
           <TextEditor
             content={w.params?.content as string | undefined}
             title={w.params?.title as string | undefined}
           />
-        )
+        );
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <ThemeContext.Provider value={getTheme(isDark)}>
       <div
         onClick={(e) => {
           if (blockDesktopInput) {
-            e.stopPropagation()
-            return
+            e.stopPropagation();
+            return;
           }
-          setSelectedIconId(null)
+          setSelectedIconId(null);
         }}
         style={{
           position: "fixed",
@@ -692,10 +736,12 @@ export default function Desktop() {
               >
                 {popup.title}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
                 {popup.body.map((line, index) => (
                   <div
-                    key={index}
+                    key={`${line}-${index}`}
                     style={{
                       color: "#e2e8f0",
                       fontSize: "0.95rem",
@@ -726,13 +772,16 @@ export default function Desktop() {
           <TopBar
             isDark={isDark}
             onToggleTheme={() => {
-              if (blockDesktopInput) return
+              if (blockDesktopInput) return;
               setIsDark((d) => {
-                const next = !d
-                storageManager.update({ theme: next ? "dark" : "light" })
-                return next
-              })
+                const next = !d;
+                storageManager.update({ theme: next ? "dark" : "light" });
+                return next;
+              });
             }}
+            runningApps={windows}
+            activeWindowId={activeWindowId}
+            onAppClick={handleTopBarAppClick}
           />
         </div>
 
@@ -740,17 +789,19 @@ export default function Desktop() {
         <div
           style={{
             position: "absolute",
-            top: 42,
+            top: 100,
             left: 12,
-            bottom: 76, // Leave space for the dock
+            bottom: 28,
             display: "flex",
             flexDirection: "column",
             flexWrap: "wrap",
             alignContent: "flex-start",
             gap: 6,
-            maxHeight: "calc(100vh - 120px)",
+            maxHeight: "calc(100vh - 140px)",
             opacity: iconsFlicker ? 0.35 : 1,
-            transition: iconsFlicker ? "opacity 0.1s ease" : "opacity 0.3s ease",
+            transition: iconsFlicker
+              ? "opacity 0.1s ease"
+              : "opacity 0.3s ease",
           }}
         >
           {icons.map((icon) => (
@@ -762,64 +813,79 @@ export default function Desktop() {
               selected={selectedIconId === icon.id}
               isDark={isDark}
               onClick={(e) => {
-                e.stopPropagation()
-                setSelectedIconId(icon.id)
+                e.stopPropagation();
+                setSelectedIconId(icon.id);
               }}
               onDoubleClick={() => {
-                openWindow(icon.id)
-                setSelectedIconId(null)
+                openWindow(icon.id);
+                setSelectedIconId(null);
               }}
             />
           ))}
         </div>
 
         {/* Open windows */}
-        {windows.map((w) => (
-          <>
-            {import.meta.env.DEV &&
-              console.debug("[DEBUG] rendering WindowFrame", {
-                key: w.id,
-                id: w.id,
-                appId: w.appId,
-                title: w.title,
-                minimized: w.minimized,
-                zIndex: w.zIndex,
-              })}
-            <WindowFrame
-              key={w.id}
-              title={w.title}
-            x={w.appId === "browser" && browserTransform ? browserTransform.x : w.x}
-            y={w.appId === "browser" && browserTransform ? browserTransform.y : w.y}
-            width={w.appId === "browser" && browserTransform ? browserTransform.width : w.width}
-            height={w.appId === "browser" && browserTransform ? browserTransform.height : w.height}
-            zIndex={w.zIndex}
-            minimized={w.minimized}
-            maximized={w.maximized}
-            isFocused={w.id === activeWindowId}
-            onClose={() => {
-              if (w.appId === "browser" && !browserCloseRequestRef.current()) {
-                window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
-                return
-              }
-              closeWindow(w.id)
-            }}
-            onMinimize={() => minimizeWindow(w.id)}
-            onMaximize={() => maximizeWindow(w.id)}
-            onMove={(x, y) => moveWindow(w.id, x, y)}
-            onFocus={() => bringToFront(w.id)}
-          >
-            {renderApp(w)}
-          </WindowFrame>
-          </>
-        ))}
+        {windows.map((w) => {
+          if (import.meta.env.DEV) {
+            console.debug("[DEBUG] rendering WindowFrame", {
+              key: w.id,
+              id: w.id,
+              appId: w.appId,
+              title: w.title,
+              minimized: w.minimized,
+              zIndex: w.zIndex,
+            });
+          }
 
-        {/* Bottom Center Dock */}
-        <Dock
-          windows={windows}
-          activeWindowId={activeWindowId}
-          onItemClick={handleDockItemClick}
-        />
+          return (
+            <Fragment key={w.id}>
+              <WindowFrame
+                title={w.title}
+                x={
+                  w.appId === "browser" && browserTransform
+                    ? browserTransform.x
+                    : w.x
+                }
+                y={
+                  w.appId === "browser" && browserTransform
+                    ? browserTransform.y
+                    : w.y
+                }
+                width={
+                  w.appId === "browser" && browserTransform
+                    ? browserTransform.width
+                    : w.width
+                }
+                height={
+                  w.appId === "browser" && browserTransform
+                    ? browserTransform.height
+                    : w.height
+                }
+                zIndex={w.zIndex}
+                minimized={w.minimized}
+                maximized={w.maximized}
+                isFocused={w.id === activeWindowId}
+                onClose={() => {
+                  if (
+                    w.appId === "browser" &&
+                    !browserCloseRequestRef.current()
+                  ) {
+                    window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
+                    return;
+                  }
+                  closeWindow(w.id);
+                }}
+                onMinimize={() => minimizeWindow(w.id)}
+                onMaximize={() => maximizeWindow(w.id)}
+                onMove={(x, y) => moveWindow(w.id, x, y)}
+                onFocus={() => bringToFront(w.id)}
+              >
+                {renderApp(w)}
+              </WindowFrame>
+            </Fragment>
+          );
+        })}
       </div>
     </ThemeContext.Provider>
-  )
+  );
 }
