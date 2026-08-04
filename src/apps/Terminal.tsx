@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react"
 
-type Line = { type: "input" | "output" | "error" | "blank"; text: string }
+type Line = { type: "input" | "output" | "error" | "warning" | "blank"; text: string }
 
 // Demo asks for Linux-style prompt: [one4all ~]$
 const DEFAULT_HOSTNAME = "one4all"
@@ -228,14 +228,26 @@ function processCommand(
   }
 }
 
+type CinematicAction =
+  | { type: "command"; text: string }
+  | { type: "output"; text: string }
+  | { type: "error"; text: string }
+  | { type: "warning"; text: string }
+  | { type: "pause"; duration?: number }
+  | { type: "blank" }
+
 type TerminalProps = {
   autoCommands?: string[]
-  demoLines?: string[]
+  demoLines?: string[]           // Legacy: for backward compatibility
+  cinematicActions?: CinematicAction[]  // New: cinematic story script (no parser)
   demoAppend?: boolean
   hostname?: string
 }
 
-export default function Terminal({ autoCommands, demoLines, demoAppend, hostname }: TerminalProps = {}) {
+export default function Terminal({ autoCommands, demoLines, cinematicActions, demoAppend, hostname }: TerminalProps = {}) {
+  if (import.meta.env.DEV) {
+    console.debug("[DEBUG] Terminal mount", { hostname, demoLines, cinematicActions, demoAppend })
+  }
   const [lines, setLines] = useState<Line[]>([
     { type: "output", text: "HYK OS  —  v1.0.0-stable" },
     { type: "output", text: 'Type "help" for available commands.' },
@@ -248,6 +260,16 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const autoRef = useRef({ started: false, commandIndex: 0, charIndex: 0, timeouts: [] as number[] })
+  const cwdRef = useRef(cwd)
+  
+  // Cinematic or demo mode: story-driven, no parser
+  const cinematicMode = !!cinematicActions?.length
+  const demoMode = !!demoLines?.length
+  const isActive = cinematicMode || demoMode
+
+  useEffect(() => {
+    cwdRef.current = cwd
+  }, [cwd])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -281,6 +303,11 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
   )
 
   const handleKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (isActive) {
+      e.preventDefault()
+      return
+    }
+
     if (e.key === "Enter") {
       submit()
     } else if (e.key === "ArrowUp") {
@@ -338,10 +365,9 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
     }
   }, [autoCommands, submit])
 
-  // Demo integration: type demoLines like a human, support 'pause' and 'OUT:' markers.
+  // Cinematic mode: story-scripted actions, no parser execution
   useEffect(() => {
-    if (!demoLines || demoLines.length === 0) return
-    // avoid running multiple times for same prop
+    if (!cinematicActions || cinematicActions.length === 0) return
     const localRef = { timeouts: [] as number[] }
 
     const schedule = (fn: () => void, delay: number) => {
@@ -349,13 +375,116 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
       localRef.timeouts.push(id)
     }
 
+    const typeCommand = (command: string) => {
+      return new Promise<void>((resolve) => {
+        let i = 0
+        const charTick = () => {
+          if (i > command.length) {
+            // Add command prompt line (typed, not submitted)
+            const promptLine: Line = {
+              type: "input",
+              text: `[${hostname ?? "CodeYou"} ~]$ ${command}`,
+            }
+            setLines((l) => [...l, promptLine])
+            resolve()
+            return
+          }
+          setInput(command.slice(0, i))
+          i++
+          schedule(charTick, Math.floor(Math.random() * (22 - 9) + 9))
+        }
+        charTick()
+      })
+    }
+
+    const run = async () => {
+      for (const action of cinematicActions) {
+        switch (action.type) {
+          case "command":
+            // Type command character by character, then add to lines
+            await typeCommand(action.text)
+            setInput("")
+            await new Promise<void>((r) => schedule(() => r(), 420))
+            break
+
+          case "output":
+            // Add output directly (never parsed, never generates fake errors)
+            setLines((l) => [...l, { type: "output", text: action.text }])
+            await new Promise<void>((r) => schedule(() => r(), 200))
+            break
+
+          case "error":
+            // Add error line directly (script-defined error, not from parser)
+            setLines((l) => [...l, { type: "error", text: action.text }])
+            await new Promise<void>((r) => schedule(() => r(), 200))
+            break
+
+          case "warning":
+            // Add warning line
+            setLines((l) => [...l, { type: "warning", text: action.text }])
+            await new Promise<void>((r) => schedule(() => r(), 200))
+            break
+
+          case "blank":
+            // Add blank line for spacing
+            setLines((l) => [...l, { type: "blank", text: "" }])
+            await new Promise<void>((r) => schedule(() => r(), 100))
+            break
+
+          case "pause":
+            // Pause for specified duration (default 600ms)
+            await new Promise<void>((r) => schedule(() => r(), action.duration ?? 600))
+            break
+        }
+      }
+    }
+
+    run()
+
+    return () => {
+      localRef.timeouts.forEach((id) => window.clearTimeout(id))
+      localRef.timeouts = []
+    }
+  }, [cinematicActions, hostname])
+
+  // Legacy demo mode: backward compatibility with string-based demoLines
+  // (This remains for backward compatibility if older demos use demoLines format)
+  useEffect(() => {
+    if (!demoLines || demoLines.length === 0 || cinematicActions?.length) return
+    const localRef = { timeouts: [] as number[] }
+
+    const schedule = (fn: () => void, delay: number) => {
+      const id = window.setTimeout(fn, delay)
+      localRef.timeouts.push(id)
+    }
+
+    const demoSubmit = (command: string) => {
+      const prompt: Line = {
+        type: "input",
+        text: `[${hostname ?? DEFAULT_HOSTNAME} ${cwdRef.current}]$ ${command}`,
+      }
+      const { output, nextCwd } = processCommand(command, cwdRef.current)
+
+      if (output[0]?.text === "__CLEAR__") {
+        setLines([])
+      } else {
+        setLines((l) => [...l, prompt, ...output, { type: "blank", text: "" }])
+      }
+
+      if (nextCwd !== undefined) {
+        setCwd(nextCwd)
+      }
+      setHistory((h) => [command, ...h])
+      setHistIdx(-1)
+      setInput("")
+    }
+
     const typeAndSubmit = (line: string) => {
       return new Promise<void>((resolve) => {
         let i = 0
         const charTick = () => {
           if (i > line.length) {
-            // submit as command
-            submit(line)
+            demoSubmit(line)
             resolve()
             return
           }
@@ -380,9 +509,7 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
           await new Promise<void>((r) => schedule(() => r(), 360))
           continue
         }
-        // default: type as command then submit
         await typeAndSubmit(raw)
-        // short pause after a command
         await new Promise<void>((r) => schedule(() => r(), 420))
       }
     }
@@ -393,7 +520,7 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
       localRef.timeouts.forEach((id) => window.clearTimeout(id))
       localRef.timeouts = []
     }
-  }, [demoLines, submit])
+  }, [demoLines, hostname])
 
   return (
     <div
@@ -422,7 +549,9 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
                   ? "rgba(255,255,255,0.85)"
                   : line.type === "error"
                     ? "#f87171"
-                    : "rgba(255,255,255,0.55)",
+                    : line.type === "warning"
+                      ? "#fbbf24"
+                      : "rgba(255,255,255,0.55)",
               whiteSpace: "pre-wrap",
               wordBreak: "break-all",
             }}
@@ -451,9 +580,12 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
         <input
           ref={inputRef}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            if (!isActive) setInput(e.target.value)
+          }}
           onKeyDown={handleKey}
-          autoFocus
+          disabled={isActive}
+          autoFocus={!isActive}
           spellCheck={false}
           style={{
             flex: 1,
@@ -463,7 +595,9 @@ export default function Terminal({ autoCommands, demoLines, demoAppend, hostname
             color: "#e0e0e0",
             fontFamily: "'JetBrains Mono', monospace",
             fontSize: "0.82rem",
-            caretColor: "#4ade80",
+            caretColor: isActive ? "transparent" : "#4ade80",
+            opacity: isActive ? 0.65 : 1,
+            cursor: isActive ? "not-allowed" : "text",
           }}
         />
       </div>

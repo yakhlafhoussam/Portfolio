@@ -88,11 +88,6 @@ export function useHykExperience() {
     )
     timerRefs.current.push(
       window.setTimeout(() => {
-        dispatchBreachPhase("open-terminal")
-      }, 1000),
-    )
-    timerRefs.current.push(
-      window.setTimeout(() => {
         dispatchBreachPhase("terminal-typing")
       }, 1300),
     )
@@ -111,11 +106,6 @@ export function useHykExperience() {
       window.setTimeout(() => {
         dispatchBreachPhase("browser-resize")
       }, 3000),
-    )
-    timerRefs.current.push(
-      window.setTimeout(() => {
-        dispatchBreachPhase("close-terminal")
-      }, 3500),
     )
     timerRefs.current.push(
       window.setTimeout(() => {
@@ -162,17 +152,6 @@ export function useHykExperience() {
         dispatchBreachPhase("breach-message")
       }, 6500),
     )
-    timerRefs.current.push(
-      window.setTimeout(() => {
-        setTakeoverPhase("screen-black")
-        dispatchBreachPhase("screen-black")
-      }, 7000),
-    )
-    timerRefs.current.push(
-      window.setTimeout(() => {
-        dispatchBreachPhase("reload")
-      }, 7500),
-    )
   }, [cleanupCountdown, dispatchBreachPhase, dispatchCountdownState])
 
   const resetCountdown = useCallback(() => {
@@ -216,10 +195,16 @@ export function useHykExperience() {
       }
     }
 
+    const handleDemoFinished = () => {
+      finishTakeover()
+    }
+
     window.addEventListener("hyk-breach-escape", handleEscape)
+    window.addEventListener("hyk-demo-finished", handleDemoFinished)
 
     return () => {
       window.removeEventListener("hyk-breach-escape", handleEscape)
+      window.removeEventListener("hyk-demo-finished", handleDemoFinished)
       cleanupCountdown()
       finishTakeover()
       if (audioRef.current) {

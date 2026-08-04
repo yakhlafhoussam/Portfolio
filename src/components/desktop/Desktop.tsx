@@ -61,6 +61,11 @@ const TITLES: Record<AppId, string> = {
 
 let idCounter = 0
 
+type SpawnWindowOptions = {
+  position?: "center" | "cascade"
+  force?: boolean
+}
+
 export default function Desktop() {
   // Initialize storage state and register visitor on first visit
   useEffect(() => {
@@ -99,7 +104,13 @@ export default function Desktop() {
   const [focusedWindow, setFocusedWindow] = useState<"browser" | "terminal" | null>(null)
   const zRef = useRef(100)
   const breachTimers = useRef<number[]>([])
+  const windowsRef = useRef<WindowState[]>([])
   const browserCloseRequestRef = useRef<() => boolean>(() => true)
+
+  // Keep windowsRef in sync with windows state (for ref access in callbacks)
+  useEffect(() => {
+    windowsRef.current = windows
+  }, [windows])
 
   useEffect(() => {
     fetch("/content/desktop.json")
@@ -144,6 +155,102 @@ export default function Desktop() {
     [blockDesktopInput],
   )
 
+  // spawnWindow: Always creates a new independent instance, never checks for existing windows
+  const spawnWindow = useCallback(
+    (
+      appId: AppId,
+      params?: Record<string, unknown>,
+      options?: SpawnWindowOptions,
+    ) => {
+      if (blockDesktopInput && !options?.force) {
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+        return { id: "" }
+      }
+
+      const size = DEFAULT_SIZES[appId]
+      const id = `win-${++idCounter}`
+      const z = ++zRef.current
+      const vw = window.innerWidth
+      const vh = window.innerHeight
+
+      let cx = Math.max(90, (vw - size.width) / 2)
+      let cy = Math.max(40, (vh - size.height) / 2)
+
+      // Calculate position based on strategy
+      if (options?.position === "cascade") {
+        // Find the last opened window of the same type and cascade from it
+        const lastSameType = windowsRef.current
+          .filter((w) => w.appId === appId)
+          .pop()
+        if (lastSameType) {
+          const dx = (Math.random() > 0.5 ? 1 : -1) * (20 + Math.floor(Math.random() * 31))
+          const dy = 15 + Math.floor(Math.random() * 21)
+          cx = Math.max(10, Math.min(vw - size.width - 20, lastSameType.x + dx))
+          cy = Math.max(40, Math.min(vh - size.height - 90, lastSameType.y + dy))
+        }
+      } else {
+        // Default scatter offset based on window count
+        const offset = (idCounter % 5) * 28
+        cx = Math.max(90, (vw - size.width) / 2 + offset)
+        cy = Math.max(40, (vh - size.height) / 2 + offset)
+      }
+
+      const newWindow: WindowState = {
+        id,
+        appId,
+        title: params?.title ? (params.title as string) : TITLES[appId],
+        x: cx,
+        y: cy,
+        width: size.width,
+        height: size.height,
+        minimized: false,
+        maximized: false,
+        zIndex: z,
+        params,
+      }
+
+      if (import.meta.env.DEV) {
+        console.debug("[DEBUG] spawnWindow", { id, appId, title: newWindow.title, x: cx, y: cy, z, params })
+      }
+
+      setWindows((ws) => [...ws, newWindow])
+      setActiveWindowId(id)
+      return { id }
+    },
+    [blockDesktopInput],
+  )
+
+  const debugSpawnedRef = useRef(false)
+
+  useEffect(() => {
+    if (
+      import.meta.env.DEV &&
+      window.location.search.includes("spawn-debug") &&
+      !debugSpawnedRef.current
+    ) {
+      debugSpawnedRef.current = true
+      const titles = [
+        "Terminal #1",
+        "Terminal #2",
+        "Terminal #3",
+        "Terminal #4",
+        "Terminal #5",
+      ]
+      titles.forEach((title, index) => {
+        window.setTimeout(() => {
+          spawnWindow(
+            "terminal",
+            {
+              title,
+              hostname: `debug-${index + 1}`,
+            },
+            { position: "cascade", force: true },
+          )
+        }, index * 150)
+      })
+    }
+  }, [spawnWindow])
+
   const openWindow = useCallback(
     (
       appId: AppId,
@@ -154,6 +261,7 @@ export default function Desktop() {
         window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
         return
       }
+
       // If opening an editor, focus existing instance for same file
       if (appId === "editor" && params) {
         const existing = windows.find(
@@ -186,7 +294,7 @@ export default function Desktop() {
         }
       }
 
-      // Generic: focus existing window for any other app
+      // For all other apps (except editor): focus existing instance if any
       if (appId !== "editor") {
         const existing = windows.find((w) => w.appId === appId)
         if (existing) {
@@ -202,12 +310,13 @@ export default function Desktop() {
         }
       }
 
+      // Create new window instance with default centered positioning
       const size = DEFAULT_SIZES[appId]
       const id = `win-${++idCounter}`
       const z = ++zRef.current
-      const offset = (idCounter % 5) * 28
       const vw = window.innerWidth
       const vh = window.innerHeight
+      const offset = (idCounter % 5) * 28
       const cx = Math.max(90, (vw - size.width) / 2 + offset)
       const cy = Math.max(40, (vh - size.height) / 2 + offset)
 
@@ -216,10 +325,7 @@ export default function Desktop() {
         {
           id,
           appId,
-          title:
-            appId === "editor"
-              ? params?.title as string || TITLES[appId]
-              : TITLES[appId],
+          title: params?.title ? (params.title as string) : TITLES[appId],
           x: cx,
           y: cy,
           width: size.width,
@@ -232,7 +338,7 @@ export default function Desktop() {
       ])
       setActiveWindowId(id)
     },
-    [windows, bringToFront],
+    [windows, bringToFront, blockDesktopInput],
   )
 
   useEffect(() => {
@@ -246,22 +352,6 @@ export default function Desktop() {
       switch (phase) {
         case "freeze":
           setBlockDesktopInput(true)
-          break
-        case "open-terminal":
-          openWindow(
-            "terminal",
-            {
-              autoCommands: [
-                "connecting...",
-                "bypassing firewall...",
-                "reading portfolio...",
-                "locating visitor...",
-                "decrypting...",
-                "access granted",
-              ],
-            },
-            { force: true },
-          )
           break
         case "close-terminal":
           // Persist terminals for the investigation board — do not destroy them
@@ -384,44 +474,34 @@ export default function Desktop() {
       }
     }
 
-    window.addEventListener("hyk-breach-countdown", handleCountdown)
-    window.addEventListener("hyk-breach-phase", handlePhase)
-    window.addEventListener("hyk-demo-terminal", (e: Event) => {
-      const d = (e as CustomEvent).detail as { name?: string; lines: string[]; rhythm?: any }
-      openWindow(
-        "terminal",
-        { demoLines: d.lines, hostname: d.name ?? "bash" },
-        { force: true },
-      )
-    })
-    window.addEventListener("hyk-demo-terminal-append", (e: Event) => {
-      const d = (e as CustomEvent).detail as { name?: string; lines: string[]; rhythm?: any }
-      // Find existing terminal and append lines by opening a terminal with append flag
-      openWindow(
-        "terminal",
-        { demoLines: d.lines, append: true, hostname: d.name ?? "bash" },
-        { force: true },
-      )
-    })
-    window.addEventListener("hyk-demo-popup", (e: Event) => {
-      const d = (e as CustomEvent).detail as { title: string; body: string[]; duration?: number }
-      // Render as breach message overlay temporarily
+    const handleDemoPopup = (event: Event) => {
+      const d = (event as CustomEvent).detail as { title: string; body: string[]; duration?: number }
       setBreachMessage(true)
       breachTimers.current.push(
         window.setTimeout(() => setBreachMessage(false), d.duration ?? 1800),
       )
-    })
+    }
+
+    window.addEventListener("hyk-breach-countdown", handleCountdown)
+    window.addEventListener("hyk-breach-phase", handlePhase)
+    window.addEventListener("hyk-demo-popup", handleDemoPopup)
 
     return () => {
       window.removeEventListener("hyk-breach-countdown", handleCountdown)
       window.removeEventListener("hyk-breach-phase", handlePhase)
-      window.removeEventListener("hyk-demo-terminal", () => {})
-      window.removeEventListener("hyk-demo-terminal-append", () => {})
-      window.removeEventListener("hyk-demo-popup", () => {})
+      window.removeEventListener("hyk-demo-popup", handleDemoPopup)
       breachTimers.current.forEach((id) => window.clearTimeout(id))
       breachTimers.current = []
     }
-  }, [openWindow])
+  }, [openWindow, spawnWindow])
+
+  // Expose spawnWindow to window object so HYK demo engine can call it
+  useEffect(() => {
+    ;(window as any).spawnWindow = spawnWindow
+    return () => {
+      delete (window as any).spawnWindow
+    }
+  }, [spawnWindow])
 
   const closeWindow = useCallback((id: string) => {
     setWindows((ws) => ws.filter((w) => w.id !== id))
@@ -470,6 +550,9 @@ export default function Desktop() {
   )
 
   const renderApp = (w: WindowState) => {
+    if (import.meta.env.DEV && w.appId === "terminal") {
+      console.debug("[DEBUG] renderApp Terminal", { id: w.id, title: w.title, params: w.params })
+    }
     switch (w.appId) {
       case "projects":
         return <FileExplorer section="projects" openWindow={openWindow} />
@@ -496,6 +579,7 @@ export default function Desktop() {
           <Terminal
             autoCommands={w.params?.autoCommands as string[] | undefined}
             demoLines={w.params?.demoLines as string[] | undefined}
+            cinematicActions={w.params?.cinematicActions as any[] | undefined}
             demoAppend={w.params?.append as boolean | undefined}
             hostname={w.params?.hostname as string | undefined}
           />
@@ -684,9 +768,19 @@ export default function Desktop() {
 
         {/* Open windows */}
         {windows.map((w) => (
-          <WindowFrame
-            key={w.id}
-            title={w.title}
+          <>
+            {import.meta.env.DEV &&
+              console.debug("[DEBUG] rendering WindowFrame", {
+                key: w.id,
+                id: w.id,
+                appId: w.appId,
+                title: w.title,
+                minimized: w.minimized,
+                zIndex: w.zIndex,
+              })}
+            <WindowFrame
+              key={w.id}
+              title={w.title}
             x={w.appId === "browser" && browserTransform ? browserTransform.x : w.x}
             y={w.appId === "browser" && browserTransform ? browserTransform.y : w.y}
             width={w.appId === "browser" && browserTransform ? browserTransform.width : w.width}
@@ -709,6 +803,7 @@ export default function Desktop() {
           >
             {renderApp(w)}
           </WindowFrame>
+          </>
         ))}
 
         {/* Bottom Center Dock */}
