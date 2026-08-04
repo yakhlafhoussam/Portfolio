@@ -101,6 +101,12 @@ export function useHykExperience() {
         dispatchBreachPhase("gpu-distortion")
       }, 2000),
     )
+    // Start the demo engine (terminals + richer corruption) in parallel with GPU distortion
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("hyk-demo-start"))
+      }, 2000),
+    )
     timerRefs.current.push(
       window.setTimeout(() => {
         dispatchBreachPhase("browser-resize")

@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react"
 
 type Line = { type: "input" | "output" | "error" | "blank"; text: string }
 
-const HOSTNAME = "hyk@localhost"
+// Demo asks for Linux-style prompt: [one4all ~]$
+const DEFAULT_HOSTNAME = "one4all"
 
 const FS: Record<string, Record<string, string>> = {
   "~": {
@@ -229,9 +230,12 @@ function processCommand(
 
 type TerminalProps = {
   autoCommands?: string[]
+  demoLines?: string[]
+  demoAppend?: boolean
+  hostname?: string
 }
 
-export default function Terminal({ autoCommands }: TerminalProps = {}) {
+export default function Terminal({ autoCommands, demoLines, demoAppend, hostname }: TerminalProps = {}) {
   const [lines, setLines] = useState<Line[]>([
     { type: "output", text: "HYK OS  —  v1.0.0-stable" },
     { type: "output", text: 'Type "help" for available commands.' },
@@ -252,7 +256,7 @@ export default function Terminal({ autoCommands }: TerminalProps = {}) {
   const submit = useCallback(
     (cmdOverride?: string) => {
       const cmd = (cmdOverride ?? input).trim()
-      const prompt: Line = { type: "input", text: `${HOSTNAME}:${cwd}$ ${cmd}` }
+      const prompt: Line = { type: "input", text: `[${hostname ?? DEFAULT_HOSTNAME} ${cwd}]$ ${cmd}` }
 
       if (!cmd) {
         setLines((l) => [...l, prompt, { type: "blank", text: "" }])
@@ -334,6 +338,63 @@ export default function Terminal({ autoCommands }: TerminalProps = {}) {
     }
   }, [autoCommands, submit])
 
+  // Demo integration: type demoLines like a human, support 'pause' and 'OUT:' markers.
+  useEffect(() => {
+    if (!demoLines || demoLines.length === 0) return
+    // avoid running multiple times for same prop
+    const localRef = { timeouts: [] as number[] }
+
+    const schedule = (fn: () => void, delay: number) => {
+      const id = window.setTimeout(fn, delay)
+      localRef.timeouts.push(id)
+    }
+
+    const typeAndSubmit = (line: string) => {
+      return new Promise<void>((resolve) => {
+        let i = 0
+        const charTick = () => {
+          if (i > line.length) {
+            // submit as command
+            submit(line)
+            resolve()
+            return
+          }
+          setInput(line.slice(0, i))
+          i++
+          schedule(charTick, Math.floor(Math.random() * (22 - 9) + 9))
+        }
+        charTick()
+      })
+    }
+
+    const run = async () => {
+      for (let idx = 0; idx < demoLines.length; idx++) {
+        const raw = demoLines[idx]
+        if (raw === "pause") {
+          await new Promise<void>((r) => schedule(() => r(), 600))
+          continue
+        }
+        if (raw.startsWith("OUT:")) {
+          const out = raw.replace(/^OUT:\s?/, "")
+          setLines((l) => [...l, { type: "output", text: out }, { type: "blank", text: "" }])
+          await new Promise<void>((r) => schedule(() => r(), 360))
+          continue
+        }
+        // default: type as command then submit
+        await typeAndSubmit(raw)
+        // short pause after a command
+        await new Promise<void>((r) => schedule(() => r(), 420))
+      }
+    }
+
+    run()
+
+    return () => {
+      localRef.timeouts.forEach((id) => window.clearTimeout(id))
+      localRef.timeouts = []
+    }
+  }, [demoLines, submit])
+
   return (
     <div
       onClick={() => inputRef.current?.focus()}
@@ -385,7 +446,7 @@ export default function Terminal({ autoCommands }: TerminalProps = {}) {
         <span
           style={{ color: "#4ade80", marginRight: 4, whiteSpace: "nowrap" }}
         >
-          {HOSTNAME}:{cwd}$
+          [{hostname ?? DEFAULT_HOSTNAME} {cwd}]$
         </span>
         <input
           ref={inputRef}

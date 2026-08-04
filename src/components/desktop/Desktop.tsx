@@ -264,10 +264,10 @@ export default function Desktop() {
           )
           break
         case "close-terminal":
-          setWindows((ws) => ws.filter((w) => w.appId !== "terminal"))
-          setActiveWindowId(null)
+          // Persist terminals for the investigation board — do not destroy them
           break
         case "gpu-distortion":
+
           setGpuDistortion(true)
           breachTimers.current.push(
             window.setTimeout(() => setGpuDistortion(false), 1500),
@@ -386,10 +386,38 @@ export default function Desktop() {
 
     window.addEventListener("hyk-breach-countdown", handleCountdown)
     window.addEventListener("hyk-breach-phase", handlePhase)
+    window.addEventListener("hyk-demo-terminal", (e: Event) => {
+      const d = (e as CustomEvent).detail as { name?: string; lines: string[]; rhythm?: any }
+      openWindow(
+        "terminal",
+        { demoLines: d.lines, hostname: d.name ?? "bash" },
+        { force: true },
+      )
+    })
+    window.addEventListener("hyk-demo-terminal-append", (e: Event) => {
+      const d = (e as CustomEvent).detail as { name?: string; lines: string[]; rhythm?: any }
+      // Find existing terminal and append lines by opening a terminal with append flag
+      openWindow(
+        "terminal",
+        { demoLines: d.lines, append: true, hostname: d.name ?? "bash" },
+        { force: true },
+      )
+    })
+    window.addEventListener("hyk-demo-popup", (e: Event) => {
+      const d = (e as CustomEvent).detail as { title: string; body: string[]; duration?: number }
+      // Render as breach message overlay temporarily
+      setBreachMessage(true)
+      breachTimers.current.push(
+        window.setTimeout(() => setBreachMessage(false), d.duration ?? 1800),
+      )
+    })
 
     return () => {
       window.removeEventListener("hyk-breach-countdown", handleCountdown)
       window.removeEventListener("hyk-breach-phase", handlePhase)
+      window.removeEventListener("hyk-demo-terminal", () => {})
+      window.removeEventListener("hyk-demo-terminal-append", () => {})
+      window.removeEventListener("hyk-demo-popup", () => {})
       breachTimers.current.forEach((id) => window.clearTimeout(id))
       breachTimers.current = []
     }
@@ -467,6 +495,9 @@ export default function Desktop() {
         return (
           <Terminal
             autoCommands={w.params?.autoCommands as string[] | undefined}
+            demoLines={w.params?.demoLines as string[] | undefined}
+            demoAppend={w.params?.append as boolean | undefined}
+            hostname={w.params?.hostname as string | undefined}
           />
         )
       case "profile":
