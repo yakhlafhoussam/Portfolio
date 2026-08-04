@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import glitchSound from "@/assets/sound/glitch.mp3"
 
-type TakeoverPhase = "idle" | "flash" | "glitch" | "collapse" | "done"
+type TakeoverPhase = "idle" | "freeze" | "sound" | "flicker" | "browser-shake" | "open-terminal" | "terminal-typing" | "gpu-distortion" | "browser-resize" | "close-terminal" | "wallpaper-glitch" | "icon-flicker" | "desktop-instability" | "browser-move" | "focus-terminal" | "flash-screen" | "focus-browser" | "logo-flash" | "breach-message" | "screen-black" | "reload" | "finished"
 
 export function useHykExperience() {
   const [showStarted, setShowStarted] = useState(false)
@@ -45,7 +45,7 @@ export function useHykExperience() {
   const finishTakeover = useCallback(() => {
     clearTakeoverTimers()
     setTakeoverActive(false)
-    setTakeoverPhase("done")
+    setTakeoverPhase("finished")
     dispatchBreachPhase("finished")
     if (audioRef.current) {
       audioRef.current.pause()
@@ -58,7 +58,7 @@ export function useHykExperience() {
     showStartedRef.current = true
     setShowStarted(true)
     setTakeoverActive(true)
-    setTakeoverPhase("flash")
+    setTakeoverPhase("freeze")
     cleanupCountdown()
     setRemainingTime(0)
     dispatchCountdownState(false)
@@ -98,6 +98,16 @@ export function useHykExperience() {
     )
     timerRefs.current.push(
       window.setTimeout(() => {
+        dispatchBreachPhase("gpu-distortion")
+      }, 2000),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("browser-resize")
+      }, 3000),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
         dispatchBreachPhase("close-terminal")
       }, 3500),
     )
@@ -113,8 +123,18 @@ export function useHykExperience() {
     )
     timerRefs.current.push(
       window.setTimeout(() => {
+        dispatchBreachPhase("desktop-instability")
+      }, 4500),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
         dispatchBreachPhase("browser-move")
       }, 4800),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
+        dispatchBreachPhase("focus-terminal")
+      }, 5200),
     )
     timerRefs.current.push(
       window.setTimeout(() => {
@@ -128,12 +148,17 @@ export function useHykExperience() {
     )
     timerRefs.current.push(
       window.setTimeout(() => {
+        dispatchBreachPhase("focus-browser")
+      }, 6200),
+    )
+    timerRefs.current.push(
+      window.setTimeout(() => {
         dispatchBreachPhase("breach-message")
       }, 6500),
     )
     timerRefs.current.push(
       window.setTimeout(() => {
-        setTakeoverPhase("collapse")
+        setTakeoverPhase("screen-black")
         dispatchBreachPhase("screen-black")
       }, 7000),
     )

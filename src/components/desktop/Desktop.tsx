@@ -87,6 +87,16 @@ export default function Desktop() {
   const [logoFlash, setLogoFlash] = useState(false)
   const [breachMessage, setBreachMessage] = useState(false)
   const [screenBlack, setScreenBlack] = useState(false)
+  const [gpuDistortion, setGpuDistortion] = useState(false)
+  const [desktopInstable, setDesktopInstable] = useState(false)
+  const [browserTransform, setBrowserTransform] = useState<{
+    width: number
+    height: number
+    x: number
+    y: number
+    scale: number
+  } | null>(null)
+  const [focusedWindow, setFocusedWindow] = useState<"browser" | "terminal" | null>(null)
   const zRef = useRef(100)
   const breachTimers = useRef<number[]>([])
   const browserCloseRequestRef = useRef<() => boolean>(() => true)
@@ -257,6 +267,80 @@ export default function Desktop() {
           setWindows((ws) => ws.filter((w) => w.appId !== "terminal"))
           setActiveWindowId(null)
           break
+        case "gpu-distortion":
+          setGpuDistortion(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setGpuDistortion(false), 1500),
+          )
+          break
+        case "browser-resize":
+          // Resize browser window to 70% of normal size
+          setWindows((ws) =>
+            ws.map((w) => {
+              if (w.appId === "browser") {
+                return {
+                  ...w,
+                  width: w.width * 0.7,
+                  height: w.height * 0.7,
+                  x: w.x + w.width * 0.15,
+                  y: w.y + w.height * 0.15,
+                }
+              }
+              return w
+            }),
+          )
+          break
+        case "desktop-instability":
+          setDesktopInstable(true)
+          breachTimers.current.push(
+            window.setTimeout(() => setDesktopInstable(false), 1000),
+          )
+          break
+        case "browser-move":
+          // Move browser window chaotically
+          setWindows((ws) =>
+            ws.map((w) => {
+              if (w.appId === "browser") {
+                return {
+                  ...w,
+                  x: w.x + (Math.random() > 0.5 ? 24 : -24),
+                  y: w.y + (Math.random() > 0.5 ? 16 : -16),
+                }
+              }
+              return w
+            }),
+          )
+          break
+        case "focus-terminal":
+          // Switch focus from browser to terminal
+          setWindows((ws) =>
+            ws.map((w) => {
+              if (w.appId === "terminal" && !windows.find(x => x.appId === "terminal")) {
+                return w
+              }
+              return w
+            }),
+          )
+          const terminalWindow = windows.find((w) => w.appId === "terminal")
+          if (terminalWindow) {
+            bringToFront(terminalWindow.id, { force: true })
+            setFocusedWindow("terminal")
+          }
+          breachTimers.current.push(
+            window.setTimeout(() => setFocusedWindow(null), 300),
+          )
+          break
+        case "focus-browser":
+          // Switch focus back to browser
+          const browserWindow = windows.find((w) => w.appId === "browser")
+          if (browserWindow) {
+            bringToFront(browserWindow.id, { force: true })
+            setFocusedWindow("browser")
+          }
+          breachTimers.current.push(
+            window.setTimeout(() => setFocusedWindow(null), 300),
+          )
+          break
         case "wallpaper-glitch":
           setWallpaperGlitch(true)
           breachTimers.current.push(
@@ -416,6 +500,7 @@ export default function Desktop() {
           inset: 0,
           fontFamily: "'Inter', sans-serif",
         }}
+        className={desktopInstable ? "hyk-desktop-unstable" : undefined}
       >
         {/* ── Wallpaper layers — both always mounted for zero-delay crossfade ── */}
         <div
@@ -457,6 +542,18 @@ export default function Desktop() {
               inset: 0,
               background: "rgba(255,255,255,0.8)",
               zIndex: 99,
+              pointerEvents: "none",
+            }}
+          />
+        )}
+        {gpuDistortion && (
+          <div
+            className="hyk-gpu-distortion"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(100, 100, 200, 0.02)",
+              zIndex: 98,
               pointerEvents: "none",
             }}
           />
@@ -559,10 +656,10 @@ export default function Desktop() {
           <WindowFrame
             key={w.id}
             title={w.title}
-            x={w.x}
-            y={w.y}
-            width={w.width}
-            height={w.height}
+            x={w.appId === "browser" && browserTransform ? browserTransform.x : w.x}
+            y={w.appId === "browser" && browserTransform ? browserTransform.y : w.y}
+            width={w.appId === "browser" && browserTransform ? browserTransform.width : w.width}
+            height={w.appId === "browser" && browserTransform ? browserTransform.height : w.height}
             zIndex={w.zIndex}
             minimized={w.minimized}
             maximized={w.maximized}
