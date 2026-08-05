@@ -3,6 +3,18 @@ import { useTheme } from "@/context/ThemeContext"
 import { storageManager } from "@/lib/storage"
 import { useHykExperience } from "@/hooks/useHykExperience"
 import FingerprintJS from "@fingerprintjs/fingerprintjs"
+import { resolveHykArticleState } from "@/lib/hykArticleState"
+import type { HykArticleState } from "@/lib/hykArticleState"
+import {
+  AlreadyViewedCard,
+  AlreadyViewedListRow,
+  LocalStorageCheatCard,
+  LocalStorageCheatListRow,
+  LocalStorageCheatArticle,
+  LocalStorageDeletedCard,
+  LocalStorageDeletedListRow,
+  LocalStorageDeletedArticle,
+} from "@/components/easter/HykEasterEggs"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,7 +63,9 @@ async function fetchLocalFeed(): Promise<NewsFeedEntry[]> {
   }
 }
 
-async function fetchHykFeed(fingerprint: string): Promise<NewsFeedEntry[]> {
+async function fetchHykFeed(
+  fingerprint: string,
+): Promise<{ entries: NewsFeedEntry[]; blocked: boolean }> {
   try {
     const r = await fetch("/api/news/hyk/feed", {
       method: "POST",
@@ -61,40 +75,46 @@ async function fetchHykFeed(fingerprint: string): Promise<NewsFeedEntry[]> {
       body: JSON.stringify({ fingerprint }),
     })
     if (r.status === 403) {
-      return []
+      return { entries: [], blocked: true }
     }
-    if (!r.ok) return []
+    if (!r.ok) return { entries: [], blocked: false }
     const data = await r.json()
     if (!Array.isArray(data)) {
       console.error(
         "[Browser] /api/news/hyk/feed did not return an array:",
         data,
       )
-      return []
+      return { entries: [], blocked: false }
     }
-    return (data as NewsFeedEntry[]).map((e) => ({
-      ...e,
-      source: "hyk" as const,
-    }))
+    return {
+      entries: (data as NewsFeedEntry[]).map((e) => ({
+        ...e,
+        source: "hyk" as const,
+      })),
+      blocked: false,
+    }
   } catch {
-    return []
+    return { entries: [], blocked: false }
   }
 }
 
-async function loadFeed(): Promise<NewsFeedEntry[]> {
+async function loadFeed(): Promise<{
+  entries: NewsFeedEntry[]
+  hykBlocked: boolean
+}> {
   const local = await fetchLocalFeed()
   try {
     const fingerprint = await getFingerprint()
-    const hyk = await fetchHykFeed(fingerprint)
+    const { entries: hyk, blocked } = await fetchHykFeed(fingerprint)
     const sortedHyk = [...hyk].sort((a, b) => {
       const da = new Date(a.publishedAt ?? a.date).getTime()
       const db = new Date(b.publishedAt ?? b.date).getTime()
       return db - da
     })
-    return [...local, ...sortedHyk]
+    return { entries: [...local, ...sortedHyk], hykBlocked: blocked }
   } catch (err) {
     console.error("Failed to load news feed:", err)
-    return local
+    return { entries: local, hykBlocked: false }
   }
 }
 
@@ -669,6 +689,9 @@ export default function Browser({
   const [article, setArticle] = useState<NewsArticle | null>(null)
   const [articleLoading, setArticleLoading] = useState(false)
   const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
+  const [hykArticleState, setHykArticleState] = useState<HykArticleState>("normal")
+  // "egg" page: the user opened an easter egg article (not a real article)
+  const [eggPage, setEggPage] = useState<"cheat" | "deleted" | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const stageRef = useRef<HTMLDivElement | null>(null)
   const browserWindowRef = useRef<HTMLDivElement | null>(null)
@@ -690,7 +713,10 @@ export default function Browser({
   useEffect(() => {
     setFeedLoading(true)
     loadFeed()
-      .then(setFeed)
+      .then(({ entries, hykBlocked }) => {
+        setFeed(entries)
+        setHykArticleState(resolveHykArticleState(hykBlocked))
+      })
       .catch(() => {})
       .finally(() => setFeedLoading(false))
   }, [])
@@ -963,6 +989,7 @@ export default function Browser({
   const goHome = useCallback(() => {
     guardNavigation(() => {
       setPage("home")
+      setEggPage(null)
       setUrlBar("hyk://new-tab")
     })
   }, [guardNavigation])
@@ -971,9 +998,11 @@ export default function Browser({
     guardNavigation(() => {
       if (page === "article") {
         setPage("news")
+        setEggPage(null)
         setUrlBar("news://hyk.internal/feed")
       } else {
         setPage("home")
+        setEggPage(null)
         setUrlBar("hyk://new-tab")
       }
     })
@@ -1234,6 +1263,30 @@ export default function Browser({
                       t={t}
                     />
                   ))}
+                  {/* HYK easter egg card — shown when feed API blocked */}
+                  {hykArticleState === "already-viewed" && (
+                    <AlreadyViewedCard t={t} />
+                  )}
+                  {hykArticleState === "localstorage-cheat" && (
+                    <LocalStorageCheatCard
+                      t={t}
+                      onClick={() => {
+                        setPage("article")
+                        setEggPage("cheat")
+                        setUrlBar("news://hyk.internal/security-alert")
+                      }}
+                    />
+                  )}
+                  {hykArticleState === "localstorage-deleted" && (
+                    <LocalStorageDeletedCard
+                      t={t}
+                      onClick={() => {
+                        setPage("article")
+                        setEggPage("deleted")
+                        setUrlBar("news://hyk.internal/computer-worms")
+                      }}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -1354,12 +1407,44 @@ export default function Browser({
                   </svg>
                 </div>
               ))}
+              {/* HYK easter egg rows in the full news list */}
+              {hykArticleState === "already-viewed" && (
+                <AlreadyViewedListRow t={t} />
+              )}
+              {hykArticleState === "localstorage-cheat" && (
+                <LocalStorageCheatListRow
+                  t={t}
+                  onClick={() => {
+                    setPage("article")
+                    setEggPage("cheat")
+                    setUrlBar("news://hyk.internal/security-alert")
+                  }}
+                />
+              )}
+              {hykArticleState === "localstorage-deleted" && (
+                <LocalStorageDeletedListRow
+                  t={t}
+                  onClick={() => {
+                    setPage("article")
+                    setEggPage("deleted")
+                    setUrlBar("news://hyk.internal/computer-worms")
+                  }}
+                />
+              )}
             </div>
           </div>
         )}
 
         {/* ── ARTICLE READER ── */}
-        {page === "article" && (
+        {page === "article" && eggPage !== null && (
+          <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto", boxSizing: "border-box" }}>
+            <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
+              {eggPage === "cheat" && <LocalStorageCheatArticle t={t} />}
+              {eggPage === "deleted" && <LocalStorageDeletedArticle t={t} />}
+            </div>
+          </div>
+        )}
+        {page === "article" && eggPage === null && (
           <div
             style={{
               padding: "32px",
