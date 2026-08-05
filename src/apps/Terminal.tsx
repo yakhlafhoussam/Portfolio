@@ -240,12 +240,13 @@ type TerminalProps = {
   autoCommands?: string[]
   demoLines?: string[]           // Legacy: for backward compatibility
   cinematicActions?: CinematicAction[]  // New: cinematic story script (no parser)
+  visualOnly?: boolean
   demoAppend?: boolean
   hostname?: string
   storyId?: string
 }
 
-export default function Terminal({ autoCommands, demoLines, cinematicActions, demoAppend, hostname, storyId }: TerminalProps = {}) {
+export default function Terminal({ autoCommands, demoLines, cinematicActions, visualOnly, demoAppend, hostname, storyId }: TerminalProps = {}) {
   if (import.meta.env.DEV) {
     console.debug("[DEBUG] Terminal mount", { hostname, demoLines, cinematicActions, demoAppend })
   }
@@ -268,6 +269,59 @@ export default function Terminal({ autoCommands, demoLines, cinematicActions, de
   const cinematicMode = !!cinematicActions?.length
   const demoMode = !!demoLines?.length
   const isActive = cinematicMode || demoMode
+
+  if (visualOnly) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          background: "#090b0a",
+          padding: 0,
+          overflow: "hidden",
+          fontFamily: "'JetBrains Mono', monospace",
+          color: "#7ee8a0",
+        }}
+      >
+        <div
+          style={{
+            height: 22,
+            flex: 0,
+            background: "linear-gradient(180deg,#1c1f1f,#141616)",
+            display: "flex",
+            alignItems: "center",
+            gap: 5,
+            padding: "0 8px",
+            borderBottom: "1px solid rgba(80,255,140,0.12)",
+          }}
+        >
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#ff5f57" }} />
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#febc2e" }} />
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#28c840" }} />
+          <span
+            style={{
+              marginLeft: 6,
+              fontSize: "10px",
+              color: "rgba(126,232,160,0.7)",
+              letterSpacing: "0.03em",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {hostname || "terminal"}
+          </span>
+        </div>
+        <div
+          style={{
+            height: "calc(100% - 22px)",
+            background:
+              "radial-gradient(ellipse at top, rgba(70,255,140,0.07), transparent 60%), #090b0a",
+            opacity: 0.95,
+          }}
+        />
+      </div>
+    )
+  }
 
   useEffect(() => {
     cwdRef.current = cwd

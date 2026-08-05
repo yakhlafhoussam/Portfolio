@@ -13,4 +13,3 @@ logs/
 .tmp-*
 .vercel
 demo/
-src/lib/hykDemoEngine.ts

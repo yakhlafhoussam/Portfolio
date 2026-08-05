@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import TopBar from "./TopBar";
 import DesktopIcon, { IconType } from "./DesktopIcon";
 import WindowFrame from "../windows/WindowFrame";
@@ -615,6 +615,7 @@ export default function Desktop() {
             autoCommands={w.params?.autoCommands as string[] | undefined}
             demoLines={w.params?.demoLines as string[] | undefined}
             cinematicActions={w.params?.cinematicActions as any[] | undefined}
+            visualOnly={w.params?.visualOnly as boolean | undefined}
             storyId={w.params?.storyId as string | undefined}
             demoAppend={w.params?.append as boolean | undefined}
             hostname={w.params?.hostname as string | undefined}
@@ -825,66 +826,49 @@ export default function Desktop() {
         </div>
 
         {/* Open windows */}
-        {windows.map((w) => {
-          if (import.meta.env.DEV) {
-            console.debug("[DEBUG] rendering WindowFrame", {
-              key: w.id,
-              id: w.id,
-              appId: w.appId,
-              title: w.title,
-              minimized: w.minimized,
-              zIndex: w.zIndex,
-            });
-          }
-
-          return (
-            <Fragment key={w.id}>
-              <WindowFrame
-                title={w.title}
-                x={
-                  w.appId === "browser" && browserTransform
-                    ? browserTransform.x
-                    : w.x
-                }
-                y={
-                  w.appId === "browser" && browserTransform
-                    ? browserTransform.y
-                    : w.y
-                }
-                width={
-                  w.appId === "browser" && browserTransform
-                    ? browserTransform.width
-                    : w.width
-                }
-                height={
-                  w.appId === "browser" && browserTransform
-                    ? browserTransform.height
-                    : w.height
-                }
-                zIndex={w.zIndex}
-                minimized={w.minimized}
-                maximized={w.maximized}
-                isFocused={w.id === activeWindowId}
-                onClose={() => {
-                  if (
-                    w.appId === "browser" &&
-                    !browserCloseRequestRef.current()
-                  ) {
-                    window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
-                    return;
-                  }
-                  closeWindow(w.id);
-                }}
-                onMinimize={() => minimizeWindow(w.id)}
-                onMaximize={() => maximizeWindow(w.id)}
-                onMove={(x, y) => moveWindow(w.id, x, y)}
-                onFocus={() => bringToFront(w.id)}
-              >
-                {renderApp(w)}
-              </WindowFrame>
-            </Fragment>
-          );
-        })}
+        {windows.map((w) => (
+          <WindowFrame
+            key={w.id}
+            title={w.title}
+            x={
+              w.appId === "browser" && browserTransform
+                ? browserTransform.x
+                : w.x
+            }
+            y={
+              w.appId === "browser" && browserTransform
+                ? browserTransform.y
+                : w.y
+            }
+            width={
+              w.appId === "browser" && browserTransform
+                ? browserTransform.width
+                : w.width
+            }
+            height={
+              w.appId === "browser" && browserTransform
+                ? browserTransform.height
+                : w.height
+            }
+            zIndex={w.zIndex}
+            minimized={w.minimized}
+            maximized={w.maximized}
+            isFocused={w.id === activeWindowId}
+            onClose={() => {
+              if (w.appId === "browser" && !browserCloseRequestRef.current()) {
+                window.dispatchEvent(new CustomEvent("hyk-breach-escape"));
+                return;
+              }
+              closeWindow(w.id);
+            }}
+            onMinimize={() => minimizeWindow(w.id)}
+            onMaximize={() => maximizeWindow(w.id)}
+            onMove={(x, y) => moveWindow(w.id, x, y)}
+            onFocus={() => bringToFront(w.id)}
+          >
+            {renderApp(w)}
+          </WindowFrame>
+        ))}
       </div>
     </ThemeContext.Provider>
   );
