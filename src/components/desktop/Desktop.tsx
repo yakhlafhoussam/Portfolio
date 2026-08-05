@@ -75,6 +75,65 @@ type SpawnWindowOptions = {
   force?: boolean;
 };
 
+const WORKSPACE_INSETS = {
+  top: 84,
+  left: 24,
+  right: 24,
+  bottom: 24,
+} as const;
+
+function clampWindowPosition(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  vw: number,
+  vh: number,
+) {
+  const minX = WORKSPACE_INSETS.left;
+  const maxX = Math.max(minX, vw - WORKSPACE_INSETS.right - width);
+  const minY = WORKSPACE_INSETS.top;
+  const maxY = Math.max(minY, vh - WORKSPACE_INSETS.bottom - height);
+  return {
+    x: Math.max(minX, Math.min(maxX, x)),
+    y: Math.max(minY, Math.min(maxY, y)),
+  };
+}
+
+function getInitialWindowPosition(
+  size: { width: number; height: number },
+  strategy: "center" | "cascade",
+  windows: WindowState[],
+  appId: AppId,
+  counter: number,
+) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  const workspaceWidth = vw - WORKSPACE_INSETS.left - WORKSPACE_INSETS.right;
+  const workspaceHeight = vh - WORKSPACE_INSETS.top - WORKSPACE_INSETS.bottom;
+
+  let x = WORKSPACE_INSETS.left + (workspaceWidth - size.width) / 2;
+  let y = WORKSPACE_INSETS.top + (workspaceHeight - size.height) / 2;
+
+  if (strategy === "cascade") {
+    const lastSameType = windows.filter((w) => w.appId === appId).pop();
+    if (lastSameType) {
+      const dx =
+        (Math.random() > 0.5 ? 1 : -1) * (20 + Math.floor(Math.random() * 31));
+      const dy = 15 + Math.floor(Math.random() * 21);
+      x = lastSameType.x + dx;
+      y = lastSameType.y + dy;
+    }
+  } else {
+    const offset = (counter % 5) * 28;
+    x += offset;
+    y += offset;
+  }
+
+  return clampWindowPosition(x, y, size.width, size.height, vw, vh);
+}
+
 export default function Desktop() {
   // Initialize storage state and register visitor on first visit
   useEffect(() => {
@@ -187,45 +246,20 @@ export default function Desktop() {
       const size = DEFAULT_SIZES[appId];
       const id = `win-${++idCounter}`;
       const z = ++zRef.current;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-
-      let cx = Math.max(90, (vw - size.width) / 2);
-      let cy = Math.max(40, (vh - size.height) / 2);
-
-      // Calculate position based on strategy
-      if (options?.position === "cascade") {
-        // Find the last opened window of the same type and cascade from it
-        const lastSameType = windowsRef.current
-          .filter((w) => w.appId === appId)
-          .pop();
-        if (lastSameType) {
-          const dx =
-            (Math.random() > 0.5 ? 1 : -1) *
-            (20 + Math.floor(Math.random() * 31));
-          const dy = 15 + Math.floor(Math.random() * 21);
-          cx = Math.max(
-            10,
-            Math.min(vw - size.width - 20, lastSameType.x + dx),
-          );
-          cy = Math.max(
-            40,
-            Math.min(vh - size.height - 90, lastSameType.y + dy),
-          );
-        }
-      } else {
-        // Default scatter offset based on window count
-        const offset = (idCounter % 5) * 28;
-        cx = Math.max(90, (vw - size.width) / 2 + offset);
-        cy = Math.max(40, (vh - size.height) / 2 + offset);
-      }
+      const pos = getInitialWindowPosition(
+        size,
+        options?.position === "cascade" ? "cascade" : "center",
+        windowsRef.current,
+        appId,
+        idCounter,
+      );
 
       const newWindow: WindowState = {
         id,
         appId,
         title: params?.title ? (params.title as string) : TITLES[appId],
-        x: cx,
-        y: cy,
+        x: pos.x,
+        y: pos.y,
         width: size.width,
         height: size.height,
         minimized: false,
@@ -239,8 +273,8 @@ export default function Desktop() {
           id,
           appId,
           title: newWindow.title,
-          x: cx,
-          y: cy,
+          x: pos.x,
+          y: pos.y,
           z,
           params,
         });
@@ -347,11 +381,13 @@ export default function Desktop() {
       const size = DEFAULT_SIZES[appId];
       const id = `win-${++idCounter}`;
       const z = ++zRef.current;
-      const vw = window.innerWidth;
-      const vh = window.innerHeight;
-      const offset = (idCounter % 5) * 28;
-      const cx = Math.max(90, (vw - size.width) / 2 + offset);
-      const cy = Math.max(40, (vh - size.height) / 2 + offset);
+      const pos = getInitialWindowPosition(
+        size,
+        "center",
+        windowsRef.current,
+        appId,
+        idCounter,
+      );
 
       setWindows((ws) => [
         ...ws,
@@ -359,8 +395,8 @@ export default function Desktop() {
           id,
           appId,
           title: params?.title ? (params.title as string) : TITLES[appId],
-          x: cx,
-          y: cy,
+          x: pos.x,
+          y: pos.y,
           width: size.width,
           height: size.height,
           minimized: false,
@@ -553,7 +589,15 @@ export default function Desktop() {
   }, []);
 
   const moveWindow = useCallback((id: string, x: number, y: number) => {
-    setWindows((ws) => ws.map((w) => (w.id === id ? { ...w, x, y } : w)));
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    setWindows((ws) =>
+      ws.map((w) => {
+        if (w.id !== id) return w;
+        const clamped = clampWindowPosition(x, y, w.width, w.height, vw, vh);
+        return { ...w, x: clamped.x, y: clamped.y };
+      }),
+    );
   }, []);
 
   const handleTopBarAppClick = useCallback(
@@ -790,9 +834,9 @@ export default function Desktop() {
         <div
           style={{
             position: "absolute",
-            top: 100,
-            left: 12,
-            bottom: 28,
+            top: WORKSPACE_INSETS.top + 12,
+            left: WORKSPACE_INSETS.left,
+            bottom: WORKSPACE_INSETS.bottom,
             display: "flex",
             flexDirection: "column",
             flexWrap: "wrap",

@@ -1,6 +1,13 @@
 import { useState } from "react"
 import { useTheme } from "../../context/ThemeContext"
 
+const WORKSPACE_INSETS = {
+  top: 74,
+  left: 12,
+  right: 12,
+  bottom: 12,
+} as const
+
 type Props = {
   title: string
   x: number
@@ -61,18 +68,18 @@ export default function WindowFrame({
     if (!drag) return
     const nx = drag.ox + (e.clientX - drag.sx)
     const ny = drag.oy + (e.clientY - drag.sy)
-    onMove(nx, Math.max(30, ny))
+    onMove(nx, Math.max(WORKSPACE_INSETS.top, ny))
   }
 
   const handleTitleUp = () => setDrag(null)
 
   const pos = maximized
     ? {
-        top: 30,
-        left: 0,
-        width: "100vw",
-        height: "calc(100vh - 30px)",
-        borderRadius: 0,
+        top: WORKSPACE_INSETS.top,
+        left: WORKSPACE_INSETS.left,
+        width: `calc(100vw - ${WORKSPACE_INSETS.left + WORKSPACE_INSETS.right}px)`,
+        height: `calc(100vh - ${WORKSPACE_INSETS.top + WORKSPACE_INSETS.bottom}px)`,
+        borderRadius: 10,
       }
     : { top: y, left: x, width, height, borderRadius: 10 }
 

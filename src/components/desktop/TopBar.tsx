@@ -25,8 +25,8 @@ const ICON_MAP: Record<AppId, string> = {
 
 const WifiIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="15"
+    height="15"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -43,8 +43,8 @@ const WifiIcon = () => (
 
 const VolumeIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="15"
+    height="15"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -60,8 +60,8 @@ const VolumeIcon = () => (
 
 const BatteryIcon = () => (
   <svg
-    width="18"
-    height="14"
+    width="17"
+    height="13"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -77,8 +77,8 @@ const BatteryIcon = () => (
 
 const BluetoothIcon = () => (
   <svg
-    width="16"
-    height="16"
+    width="15"
+    height="15"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -108,9 +108,9 @@ const ThemeToggleIcon = ({
         alignItems: "center",
         justifyContent: "center",
         cursor: "pointer",
-        width: 36,
-        height: 36,
-        borderRadius: 12,
+        width: 30,
+        height: 30,
+        borderRadius: 10,
         border: "none",
         background: "transparent",
         transition: "background 0.2s ease",
@@ -125,8 +125,8 @@ const ThemeToggleIcon = ({
     >
       {isDark ? (
         <svg
-          width="14"
-          height="14"
+          width="13"
+          height="13"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -138,8 +138,8 @@ const ThemeToggleIcon = ({
         </svg>
       ) : (
         <svg
-          width="14"
-          height="14"
+          width="13"
+          height="13"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -207,21 +207,21 @@ export default function TopBar({
         top: 16,
         left: 24,
         right: 24,
-        minHeight: 52,
+        minHeight: 44,
         background: t.isDark ? "rgba(18,18,20,0.94)" : "rgba(250,250,252,0.96)",
         backdropFilter: "blur(26px)",
         border: t.isDark
           ? "1px solid rgba(255,255,255,0.08)"
           : "1px solid rgba(0,0,0,0.1)",
-        borderRadius: 24,
+        borderRadius: 20,
         boxShadow: t.isDark
           ? "0 40px 120px rgba(0,0,0,0.18)"
           : "0 30px 90px rgba(15,15,15,0.08)",
         display: "grid",
         gridTemplateColumns: "minmax(220px, 1fr) auto minmax(220px, 1fr)",
         alignItems: "center",
-        gap: 14,
-        padding: "10px 20px",
+        gap: 10,
+        padding: "7px 14px",
         zIndex: 10001,
         userSelect: "none",
         transition: t.transition,
@@ -232,7 +232,7 @@ export default function TopBar({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 10,
+          gap: 8,
           minWidth: 0,
           overflow: "hidden",
         }}
@@ -244,12 +244,15 @@ export default function TopBar({
               key={app.id}
               type="button"
               onClick={() => onAppClick(app.id)}
+              title={app.title}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 8,
-                padding: "10px 12px",
-                borderRadius: 16,
+                justifyContent: "center",
+                padding: 0,
+                width: 34,
+                height: 30,
+                borderRadius: 11,
                 border: "none",
                 background: active
                   ? t.isDark
@@ -286,24 +289,12 @@ export default function TopBar({
                 alt={app.title}
                 draggable={false}
                 style={{
-                  width: 18,
-                  height: 18,
+                  width: 17,
+                  height: 17,
                   objectFit: "contain",
                   filter: active ? "none" : t.isDark ? "brightness(0.88)" : "brightness(0.8)",
                 }}
               />
-              <span
-                style={{
-                  fontSize: "0.78rem",
-                  fontWeight: 600,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  maxWidth: 120,
-                }}
-              >
-                {app.title}
-              </span>
             </button>
           )
         })}
@@ -315,8 +306,8 @@ export default function TopBar({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 10,
-          padding: "6px 14px",
+          gap: 8,
+          padding: "5px 11px",
           background: t.isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
           borderRadius: 999,
           border: t.isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
@@ -327,7 +318,7 @@ export default function TopBar({
         <span
           style={{
             color: t.isDark ? "rgba(255,255,255,0.92)" : "rgba(17,24,39,0.92)",
-            fontSize: "0.82rem",
+            fontSize: "0.79rem",
             fontWeight: 600,
             fontFamily: "'JetBrains Mono', monospace",
             letterSpacing: "0.04em",
@@ -348,7 +339,7 @@ export default function TopBar({
         <span
           style={{
             color: t.isDark ? "rgba(255,255,255,0.66)" : "rgba(17,24,39,0.66)",
-            fontSize: "0.78rem",
+            fontSize: "0.74rem",
             fontWeight: 500,
             fontFamily: "'Inter', sans-serif",
             transition: t.transition,
@@ -364,7 +355,7 @@ export default function TopBar({
           display: "flex",
           alignItems: "center",
           justifyContent: "flex-end",
-          gap: 14,
+          gap: 10,
           color: t.isDark ? "rgba(255,255,255,0.78)" : "rgba(17,24,39,0.85)",
         }}
       >
@@ -372,9 +363,9 @@ export default function TopBar({
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: 10,
-            padding: "8px 12px",
-            borderRadius: 14,
+            gap: 8,
+            padding: "6px 10px",
+            borderRadius: 12,
             background: t.isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)",
             border: t.isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
           }}
