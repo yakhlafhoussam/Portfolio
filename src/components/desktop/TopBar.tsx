@@ -203,10 +203,10 @@ export default function TopBar({
   return (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
         top: 16,
-        left: 24,
-        right: 24,
+        left: 0,
+        right: 0,
         minHeight: 44,
         background: t.isDark ? "rgba(18,18,20,0.94)" : "rgba(250,250,252,0.96)",
         backdropFilter: "blur(26px)",

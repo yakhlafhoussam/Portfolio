@@ -75,7 +75,7 @@ type SpawnWindowOptions = {
   force?: boolean;
 };
 
-const WORKSPACE_INSETS = {
+export const WORKSPACE_INSETS = {
   top: 84,
   left: 24,
   right: 24,
@@ -812,22 +812,39 @@ export default function Desktop() {
             }}
           />
         )}
-        {/* TopBar — stop click propagation to avoid deselecting icons */}
-        <div onClick={(e) => e.stopPropagation()}>
-          <TopBar
-            isDark={isDark}
-            onToggleTheme={() => {
-              if (blockDesktopInput) return;
-              setIsDark((d) => {
-                const next = !d;
-                storageManager.update({ theme: next ? "dark" : "light" });
-                return next;
-              });
-            }}
-            runningApps={windows}
-            activeWindowId={activeWindowId}
-            onAppClick={handleTopBarAppClick}
-          />
+        {/* ── Workspace container — single source of truth for horizontal bounds ── */}
+        {/* TopBar lives inside so it inherits the same left/right edges as windows */}
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            bottom: 0,
+            left: WORKSPACE_INSETS.left,
+            right: WORKSPACE_INSETS.right,
+            pointerEvents: "none",
+            zIndex: 10001,
+          }}
+        >
+          {/* TopBar — stop click propagation to avoid deselecting icons */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{ pointerEvents: "auto" }}
+          >
+            <TopBar
+              isDark={isDark}
+              onToggleTheme={() => {
+                if (blockDesktopInput) return;
+                setIsDark((d) => {
+                  const next = !d;
+                  storageManager.update({ theme: next ? "dark" : "light" });
+                  return next;
+                });
+              }}
+              runningApps={windows}
+              activeWindowId={activeWindowId}
+              onAppClick={handleTopBarAppClick}
+            />
+          </div>
         </div>
 
         {/* Desktop icons — flex column wrap for responsive grid */}

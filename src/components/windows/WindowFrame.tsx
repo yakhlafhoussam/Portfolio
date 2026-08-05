@@ -1,12 +1,6 @@
 import { useState } from "react"
 import { useTheme } from "../../context/ThemeContext"
-
-const WORKSPACE_INSETS = {
-  top: 74,
-  left: 12,
-  right: 12,
-  bottom: 12,
-} as const
+import { WORKSPACE_INSETS } from "../desktop/Desktop"
 
 type Props = {
   title: string
