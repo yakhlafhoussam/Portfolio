@@ -15,6 +15,7 @@ import { storageManager } from "../../lib/storage";
 import { initVisitor } from "../../services/visitor";
 import lightWallpaper from "@/assets/wallpapers/light.png";
 import darkWallpaper from "@/assets/wallpapers/dark.png";
+import DevToolsEasterEgg from "./DevToolsEasterEgg";
 
 export type AppId =
   | "projects"
@@ -164,6 +165,32 @@ export default function Desktop() {
     null,
   );
   const popupTimerRef = useRef<number | null>(null);
+
+  // ── DevTools detection Easter egg ──────────────────────────────────────────
+  const [devToolsOpen, setDevToolsOpen] = useState(false);
+  useEffect(() => {
+    const THRESHOLD = 160;
+    let prevOpen = false;
+    const check = () => {
+      const open =
+        window.outerWidth - window.innerWidth > THRESHOLD ||
+        window.outerHeight - window.innerHeight > THRESHOLD;
+      if (open !== prevOpen) {
+        prevOpen = open;
+        setDevToolsOpen(open);
+        // Force dark mode when devtools opens; restore saved pref when it closes
+        if (open) {
+          setIsDark(true);
+        } else {
+          setIsDark(storageManager.read().theme === "dark");
+        }
+      }
+    };
+    check();
+    const id = window.setInterval(check, 500);
+    return () => window.clearInterval(id);
+  }, []);
+
   const [screenBlack, setScreenBlack] = useState(false);
   const [desktopInstable, setDesktopInstable] = useState(false);
   const [browserTransform, setBrowserTransform] = useState<{
@@ -731,6 +758,9 @@ export default function Desktop() {
             pointerEvents: "none",
           }}
         />
+        {/* ── DevTools Easter egg overlay ── */}
+        {devToolsOpen && <DevToolsEasterEgg />}
+
         {flashScreen && (
           <div
             style={{
