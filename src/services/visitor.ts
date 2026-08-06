@@ -9,51 +9,42 @@ export async function initVisitor(): Promise<void> {
 
     const response = await fetch("/api/visitor/init", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fingerprint }),
     })
 
-    if (response.ok) {
-      const data = await response.json()
+    if (!response.ok) return
 
-      // Read current local value
-      let localValue: string | null = null
-      try {
-        const topLevel = window.localStorage.getItem("hykViewed")
-        if (topLevel !== null) {
-          localValue = topLevel
-        } else {
-          const raw = window.localStorage.getItem("HYK_STORAGE")
-          if (raw !== null) {
-            const parsed = JSON.parse(raw)
-            const val = parsed?.hyk?.viewed
-            if (val !== undefined && val !== null) {
-              localValue = String(val)
-            }
-          }
-        }
-      } catch {}
+    const data = await response.json()
+    const dbHykViewed: boolean = data.hykViewed ?? false
 
-      // If the user has set a special bypass code (HYK or hyk) or is in a cheat/deleted state,
-      // we do NOT restore the normal "viewed = true" state yet.
-      const isSpecialOrCheated =
-        localValue === "HYK" ||
-        localValue === "hyk" ||
-        localValue === "false" ||
-        localValue === null
+    // ── LocalStorage lifecycle ───────────────────────────────────────────────
+    //
+    // Case 1: db.hykViewed === false  AND  storage is missing
+    //   → First-time visitor. Create the default HYK localStorage.
+    //      This is the ONLY moment automatic creation is allowed.
+    //
+    // Case 2: db.hykViewed === true  AND  storage is missing
+    //   → User already read the article (possibly on another device or after
+    //      clearing storage). The missing storage is intentionally interpreted
+    //      as a bypass attempt — leave localStorage completely untouched.
+    //
+    // Case 3 & 4: db.hykViewed === true  AND  storage exists
+    //   → Preserve whatever is there. Theme changes are handled separately.
+    //      Never inject hykViewed into an existing object.
+    //
+    // Case 5: User opens & reads the HYK article again
+    //   → Handled inside Browser.tsx via storageManager.update({ hyk: { viewed: true } }).
+    //      That is the ONLY other place allowed to write hyk state.
+    //
+    const storageExists = storageManager.readRaw() !== null
 
-      const shouldSkipRestore = data.hykViewed === true && isSpecialOrCheated
-
-      if (!shouldSkipRestore) {
-        storageManager.update({
-          hyk: {
-            viewed: data.hykViewed ?? false,
-          },
-        })
-      }
+    if (!dbHykViewed && !storageExists) {
+      // Case 1 — brand-new visitor
+      storageManager.initializeForNewVisitor()
     }
+    // All other cases: do nothing. Storage is preserved exactly as-is.
+
   } catch (error) {
     console.error("Visitor service initialization failed:", error)
   }

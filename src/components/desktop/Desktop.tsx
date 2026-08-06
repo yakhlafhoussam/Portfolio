@@ -136,15 +136,15 @@ function getInitialWindowPosition(
 }
 
 export default function Desktop() {
-  // Initialize storage state and register visitor on first visit
+  // Register visitor on first visit — the visitor service owns all
+  // localStorage initialisation decisions. Do NOT call storageManager.initialize() here.
   useEffect(() => {
-    storageManager.initialize();
     initVisitor();
   }, []);
 
   const [isDark, setIsDark] = useState(() => {
-    storageManager.initialize();
-    return storageManager.read().theme === "dark";
+    // Read theme from storage if present; default to dark without writing anything.
+    return (storageManager.readRaw()?.theme ?? "dark") === "dark";
   });
   const [icons, setIcons] = useState<
     {
@@ -186,7 +186,8 @@ export default function Desktop() {
             "color: #cc0000; font-family: monospace; font-size: 14px; font-weight: bold; text-shadow: 0 0 10px rgba(200,0,0,0.5);"
           );
         } else {
-          setIsDark(storageManager.read().theme === "dark");
+          const savedTheme = storageManager.readRaw()?.theme;
+          setIsDark(savedTheme !== undefined ? savedTheme === "dark" : true);
         }
       }
     };
@@ -869,11 +870,9 @@ export default function Desktop() {
               onToggleTheme={() => {
                 if (blockDesktopInput) return;
                 if (devToolsOpen) return;
-                setIsDark((d) => {
-                  const next = !d;
-                  storageManager.update({ theme: next ? "dark" : "light" });
-                  return next;
-                });
+                const next = !isDark;
+                storageManager.updateTheme(next ? "dark" : "light");
+                setIsDark(next);
               }}
               runningApps={windows}
               activeWindowId={activeWindowId}
