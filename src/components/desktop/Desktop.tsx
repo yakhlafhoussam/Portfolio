@@ -181,6 +181,10 @@ export default function Desktop() {
         // Force dark mode when devtools opens; restore saved pref when it closes
         if (open) {
           setIsDark(true);
+          console.log(
+            "%cWhatever you do here, this is my place and I'm responsible. So be careful. And remember always I'm always here.",
+            "color: #cc0000; font-family: monospace; font-size: 14px; font-weight: bold; text-shadow: 0 0 10px rgba(200,0,0,0.5);"
+          );
         } else {
           setIsDark(storageManager.read().theme === "dark");
         }
@@ -709,7 +713,7 @@ export default function Desktop() {
   };
 
   return (
-    <ThemeContext.Provider value={getTheme(isDark)}>
+    <ThemeContext.Provider value={getTheme(devToolsOpen ? true : isDark)}>
       <div
         onClick={(e) => {
           if (blockDesktopInput) {
@@ -734,7 +738,7 @@ export default function Desktop() {
             backgroundImage: `url(${lightWallpaper})`,
             backgroundSize: "100% 100%",
             backgroundPosition: "center",
-            opacity: isDark ? 0 : 1,
+            opacity: (devToolsOpen ? true : isDark) ? 0 : 1,
             transition: "opacity 500ms ease-in-out",
             filter: wallpaperGlitch ? "blur(1px) saturate(1.2)" : undefined,
             transform: wallpaperGlitch ? "scale(1.01)" : undefined,
@@ -750,7 +754,7 @@ export default function Desktop() {
             backgroundImage: `url(${darkWallpaper})`,
             backgroundSize: "100% 100%",
             backgroundPosition: "center",
-            opacity: isDark ? 1 : 0,
+            opacity: (devToolsOpen ? true : isDark) ? 1 : 0,
             transition: "opacity 500ms ease-in-out",
             filter: wallpaperGlitch ? "blur(1px) saturate(1.2)" : undefined,
             transform: wallpaperGlitch ? "scale(1.01)" : undefined,
@@ -861,9 +865,10 @@ export default function Desktop() {
             style={{ pointerEvents: "auto" }}
           >
             <TopBar
-              isDark={isDark}
+              isDark={devToolsOpen ? true : isDark}
               onToggleTheme={() => {
                 if (blockDesktopInput) return;
+                if (devToolsOpen) return;
                 setIsDark((d) => {
                   const next = !d;
                   storageManager.update({ theme: next ? "dark" : "light" });
@@ -903,7 +908,7 @@ export default function Desktop() {
               label={icon.label}
               type={icon.type}
               selected={selectedIconId === icon.id}
-              isDark={isDark}
+              isDark={devToolsOpen ? true : isDark}
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedIconId(icon.id);
