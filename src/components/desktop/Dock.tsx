@@ -26,7 +26,7 @@ type Props = {
 }
 
 // Map every AppId to a Papirus icon src + optional CSS filter
-const DOCK_ICON: Record<AppId, { src: string filter?: string }> = {
+const DOCK_ICON: Record<AppId, { src: string; filter?: string }> = {
   projects: { src: folderSvg },
   experience: { src: briefcaseSvg },
   education: { src: graduationSvg },

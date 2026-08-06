@@ -14,6 +14,12 @@ import {
   LocalStorageDeletedCard,
   LocalStorageDeletedListRow,
   LocalStorageDeletedArticle,
+  BypassSuccessCard,
+  BypassSuccessListRow,
+  BypassSuccessArticle,
+  BypassFailCard,
+  BypassFailListRow,
+  BypassFailArticle,
 } from "@/components/easter/HykEasterEggs"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -691,7 +697,7 @@ export default function Browser({
   const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
   const [hykArticleState, setHykArticleState] = useState<HykArticleState>("normal")
   // "egg" page: the user opened an easter egg article (not a real article)
-  const [eggPage, setEggPage] = useState<"cheat" | "deleted" | null>(null)
+  const [eggPage, setEggPage] = useState<"cheat" | "deleted" | "bypass-success" | "bypass-fail" | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const stageRef = useRef<HTMLDivElement | null>(null)
   const browserWindowRef = useRef<HTMLDivElement | null>(null)
@@ -986,16 +992,53 @@ export default function Browser({
     }
   }, [takeoverActive])
 
+  const restoreLocalStorageAfterReading = useCallback(() => {
+    storageManager.update({
+      hyk: {
+        viewed: true,
+      },
+    })
+    try {
+      window.localStorage.removeItem("hykViewed")
+    } catch {}
+  }, [])
+
+  const eggPageRef = useRef<"cheat" | "deleted" | "bypass-success" | "bypass-fail" | null>(null)
+  useEffect(() => {
+    eggPageRef.current = eggPage
+  }, [eggPage])
+
+  useEffect(() => {
+    return () => {
+      if (eggPageRef.current !== null) {
+        storageManager.update({
+          hyk: {
+            viewed: true,
+          },
+        })
+        try {
+          window.localStorage.removeItem("hykViewed")
+        } catch {}
+      }
+    }
+  }, [])
+
   const goHome = useCallback(() => {
     guardNavigation(() => {
+      if (eggPage !== null) {
+        restoreLocalStorageAfterReading()
+      }
       setPage("home")
       setEggPage(null)
       setUrlBar("hyk://new-tab")
     })
-  }, [guardNavigation])
+  }, [guardNavigation, eggPage, restoreLocalStorageAfterReading])
 
   const goBack = useCallback(() => {
     guardNavigation(() => {
+      if (eggPage !== null) {
+        restoreLocalStorageAfterReading()
+      }
       if (page === "article") {
         setPage("news")
         setEggPage(null)
@@ -1006,7 +1049,7 @@ export default function Browser({
         setUrlBar("hyk://new-tab")
       }
     })
-  }, [page, guardNavigation])
+  }, [page, guardNavigation, eggPage, restoreLocalStorageAfterReading])
 
   const openNews = useCallback(async () => {
     guardNavigation(() => {
@@ -1287,6 +1330,26 @@ export default function Browser({
                       }}
                     />
                   )}
+                  {hykArticleState === "bypass-success" && (
+                    <BypassSuccessCard
+                      t={t}
+                      onClick={() => {
+                        setPage("article")
+                        setEggPage("bypass-success")
+                        setUrlBar("news://hyk.internal/bypass-success")
+                      }}
+                    />
+                  )}
+                  {hykArticleState === "bypass-fail" && (
+                    <BypassFailCard
+                      t={t}
+                      onClick={() => {
+                        setPage("article")
+                        setEggPage("bypass-fail")
+                        setUrlBar("news://hyk.internal/bypass-fail")
+                      }}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -1431,6 +1494,26 @@ export default function Browser({
                   }}
                 />
               )}
+              {hykArticleState === "bypass-success" && (
+                <BypassSuccessListRow
+                  t={t}
+                  onClick={() => {
+                    setPage("article")
+                    setEggPage("bypass-success")
+                    setUrlBar("news://hyk.internal/bypass-success")
+                  }}
+                />
+              )}
+              {hykArticleState === "bypass-fail" && (
+                <BypassFailListRow
+                  t={t}
+                  onClick={() => {
+                    setPage("article")
+                    setEggPage("bypass-fail")
+                    setUrlBar("news://hyk.internal/bypass-fail")
+                  }}
+                />
+              )}
             </div>
           </div>
         )}
@@ -1441,6 +1524,8 @@ export default function Browser({
             <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
               {eggPage === "cheat" && <LocalStorageCheatArticle t={t} />}
               {eggPage === "deleted" && <LocalStorageDeletedArticle t={t} />}
+              {eggPage === "bypass-success" && <BypassSuccessArticle t={t} />}
+              {eggPage === "bypass-fail" && <BypassFailArticle t={t} />}
             </div>
           </div>
         )}

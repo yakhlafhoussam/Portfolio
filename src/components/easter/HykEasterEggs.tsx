@@ -11,6 +11,8 @@
 
 import laughing1 from "@/assets/videos/laughing_1.mp4"
 import laughing2 from "@/assets/videos/laughing_2.mp4"
+import laughing4 from "@/assets/videos/laughing_4.mp4"
+import laughing5 from "@/assets/videos/laughing_5.mp4"
 import { useTheme } from "@/context/ThemeContext"
 import { useState } from "react"
 
@@ -499,7 +501,7 @@ export function LocalStorageDeletedCard({
             overflow: "hidden",
           }}
         >
-          By the way, bhala chaft chi virus kaydor hna...
+          By the way, bhala chaft chi doda katdor hna...
         </div>
         <div style={{ color: t.textFaint, fontSize: "0.65rem", marginTop: 8 }}>
           Just now
@@ -604,7 +606,7 @@ export function LocalStorageDeletedListRow({
             lineHeight: 1.4,
           }}
         >
-          By the way, bhala chaft chi virus kaydor hna...
+          By the way, bhala chaft chi doda katdor hna...
         </div>
       </div>
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
@@ -703,24 +705,16 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
 
   const wormSections: { heading: string; body: string }[] = [
     {
-      heading: "What is a computer worm?",
-      body: "A computer worm is a standalone malware program that replicates itself to spread to other systems. Unlike viruses, worms do not need a host file. They exploit network vulnerabilities to propagate automatically — silently, efficiently, and without your permission.",
+      heading: "What is a Worm?",
+      body: "A computer worm is a standalone malware program that replicates itself in order to spread to other computers. Unlike a standard virus, it doesn't need a host file or any human help to execute. It just wanders around networks on its own, exploiting vulnerabilities and replicating itself to consume bandwidth, like a digital parasite.",
     },
     {
-      heading: "How worms spread",
-      body: "Worms typically spread through email attachments, network shares, instant messaging links, and unpatched operating system vulnerabilities. Once inside, they can replicate thousands of copies of themselves within seconds. Some modern worms also monitor browser storage events.",
+      heading: "Why is it called a worm?",
+      body: "The term was inspired by John Brunner's 1975 sci-fi novel 'The Shockwave Rider', which described a self-replicating tapeworm program crawling through a global network. Computer pioneers loved the analogy of code 'crawling' from host to host, so the name stuck. Honestly, 'worm' sounds way cooler than 'self-propagating software entity'.",
     },
     {
-      heading: "Famous worms in history",
-      body: "The Morris Worm (1988) was one of the first recognized internet worms, infecting roughly 6,000 machines. ILOVEYOU (2000) spread via email and caused an estimated $10 billion in damage. Stuxnet (2010) targeted industrial systems and is widely considered the first cyber weapon. And then there's HYK, which simply notices when you delete its LocalStorage.",
-    },
-    {
-      heading: "How to protect your system",
-      body: "Keep your OS and software up to date. Use a reputable antivirus program. Avoid clicking unknown links. Don't open suspicious attachments. And most importantly — do not delete LocalStorage entries that you don't fully understand. Some systems remember.",
-    },
-    {
-      heading: "Why deleting LocalStorage won't fool HYK 😄",
-      body: "When you delete the HYK_STORAGE key from localStorage, you might think the system forgets you. But HYK has already spoken to Firestore. Firestore doesn't forget. It's sitting quietly on a server somewhere, with your fingerprint, smiling. This article is its way of saying hello.",
+      heading: "Worm vs. Virus vs. Trojan: The Big Three",
+      body: "Let's break down the differences: (1) A Virus is dependent—it needs to infect a host file and relies on human action (like opening a bad file) to spread. (2) A Worm is autonomous—it spreads by itself across networks without needing a host file or user action. (3) A Trojan is deceptive—it disguises itself as a legit program to trick you into running it, but doesn't replicate on its own. (4) HYK is playful—it won't delete your files, but it will definitely catch you if you try to wipe its LocalStorage.",
     },
   ]
 
@@ -808,7 +802,7 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
           By the way...
         </p>
         <p style={{ color: t.textMuted, fontSize: "0.88rem", lineHeight: 1.68, margin: "0 0 24px 0" }}>
-          Bhala chaft chi virus kaydor hna... Khalli n3tik chi ma3lomat 3lih.
+          B7al ila chft chi doda katdour hna... Khalli n3tik chi ma3lomat 3liha.
         </p>
       </div>
 
@@ -840,6 +834,48 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
         ))}
       </div>
 
+      {/* Final challenge at the end of the Worm article */}
+      <div
+        style={{
+          marginTop: 32,
+          padding: "16px 20px",
+          borderRadius: 10,
+          background: t.isDark ? "rgba(239, 68, 68, 0.05)" : "rgba(239, 68, 68, 0.03)",
+          border: "1px dashed rgba(239, 68, 68, 0.3)",
+        }}
+      >
+        <h3
+          style={{
+            color: t.text,
+            fontSize: "0.95rem",
+            fontWeight: 700,
+            margin: "0 0 8px 0",
+          }}
+        >
+          🔐 The Ultimate Bypass Challenge
+        </h3>
+        <p style={{ color: t.textMuted, fontSize: "0.84rem", lineHeight: 1.5, margin: "0 0 12px 0" }}>
+          If you really want to bypass this security and prove your hacker skills...
+        </p>
+        <code
+          style={{
+            display: "block",
+            background: t.isDark ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.05)",
+            padding: "8px 12px",
+            borderRadius: 6,
+            fontSize: "0.8rem",
+            fontFamily: "'JetBrains Mono', monospace",
+            color: t.isDark ? "#f43f5e" : "#e11d48",
+            marginBottom: 12,
+          }}
+        >
+          localStorage.setItem("hykViewed", "HYK")
+        </code>
+        <p style={{ color: t.textMuted, fontSize: "0.84rem", lineHeight: 1.5, margin: 0 }}>
+          Do this in your browser console, then <strong>refresh the page</strong>. Let's see if you can fool HYK.
+        </p>
+      </div>
+
       <p
         style={{
           color: t.textFaint,
@@ -854,3 +890,572 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
     </div>
   )
 }
+
+// ─── Case A — Bypass Success (HYK) ───────────────────────────────────────────
+
+export function BypassSuccessCard({
+  onClick,
+  t,
+}: {
+  onClick: () => void
+  t: ReturnType<typeof useTheme>
+}) {
+  const [hovered, setHovered] = useState(false)
+  const accent = "#22c55e"
+  const accentBg = "rgba(34,197,94,0.1)"
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        flexShrink: 0,
+        width: 250,
+        borderRadius: 10,
+        overflow: "hidden",
+        background: t.isDark ? "#212124" : "#ffffff",
+        border:
+          "1px solid " +
+          (hovered
+            ? "rgba(34,197,94,0.4)"
+            : t.isDark
+              ? "rgba(34,197,94,0.18)"
+              : "rgba(34,197,94,0.18)"),
+        cursor: "pointer",
+        transform: hovered ? "translateY(-2px)" : "none",
+        transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: hovered ? "0 8px 24px rgba(34,197,94,0.12)" : "none",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 120,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(34,197,94,0.07)",
+          fontSize: "2.6rem",
+        }}
+      >
+        🔓
+      </div>
+      <div style={{ padding: "10px 12px 12px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: accent,
+              background: accentBg,
+              padding: "2px 6px",
+              borderRadius: 4,
+            }}
+          >
+            System Unlocked
+          </span>
+          <span style={{ color: t.textFaint, fontSize: "0.64rem" }}>1 min read</span>
+        </div>
+        <div
+          style={{
+            color: t.text,
+            fontSize: "0.8rem",
+            fontWeight: 600,
+            lineHeight: 1.35,
+            marginBottom: 5,
+          }}
+        >
+          🔓 Security Bypass: Success
+        </div>
+        <div
+          style={{
+            color: t.textMuted,
+            fontSize: "0.72rem",
+            lineHeight: 1.4,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          You successfully bypassed the security alert. Or did you?
+        </div>
+        <div style={{ color: t.textFaint, fontSize: "0.65rem", marginTop: 8 }}>
+          Just now
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function BypassSuccessListRow({
+  onClick,
+  t,
+}: {
+  onClick: () => void
+  t: ReturnType<typeof useTheme>
+}) {
+  const accent = "#22c55e"
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        padding: "12px",
+        borderRadius: 8,
+        background: t.isDark ? "#212124" : "#ffffff",
+        border: "1px solid rgba(34,197,94,0.22)",
+        cursor: "pointer",
+        transition: t.transition,
+      }}
+      onMouseEnter={(e) => {
+        ;(e.currentTarget as HTMLElement).style.borderColor =
+          "rgba(34,197,94,0.45)"
+        ;(e.currentTarget as HTMLElement).style.transform = "translateX(2px)"
+      }}
+      onMouseLeave={(e) => {
+        ;(e.currentTarget as HTMLElement).style.borderColor =
+          "rgba(34,197,94,0.22)"
+        ;(e.currentTarget as HTMLElement).style.transform = "none"
+      }}
+    >
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 6,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(34,197,94,0.07)",
+          fontSize: "1.8rem",
+        }}
+      >
+        🔓
+      </div>
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 4,
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: accent,
+            }}
+          >
+            System Unlocked
+          </span>
+          <span style={{ color: t.textFaint, fontSize: "0.66rem" }}>
+            Just now · 1 min read
+          </span>
+        </div>
+        <div
+          style={{
+            color: t.text,
+            fontSize: "0.82rem",
+            fontWeight: 600,
+          }}
+        >
+          🔓 Security Bypass: Success
+        </div>
+        <div
+          style={{
+            color: t.textMuted,
+            fontSize: "0.72rem",
+            marginTop: 2,
+            lineHeight: 1.4,
+          }}
+        >
+          You successfully bypassed the security alert. Or did you?
+        </div>
+      </div>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path
+          d="M3 8h10M9 4l4 4-4 4"
+          stroke={t.textFaint}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
+export function BypassSuccessArticle({ t }: { t: ReturnType<typeof useTheme> }) {
+  const accent = "#22c55e"
+  const accentBg = "rgba(34,197,94,0.1)"
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+        <span
+          style={{
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: accent,
+            background: accentBg,
+            padding: "3px 8px",
+            borderRadius: 4,
+          }}
+        >
+          System Unlocked
+        </span>
+        <span style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 500 }}>
+          Just now · 1 min read
+        </span>
+      </div>
+
+      <h1
+        style={{
+          color: t.text,
+          fontSize: "1.75rem",
+          fontWeight: 800,
+          lineHeight: 1.25,
+          margin: "0 0 24px 0",
+          letterSpacing: "-0.02em",
+        }}
+      >
+        🔓 SECURITY BYPASS: SUCCESS
+      </h1>
+
+      <p style={{ color: t.text, fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.6, margin: "0 0 16px 0" }}>
+        I can't believe you actually trusted me 😂
+      </p>
+
+      <EggVideo src={laughing4} />
+
+      <p style={{ color: t.textMuted, fontSize: "0.95rem", lineHeight: 1.68, margin: "0 0 16px 0" }}>
+        Congratulations...
+      </p>
+
+      <p style={{ color: t.textMuted, fontSize: "0.95rem", lineHeight: 1.68, margin: "0 0 24px 0" }}>
+        You followed instructions from an article written by the same system that trapped you.
+      </p>
+
+      <div
+        style={{
+          padding: "16px 20px",
+          borderRadius: 10,
+          background: t.isDark ? "rgba(34,197,94,0.05)" : "rgba(34,197,94,0.03)",
+          border: "1px solid rgba(34,197,94,0.3)",
+          marginBottom: 24,
+        }}
+      >
+        <p style={{ color: t.textMuted, fontSize: "0.88rem", lineHeight: 1.6, margin: 0 }}>
+          Hats off to your persistence though! Playful curiosity is what makes development fun.
+        </p>
+      </div>
+
+      <p
+        style={{
+          color: t.textFaint,
+          fontSize: "0.76rem",
+          lineHeight: 1.6,
+          fontFamily: "'JetBrains Mono', monospace",
+          margin: 0,
+        }}
+      >
+        hyk.internal/bypass — Session completed. Have a wonderful day!
+      </p>
+    </div>
+  )
+}
+
+// ─── Case B — Bypass Fail (hyk) ──────────────────────────────────────────────
+
+export function BypassFailCard({
+  onClick,
+  t,
+}: {
+  onClick: () => void
+  t: ReturnType<typeof useTheme>
+}) {
+  const [hovered, setHovered] = useState(false)
+  const accent = "#f59e0b"
+  const accentBg = "rgba(245,158,11,0.1)"
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        flexShrink: 0,
+        width: 250,
+        borderRadius: 10,
+        overflow: "hidden",
+        background: t.isDark ? "#212124" : "#ffffff",
+        border:
+          "1px solid " +
+          (hovered
+            ? "rgba(245,158,11,0.4)"
+            : t.isDark
+              ? "rgba(245,158,11,0.18)"
+              : "rgba(245,158,11,0.18)"),
+        cursor: "pointer",
+        transform: hovered ? "translateY(-2px)" : "none",
+        transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
+        boxShadow: hovered ? "0 8px 24px rgba(245,158,11,0.12)" : "none",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 120,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(245,158,11,0.07)",
+          fontSize: "2.6rem",
+        }}
+      >
+        🔒
+      </div>
+      <div style={{ padding: "10px 12px 12px" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 6,
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: accent,
+              background: accentBg,
+              padding: "2px 6px",
+              borderRadius: 4,
+            }}
+          >
+            Bypass Blocked
+          </span>
+          <span style={{ color: t.textFaint, fontSize: "0.64rem" }}>1 min read</span>
+        </div>
+        <div
+          style={{
+            color: t.text,
+            fontSize: "0.8rem",
+            fontWeight: 600,
+            lineHeight: 1.35,
+            marginBottom: 5,
+          }}
+        >
+          🔒 Security Bypass: Failed
+        </div>
+        <div
+          style={{
+            color: t.textMuted,
+            fontSize: "0.72rem",
+            lineHeight: 1.4,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+          }}
+        >
+          You tried to bypass security but something went wrong. Click to inspect error.
+        </div>
+        <div style={{ color: t.textFaint, fontSize: "0.65rem", marginTop: 8 }}>
+          Just now
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export function BypassFailListRow({
+  onClick,
+  t,
+}: {
+  onClick: () => void
+  t: ReturnType<typeof useTheme>
+}) {
+  const accent = "#f59e0b"
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        padding: "12px",
+        borderRadius: 8,
+        background: t.isDark ? "#212124" : "#ffffff",
+        border: "1px solid rgba(245,158,11,0.22)",
+        cursor: "pointer",
+        transition: t.transition,
+      }}
+      onMouseEnter={(e) => {
+        ;(e.currentTarget as HTMLElement).style.borderColor =
+          "rgba(245,158,11,0.45)"
+        ;(e.currentTarget as HTMLElement).style.transform = "translateX(2px)"
+      }}
+      onMouseLeave={(e) => {
+        ;(e.currentTarget as HTMLElement).style.borderColor =
+          "rgba(245,158,11,0.22)"
+        ;(e.currentTarget as HTMLElement).style.transform = "none"
+      }}
+    >
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: 6,
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(245,158,11,0.07)",
+          fontSize: "1.8rem",
+        }}
+      >
+        🔒
+      </div>
+      <div style={{ flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 4,
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: accent,
+            }}
+          >
+            Bypass Blocked
+          </span>
+          <span style={{ color: t.textFaint, fontSize: "0.66rem" }}>
+            Just now · 1 min read
+          </span>
+        </div>
+        <div
+          style={{
+            color: t.text,
+            fontSize: "0.82rem",
+            fontWeight: 600,
+          }}
+        >
+          🔒 Security Bypass: Failed
+        </div>
+        <div
+          style={{
+            color: t.textMuted,
+            fontSize: "0.72rem",
+            marginTop: 2,
+            lineHeight: 1.4,
+          }}
+        >
+          You tried to bypass security but something went wrong. Click to inspect error.
+        </div>
+      </div>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path
+          d="M3 8h10M9 4l4 4-4 4"
+          stroke={t.textFaint}
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  )
+}
+
+export function BypassFailArticle({ t }: { t: ReturnType<typeof useTheme> }) {
+  const accent = "#f59e0b"
+  const accentBg = "rgba(245,158,11,0.1)"
+  return (
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+        <span
+          style={{
+            fontSize: "0.62rem",
+            fontWeight: 700,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: accent,
+            background: accentBg,
+            padding: "3px 8px",
+            borderRadius: 4,
+          }}
+        >
+          Bypass Blocked
+        </span>
+        <span style={{ color: t.textFaint, fontSize: "0.7rem", fontWeight: 500 }}>
+          Just now · 1 min read
+        </span>
+      </div>
+
+      <h1
+        style={{
+          color: t.text,
+          fontSize: "1.75rem",
+          fontWeight: 800,
+          lineHeight: 1.25,
+          margin: "0 0 24px 0",
+          letterSpacing: "-0.02em",
+        }}
+      >
+        🔒 SECURITY BYPASS: FAILED
+      </h1>
+
+      <p style={{ color: t.text, fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.6, margin: "0 0 16px 0" }}>
+        I said HYK... not hyk 😅
+      </p>
+
+      <EggVideo src={laughing5} />
+
+      <p style={{ color: t.textMuted, fontSize: "0.95rem", lineHeight: 1.68, margin: "0 0 16px 0" }}>
+        Almost got it!
+      </p>
+
+      <p style={{ color: t.textMuted, fontSize: "0.95rem", lineHeight: 1.68, margin: "0 0 24px 0" }}>
+        But the check is case-sensitive. "HYK" must be completely in uppercase. Try changing the localStorage value to all-caps and refreshing!
+      </p>
+
+      <p
+        style={{
+          color: t.textFaint,
+          fontSize: "0.76rem",
+          lineHeight: 1.6,
+          fontFamily: "'JetBrains Mono', monospace",
+          margin: 0,
+        }}
+      >
+        hyk.internal/bypass — Error code: CaseSensitivityMismatch.
+      </p>
+    </div>
+  )
+}
+

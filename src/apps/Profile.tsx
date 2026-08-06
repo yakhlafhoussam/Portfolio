@@ -3,7 +3,7 @@ import { useTheme } from "@/context/ThemeContext"
 
 type SkillLevel = "Expert" | "Proficient" | "Learning"
 
-type Skill = { name: string level: SkillLevel }
+type Skill = { name: string; level: SkillLevel }
 
 const SKILLS: Skill[] = [
   { name: "TypeScript", level: "Expert" },
