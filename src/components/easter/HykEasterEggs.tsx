@@ -16,6 +16,47 @@ import laughing5 from "@/assets/videos/laughing_5.mp4"
 import { useTheme } from "@/context/ThemeContext"
 import { useState } from "react"
 
+// ─── Inline SVG Icons ─────────────────────────────────────────────────────────
+
+function AlertShieldIcon({ size = 20, color = "#ef4444" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: "inline-block", verticalAlign: "middle" }}>
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  )
+}
+
+function BrainIcon({ size = 20, color = "#fbbf24" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: "inline-block", verticalAlign: "middle" }}>
+      <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.44 2.5 2.5 0 0 1 0-3.12 3 3 0 0 1 0-4.88 2.5 2.5 0 0 1 0-3.12A2.5 2.5 0 0 1 9.5 2z" />
+      <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.44 2.5 2.5 0 0 0 0-3.12 3 3 0 0 0 0-4.88 2.5 2.5 0 0 0 0-3.12A2.5 2.5 0 0 0 14.5 2z" />
+    </svg>
+  )
+}
+
+function UnlockIcon({ size = 20, color = "#22c55e" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: "inline-block", verticalAlign: "middle" }}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 9.9-1" />
+    </svg>
+  )
+}
+
+function LockIcon({ size = 20, color = "#ef4444" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: "inline-block", verticalAlign: "middle" }}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+
+
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
 function EggVideo({ src }: { src: string }) {
@@ -33,7 +74,7 @@ function EggVideo({ src }: { src: string }) {
         maxHeight: 340,
         borderRadius: 12,
         marginBottom: 24,
-        objectFit: "cover",
+        objectFit: "fill",
         boxShadow: t.isDark
           ? "0 4px 20px rgba(0,0,0,0.4)"
           : "0 4px 16px rgba(0,0,0,0.08)",
@@ -229,10 +270,9 @@ export function LocalStorageCheatCard({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(239,68,68,0.07)",
-          fontSize: "2.6rem",
         }}
       >
-        🚨
+        <AlertShieldIcon size={38} color={accent} />
       </div>
       <div style={{ padding: "10px 12px 12px" }}>
         <div
@@ -266,9 +306,13 @@ export function LocalStorageCheatCard({
             fontWeight: 600,
             lineHeight: 1.35,
             marginBottom: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🚨 Someone tried to cheat the HYK system.
+          <AlertShieldIcon size={14} color={accent} />
+          <span>Someone tried to cheat the HYK system.</span>
         </div>
         <div
           style={{
@@ -334,10 +378,9 @@ export function LocalStorageCheatListRow({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(239,68,68,0.07)",
-          fontSize: "1.8rem",
         }}
       >
-        🚨
+        <AlertShieldIcon size={26} color={accent} />
       </div>
       <div style={{ flex: 1 }}>
         <div
@@ -368,9 +411,13 @@ export function LocalStorageCheatListRow({
             color: t.text,
             fontSize: "0.82rem",
             fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🚨 Someone tried to cheat the HYK system.
+          <AlertShieldIcon size={14} color={accent} />
+          <span>Someone tried to cheat the HYK system.</span>
         </div>
         <div
           style={{
@@ -449,10 +496,9 @@ export function LocalStorageDeletedCard({
           background: t.isDark
             ? "rgba(251,191,36,0.06)"
             : "rgba(180,120,0,0.05)",
-          fontSize: "2.6rem",
         }}
       >
-        🧠
+        <BrainIcon size={38} color={accent} />
       </div>
       <div style={{ padding: "10px 12px 12px" }}>
         <div
@@ -560,10 +606,9 @@ export function LocalStorageDeletedListRow({
           background: t.isDark
             ? "rgba(251,191,36,0.06)"
             : "rgba(180,120,0,0.05)",
-          fontSize: "1.8rem",
         }}
       >
-        🧠
+        <BrainIcon size={26} color={accent} />
       </div>
       <div style={{ flex: 1 }}>
         <div
@@ -657,9 +702,13 @@ export function LocalStorageCheatArticle({ t }: { t: ReturnType<typeof useTheme>
           lineHeight: 1.25,
           margin: "0 0 24px 0",
           letterSpacing: "-0.02em",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
         }}
       >
-        🚨 SECURITY ALERT
+        <AlertShieldIcon size={28} color="#ef4444" />
+        <span>SECURITY ALERT</span>
       </h1>
 
       <p style={{ color: t.textMuted, fontSize: "0.88rem", lineHeight: 1.68, margin: "0 0 16px 0" }}>
@@ -850,9 +899,13 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
             fontSize: "0.95rem",
             fontWeight: 700,
             margin: "0 0 8px 0",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🔐 The Ultimate Bypass Challenge
+          <LockIcon size={14} color="#ef4444" />
+          <span>The Ultimate Bypass Challenge</span>
         </h3>
         <p style={{ color: t.textMuted, fontSize: "0.84rem", lineHeight: 1.5, margin: "0 0 12px 0" }}>
           If you really want to bypass this security and prove your hacker skills...
@@ -935,10 +988,9 @@ export function BypassSuccessCard({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(34,197,94,0.07)",
-          fontSize: "2.6rem",
         }}
       >
-        🔓
+        <UnlockIcon size={38} color={accent} />
       </div>
       <div style={{ padding: "10px 12px 12px" }}>
         <div
@@ -972,9 +1024,13 @@ export function BypassSuccessCard({
             fontWeight: 600,
             lineHeight: 1.35,
             marginBottom: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🔓 Security Bypass: Success
+          <UnlockIcon size={14} color={accent} />
+          <span>Security Bypass: Success</span>
         </div>
         <div
           style={{
@@ -1040,10 +1096,9 @@ export function BypassSuccessListRow({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(34,197,94,0.07)",
-          fontSize: "1.8rem",
         }}
       >
-        🔓
+        <UnlockIcon size={26} color={accent} />
       </div>
       <div style={{ flex: 1 }}>
         <div
@@ -1074,9 +1129,13 @@ export function BypassSuccessListRow({
             color: t.text,
             fontSize: "0.82rem",
             fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🔓 Security Bypass: Success
+          <UnlockIcon size={14} color={accent} />
+          <span>Security Bypass: Success</span>
         </div>
         <div
           style={{
@@ -1134,9 +1193,13 @@ export function BypassSuccessArticle({ t }: { t: ReturnType<typeof useTheme> }) 
           lineHeight: 1.25,
           margin: "0 0 24px 0",
           letterSpacing: "-0.02em",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
         }}
       >
-        🔓 SECURITY BYPASS: SUCCESS
+        <UnlockIcon size={28} color="#22c55e" />
+        <span>SECURITY BYPASS: SUCCESS</span>
       </h1>
 
       <p style={{ color: t.text, fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.6, margin: "0 0 16px 0" }}>
@@ -1226,10 +1289,9 @@ export function BypassFailCard({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(245,158,11,0.07)",
-          fontSize: "2.6rem",
         }}
       >
-        🔒
+        <LockIcon size={38} color={accent} />
       </div>
       <div style={{ padding: "10px 12px 12px" }}>
         <div
@@ -1263,9 +1325,13 @@ export function BypassFailCard({
             fontWeight: 600,
             lineHeight: 1.35,
             marginBottom: 5,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🔒 Security Bypass: Failed
+          <LockIcon size={14} color={accent} />
+          <span>Security Bypass: Failed</span>
         </div>
         <div
           style={{
@@ -1331,10 +1397,9 @@ export function BypassFailListRow({
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(245,158,11,0.07)",
-          fontSize: "1.8rem",
         }}
       >
-        🔒
+        <LockIcon size={26} color={accent} />
       </div>
       <div style={{ flex: 1 }}>
         <div
@@ -1365,9 +1430,13 @@ export function BypassFailListRow({
             color: t.text,
             fontSize: "0.82rem",
             fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
           }}
         >
-          🔒 Security Bypass: Failed
+          <LockIcon size={14} color={accent} />
+          <span>Security Bypass: Failed</span>
         </div>
         <div
           style={{
@@ -1425,9 +1494,13 @@ export function BypassFailArticle({ t }: { t: ReturnType<typeof useTheme> }) {
           lineHeight: 1.25,
           margin: "0 0 24px 0",
           letterSpacing: "-0.02em",
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
         }}
       >
-        🔒 SECURITY BYPASS: FAILED
+        <LockIcon size={28} color="#f59e0b" />
+        <span>SECURITY BYPASS: FAILED</span>
       </h1>
 
       <p style={{ color: t.text, fontSize: "1.1rem", fontWeight: 600, lineHeight: 1.6, margin: "0 0 16px 0" }}>
