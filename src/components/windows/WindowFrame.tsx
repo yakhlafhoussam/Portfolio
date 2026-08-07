@@ -1,6 +1,13 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { useTheme } from "../../context/ThemeContext"
 import { WORKSPACE_INSETS } from "../desktop/Desktop"
+
+const MIN_WIDTH = 320
+const MIN_HEIGHT = 200
+
+type ResizeDir =
+  | "n" | "s" | "e" | "w"
+  | "ne" | "nw" | "se" | "sw"
 
 type Props = {
   title: string
@@ -16,9 +23,32 @@ type Props = {
   onMinimize: () => void
   onMaximize: () => void
   onMove: (x: number, y: number) => void
+  onResize: (x: number, y: number, width: number, height: number) => void
   onFocus: () => void
   closeDisabled?: boolean
   children: React.ReactNode
+}
+
+// ─── Resize handle style helper ────────────────────────────────────────────────
+function handleStyle(dir: ResizeDir): React.CSSProperties {
+  const base: React.CSSProperties = {
+    position: "absolute",
+    zIndex: 10,
+  }
+
+  const edgeSize = 6
+  const cornerSize = 14
+
+  switch (dir) {
+    case "n":  return { ...base, top: 0, left: cornerSize, right: cornerSize, height: edgeSize, cursor: "n-resize" }
+    case "s":  return { ...base, bottom: 0, left: cornerSize, right: cornerSize, height: edgeSize, cursor: "s-resize" }
+    case "e":  return { ...base, right: 0, top: cornerSize, bottom: cornerSize, width: edgeSize, cursor: "e-resize" }
+    case "w":  return { ...base, left: 0, top: cornerSize, bottom: cornerSize, width: edgeSize, cursor: "w-resize" }
+    case "ne": return { ...base, top: 0, right: 0, width: cornerSize, height: cornerSize, cursor: "ne-resize" }
+    case "nw": return { ...base, top: 0, left: 0, width: cornerSize, height: cornerSize, cursor: "nw-resize" }
+    case "se": return { ...base, bottom: 0, right: 0, width: cornerSize, height: cornerSize, cursor: "se-resize" }
+    case "sw": return { ...base, bottom: 0, left: 0, width: cornerSize, height: cornerSize, cursor: "sw-resize" }
+  }
 }
 
 export default function WindowFrame({
@@ -35,21 +65,37 @@ export default function WindowFrame({
   onMinimize,
   onMaximize,
   onMove,
+  onResize,
   onFocus,
   closeDisabled = false,
   children,
 }: Props) {
   const t = useTheme()
+
+  // ── Drag state ──────────────────────────────────────────────────────────────
   const [drag, setDrag] = useState<{
     sx: number
     sy: number
     ox: number
     oy: number
   } | null>(null)
+
+  // ── Resize state ────────────────────────────────────────────────────────────
+  const [resize, setResize] = useState<{
+    dir: ResizeDir
+    sx: number
+    sy: number
+    ox: number
+    oy: number
+    ow: number
+    oh: number
+  } | null>(null)
+
   const [hoverClose, setHoverClose] = useState(false)
   const [hoverMin, setHoverMin] = useState(false)
   const [hoverMax, setHoverMax] = useState(false)
 
+  // ── Title bar drag ──────────────────────────────────────────────────────────
   const handleTitleDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || maximized) return
     e.preventDefault()
@@ -67,6 +113,45 @@ export default function WindowFrame({
 
   const handleTitleUp = () => setDrag(null)
 
+  // ── Resize handle ───────────────────────────────────────────────────────────
+  const handleResizeDown = useCallback(
+    (dir: ResizeDir) => (e: React.PointerEvent<HTMLDivElement>) => {
+      if (maximized) return
+      e.stopPropagation()
+      e.preventDefault()
+      e.currentTarget.setPointerCapture(e.pointerId)
+      onFocus()
+      setResize({ dir, sx: e.clientX, sy: e.clientY, ox: x, oy: y, ow: width, oh: height })
+    },
+    [maximized, x, y, width, height, onFocus],
+  )
+
+  const handleResizeMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!resize) return
+      const dx = e.clientX - resize.sx
+      const dy = e.clientY - resize.sy
+      const { dir, ox, oy, ow, oh } = resize
+
+      let nx = ox, ny = oy, nw = ow, nh = oh
+
+      // Horizontal
+      if (dir.includes("e")) { nw = Math.max(MIN_WIDTH, ow + dx) }
+      if (dir.includes("w")) { nw = Math.max(MIN_WIDTH, ow - dx); nx = ox + ow - nw }
+      // Vertical
+      if (dir.includes("s")) { nh = Math.max(MIN_HEIGHT, oh + dy) }
+      if (dir.includes("n")) {
+        nh = Math.max(MIN_HEIGHT, oh - dy)
+        ny = Math.max(WORKSPACE_INSETS.top, oy + oh - nh)
+      }
+
+      onResize(nx, ny, nw, nh)
+    },
+    [resize, onResize],
+  )
+
+  const handleResizeUp = useCallback(() => setResize(null), [])
+
   const pos = maximized
     ? {
         top: WORKSPACE_INSETS.top,
@@ -77,9 +162,13 @@ export default function WindowFrame({
       }
     : { top: y, left: x, width, height, borderRadius: 10 }
 
+  const RESIZE_DIRS: ResizeDir[] = ["n", "s", "e", "w", "ne", "nw", "se", "sw"]
+
   return (
     <div
       onPointerDown={onFocus}
+      onPointerMove={resize ? handleResizeMove : undefined}
+      onPointerUp={resize ? handleResizeUp : undefined}
       style={{
         position: "fixed",
         ...pos,
@@ -93,9 +182,20 @@ export default function WindowFrame({
         flexDirection: "column",
         overflow: "hidden",
         animation: "windowOpen 0.18s ease",
-        transition: t.transition,
+        transition: resize ? "none" : t.transition,
       }}
     >
+      {/* Resize handles — only shown when not maximized */}
+      {!maximized && RESIZE_DIRS.map((dir) => (
+        <div
+          key={dir}
+          style={handleStyle(dir)}
+          onPointerDown={handleResizeDown(dir)}
+          onPointerMove={handleResizeMove}
+          onPointerUp={handleResizeUp}
+        />
+      ))}
+
       {/* Title bar */}
       <div
         onPointerDown={handleTitleDown}

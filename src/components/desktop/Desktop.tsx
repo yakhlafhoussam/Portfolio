@@ -632,6 +632,17 @@ export default function Desktop() {
     );
   }, []);
 
+  const resizeWindow = useCallback(
+    (id: string, x: number, y: number, width: number, height: number) => {
+      setWindows((ws) =>
+        ws.map((w) =>
+          w.id === id ? { ...w, x, y, width, height } : w,
+        ),
+      );
+    },
+    [],
+  );
+
   const handleTopBarAppClick = useCallback(
     (windowId: string) => {
       if (blockDesktopInput) {
@@ -959,6 +970,7 @@ export default function Desktop() {
             onMinimize={() => minimizeWindow(w.id)}
             onMaximize={() => maximizeWindow(w.id)}
             onMove={(x, y) => moveWindow(w.id, x, y)}
+            onResize={(x, y, width, height) => resizeWindow(w.id, x, y, width, height)}
             onFocus={() => bringToFront(w.id)}
           >
             {renderApp(w)}
