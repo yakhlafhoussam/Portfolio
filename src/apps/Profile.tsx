@@ -491,7 +491,7 @@ export default function Profile() {
                   </svg>
                 }
                 label="Discord"
-                value="houssam_yk"
+                value="houssam_yakhlaf"
                 href="https://discord.com"
               />
               {profileData.contact.phone && (
