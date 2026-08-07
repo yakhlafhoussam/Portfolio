@@ -1,5 +1,21 @@
-import debuggersImg from "@/assets/screenshots/debuggers.png"
-import blackwaveImg from "@/assets/screenshots/blackwave.png"
+import debuggers_1 from "@/assets/screenshots/debuggers/debuggers_1.png"
+import debuggers_2 from "@/assets/screenshots/debuggers/debuggers_2.png"
+import debuggers_3 from "@/assets/screenshots/debuggers/debuggers_3.png"
+import debuggers_4 from "@/assets/screenshots/debuggers/debuggers_4.png"
+import debuggers_5 from "@/assets/screenshots/debuggers/debuggers_5.png"
+
+import blackwave_1 from "@/assets/screenshots/blackwave/blackwave_1.png"
+import blackwave_2 from "@/assets/screenshots/blackwave/blackwave_2.png"
+import blackwave_3 from "@/assets/screenshots/blackwave/blackwave_3.png"
+import blackwave_4 from "@/assets/screenshots/blackwave/blackwave_4.png"
+import blackwave_5 from "@/assets/screenshots/blackwave/blackwave_5.png"
+import blackwave_6 from "@/assets/screenshots/blackwave/blackwave_6.png"
+import blackwave_7 from "@/assets/screenshots/blackwave/blackwave_7.png"
+
+import worksphere_1 from "@/assets/screenshots/worksphere/worksphere_1.png"
+import worksphere_2 from "@/assets/screenshots/worksphere/worksphere_2.png"
+import worksphere_3 from "@/assets/screenshots/worksphere/worksphere_3.png"
+import worksphere_4 from "@/assets/screenshots/worksphere/worksphere_4.png"
 
 export const PROJECTS = [
   {
@@ -17,7 +33,14 @@ export const PROJECTS = [
     demo: "https://yakhlafhoussam.github.io/Frontend_Master/",
     year: "2026",
     status: "Open",
-    image: debuggersImg,
+    image: debuggers_1,
+    screenshots: [
+      debuggers_1,
+      debuggers_2,
+      debuggers_3,
+      debuggers_4,
+      debuggers_5,
+    ],
   },
 
   {
@@ -40,7 +63,16 @@ export const PROJECTS = [
     demo: null,
     year: "2026",
     status: "Completed",
-    image: blackwaveImg,
+    image: blackwave_1,
+    screenshots: [
+      blackwave_1,
+      blackwave_2,
+      blackwave_3,
+      blackwave_4,
+      blackwave_5,
+      blackwave_6,
+      blackwave_7,
+    ],
   },
 
   {
@@ -65,6 +97,7 @@ export const PROJECTS = [
     year: "2026",
     status: "Completed",
     image: null,
+    screenshots: [] as string[],
   },
 
   {
@@ -83,7 +116,13 @@ export const PROJECTS = [
     demo: null,
     year: "2025",
     status: "Completed",
-    image: null,
+    image: worksphere_1,
+    screenshots: [
+      worksphere_1,
+      worksphere_2,
+      worksphere_3,
+      worksphere_4,
+    ],
   },
 ]
 

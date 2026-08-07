@@ -213,13 +213,23 @@ ${project.technologies.map((t) => `- ${t}`).join("\n")}
   })
 
   // Screenshots Subfolder
-  const screenshotsList: FileItem[] = [
-    {
+  const screenshotsList: FileItem[] = []
+  if (project.screenshots && project.screenshots.length > 0) {
+    const projPrefix = project.id === "workspace" ? "worksphere" : (project.id === "debuggers-lms" ? "debuggers" : project.id)
+    project.screenshots.forEach((src, idx) => {
+      screenshotsList.push({
+        name: `${projPrefix}_${idx + 1}.png`,
+        type: "image",
+        imageSrc: src,
+      })
+    })
+  } else {
+    screenshotsList.push({
       name: "home.png",
       type: "image",
       imageSrc: previewImg,
-    },
-  ]
+    })
+  }
 
 
   files.push({
