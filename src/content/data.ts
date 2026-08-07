@@ -22,7 +22,7 @@ export const PROJECTS = [
     id: "debuggers-lms",
     name: "DebuGGers",
     description:
-      "A Learning Management System developed for DebuGGers, providing course management, authentication, video lessons, and educational resources through a modern web platform.",
+      "A modern e-learning platform designed to help developers master programming through structured video courses, multilingual support (EN/FR/AR), lesson progress tracking, downloadable resources, personal notes, and an intuitive dashboard for both learners and instructors.",
     technologies: [
       "HTML",
       "CSS",
@@ -47,7 +47,7 @@ export const PROJECTS = [
     id: "blackwave",
     name: "BlackWave",
     description:
-      "A modern full-stack web application focused on delivering a clean user experience with responsive design and scalable architecture.",
+      "A cyberpunk-inspired simulation of an underground digital marketplace built for educational purposes. BlackWave recreates a fictional dark-web ecosystem featuring anonymous communities, virtual cryptocurrency transactions, reputation systems, digital marketplaces, and moderation tools through an immersive cinematic interface.",
     technologies: [
       "Laravel 12",
       "Blade",
@@ -79,7 +79,7 @@ export const PROJECTS = [
     id: "easycoloc",
     name: "EasyColoc",
     description:
-      "A collaborative housing platform designed to simplify roommate matching and shared accommodation management through an intuitive interface.",
+      "A shared-house management platform that helps roommates manage common expenses, calculate balances automatically, simplify reimbursements, handle invitations, monitor financial reputation, and organize shared living through an automated debt settlement system.",
     technologies: [
       "Laravel 12",
       "Blade",
@@ -104,7 +104,7 @@ export const PROJECTS = [
     id: "workspace",
     name: "WorkSphere",
     description:
-      "A virtual collaborative workspace that brings together task management, communication, and productivity tools in one unified environment.",
+      "A virtual collaborative workspace inspired by modern productivity platforms, providing project organization, team management, real-time communication, shared workspaces, and desktop-inspired collaboration tools.",
     technologies: [
       "React",
       "TypeScript",
@@ -192,8 +192,8 @@ export const EDUCATION = [
 
   {
     id: "uca",
-    institution: "Cadi Ayyad University",
-    degree: "English Studies",
+    institution: "Université Cadi Ayyad",
+    degree: "Bachelor's Degree",
     period: "2024 — Present",
     gpa: null,
     relevant: [
