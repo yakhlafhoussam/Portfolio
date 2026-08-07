@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react"
 import { PROJECTS, EXPERIENCE, EDUCATION } from "@/content/data"
 import { useTheme } from "@/context/ThemeContext"
+import portfolioImg from "@/assets/screenshots/portfolio.png"
+
 
 type Section = "projects" | "experience" | "education"
 type FileExplorerProps = {
@@ -203,9 +205,7 @@ ${project.technologies.map((t) => `- ${t}`).join("\n")}
   }
 
   // Preview Image
-  const previewImg =
-    project.image ||
-    "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format"
+  const previewImg = project.image || portfolioImg
   files.push({
     name: "Preview.png",
     type: "image",
@@ -221,44 +221,6 @@ ${project.technologies.map((t) => `- ${t}`).join("\n")}
     },
   ]
 
-  // Add extra mockup screenshots based on project
-  if (project.id === "neural-canvas") {
-    screenshotsList.push(
-      {
-        name: "canvas.png",
-        type: "image",
-        imageSrc:
-          "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&h=600&fit=crop&auto=format",
-      },
-      {
-        name: "details.png",
-        type: "image",
-        imageSrc:
-          "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&h=600&fit=crop&auto=format",
-      },
-    )
-  } else if (project.id === "void-sync") {
-    screenshotsList.push({
-      name: "editor.png",
-      type: "image",
-      imageSrc:
-        "https://images.unsplash.com/photo-1618401471353-b98aedd07871?w=900&h=600&fit=crop&auto=format",
-    })
-  } else if (project.id === "spectral") {
-    screenshotsList.push({
-      name: "visualizer.png",
-      type: "image",
-      imageSrc:
-        "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=900&h=600&fit=crop&auto=format",
-    })
-  } else {
-    screenshotsList.push({
-      name: "terminal.png",
-      type: "image",
-      imageSrc:
-        "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=900&h=600&fit=crop&auto=format",
-    })
-  }
 
   files.push({
     name: "Screenshots",

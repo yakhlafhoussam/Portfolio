@@ -1,180 +1,186 @@
+import debuggersImg from "@/assets/screenshots/debuggers.png"
+import blackwaveImg from "@/assets/screenshots/blackwave.png"
+
 export const PROJECTS = [
   {
-    id: "neural-canvas",
-    name: "neural-canvas",
+    id: "debuggers-lms",
+    name: "DebuGGers",
     description:
-      "An AI-powered generative art tool that transforms textual prompts into layered visual compositions. Built on diffusion models with a custom post-processing pipeline for style transfer, depth-aware compositing, and resolution upscaling.",
+      "A Learning Management System developed for DebuGGers, providing course management, authentication, video lessons, and educational resources through a modern web platform.",
     technologies: [
-      "Python",
-      "PyTorch",
-      "FastAPI",
-      "React",
-      "WebGL",
-      "Canvas API",
+      "HTML",
+      "CSS",
+      "Tailwind",
+      "JS",
     ],
-    github: "https://github.com/hyk/neural-canvas",
-    demo: "https://neural-canvas.dev",
-    year: "2024",
-    status: "Active",
-    image:
-      "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=760&h=380&fit=crop&auto=format",
+    github: "https://github.com/yakhlafhoussam/Frontend_Master.git",
+    demo: "https://yakhlafhoussam.github.io/Frontend_Master/",
+    year: "2026",
+    status: "Open",
+    image: debuggersImg,
   },
+
   {
-    id: "void-sync",
-    name: "void-sync",
+    id: "blackwave",
+    name: "BlackWave",
     description:
-      "Real-time collaboration engine built on CRDTs and WebSockets. Allows concurrent editing of shared state with conflict-free resolution, persistent session recovery, and optional end-to-end encryption.",
+      "A modern full-stack web application focused on delivering a clean user experience with responsive design and scalable architecture.",
     technologies: [
-      "TypeScript",
-      "Node.js",
-      "WebSocket",
-      "CRDTs",
-      "Redis",
+      "Laravel 12",
+      "Blade",
+      "HTML",
+      "CSS",
+      "Tailwind CSS",
+      "JavaScript",
       "PostgreSQL",
+      "Docker",
+      "Docker Compose",
     ],
-    github: "https://github.com/hyk/void-sync",
+    github: "https://github.com/yakhlafhoussam/BlackWave.git",
     demo: null,
-    year: "2024",
-    status: "Beta",
-    image:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=760&h=380&fit=crop&auto=format",
+    year: "2026",
+    status: "Completed",
+    image: blackwaveImg,
   },
+
   {
-    id: "spectral",
-    name: "spectral",
+    id: "easycoloc",
+    name: "EasyColoc",
     description:
-      "Zero-dependency audio visualization library for the browser. Renders frequency spectrums, waveforms, and 3D spectrograms in real-time using the Web Audio API and WebGPU. 8kb gzipped.",
-    technologies: ["TypeScript", "Web Audio API", "WebGPU", "Canvas", "WASM"],
-    github: "https://github.com/hyk/spectral",
-    demo: "https://spectral.hyk.dev",
-    year: "2023",
-    status: "Stable",
-    image:
-      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=760&h=380&fit=crop&auto=format",
-  },
-  {
-    id: "kernel-drift",
-    name: "kernel-drift",
-    description:
-      "System performance monitor written in Rust. Tracks CPU, memory, I/O, and network metrics at sub-millisecond precision. Exposes a gRPC API and includes a terminal dashboard with historical sparklines.",
-    technologies: ["Rust", "gRPC", "Tokio", "TUI", "Linux perf_events"],
-    github: "https://github.com/hyk/kernel-drift",
+      "A collaborative housing platform designed to simplify roommate matching and shared accommodation management through an intuitive interface.",
+    technologies: [
+      "Laravel 12",
+      "Blade",
+      "HTML",
+      "CSS",
+      "Tailwind CSS",
+      "JavaScript",
+      "PostgreSQL",
+      "Docker",
+      "Docker Compose",
+    ],
+    github:
+      "https://github.com/yakhlafhoussam/EasyColoc-croisse-2.git",
     demo: null,
-    year: "2023",
-    status: "Stable",
+    year: "2026",
+    status: "Completed",
+    image: null,
+  },
+
+  {
+    id: "workspace",
+    name: "WorkSphere",
+    description:
+      "A virtual collaborative workspace that brings together task management, communication, and productivity tools in one unified environment.",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Firebase",
+      "Tailwind CSS",
+    ],
+    github:
+      "https://github.com/yakhlafhoussam/Brief-Soutenance-Crois-e-1-WorkSphere---Virtual-Workspace-.git",
+    demo: null,
+    year: "2025",
+    status: "Completed",
     image: null,
   },
 ]
 
 export const EXPERIENCE = [
   {
-    id: "meridian-2024",
-    company: "Meridian Systems",
-    role: "Software Engineering Intern",
-    period: "May 2024 — Aug 2024",
-    location: "San Francisco, CA",
+    id: "glorvia-2026",
+    company: "Glorvia Media Agency",
+    role: "Full Stack Developer Intern",
+    period: "May 2026 — Jul 2026",
+    location: "Hybrid • Oujda, Morocco",
     description:
-      "Built internal tooling for the infrastructure team. Reduced deployment pipeline time by 34% by parallelizing build steps and introducing incremental artifact caching. Shipped a monitoring dashboard that aggregated 12 previously separate alert sources into a single interface.",
-    technologies: ["Go", "Kubernetes", "Terraform", "Prometheus", "React"],
+      "Completed a two-month internship through YouCode Safi. Worked on enterprise web applications using Spring Boot, Angular, PostgreSQL, Docker, JWT authentication, REST APIs, and collaborative software development practices.",
+    technologies: [
+      "Spring Boot",
+      "Angular",
+      "PostgreSQL",
+      "Docker",
+      "JWT",
+    ],
     type: "internship",
-  },
-  {
-    id: "ml-lab-2023",
-    company: "University ML Lab",
-    role: "Research Assistant",
-    period: "Sep 2023 — Apr 2024",
-    location: "Remote",
-    description:
-      "Contributed to research on efficient fine-tuning of large language models. Implemented LoRA adapter training pipelines and ran ablation studies across model scales from 1B to 70B. Co-authored one workshop paper submitted to NeurIPS.",
-    technologies: ["Python", "PyTorch", "HuggingFace", "CUDA", "W&B"],
-    type: "research",
-  },
-  {
-    id: "freelance-2022",
-    company: "Independent",
-    role: "Freelance Developer",
-    period: "Jun 2022 — Aug 2023",
-    location: "Remote",
-    description:
-      "Developed and delivered web applications for clients across e-commerce, media, and fintech domains. Maintained a 100% on-time delivery record.",
-    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Stripe", "Vercel"],
-    type: "freelance",
   },
 ]
 
 export const EDUCATION = [
   {
-    id: "bsc",
-    institution: "State University",
-    degree: "B.Sc. Computer Science",
-    period: "2021 — 2025",
-    gpa: "3.9 / 4.0",
-    relevant: [
-      "Data Structures & Algorithms",
-      "Operating Systems",
-      "Computer Networks",
-      "Machine Learning",
-      "Distributed Systems",
-      "Compilers",
-    ],
-  },
-  {
-    id: "cert-ml",
-    institution: "Coursera / DeepLearning.AI",
-    degree: "Machine Learning Specialization",
-    period: "2023",
+    id: "youcode",
+    institution: "YouCode Safi",
+    degree: "Software Engineering & Artificial Intelligence",
+    period: "2025 — Present",
     gpa: null,
     relevant: [
-      "Supervised Learning",
-      "Unsupervised Learning",
-      "Reinforcement Learning",
+      "Java",
+      "TypeScript",
+      "JavaScript",
+      "C",
+      "PHP",
+      "HTML5",
+      "CSS3",
+      "SQL",
+      "Angular",
+      "Vue.js",
+      "Tailwind CSS",
+      "Bootstrap",
+      "Laravel",
+      "Spring Boot",
+      "REST APIs",
+      "JWT",
+      "JPA",
+      "PostgreSQL",
+      "MySQL",
+      "Firebase",
+      "Figma",
+      "Draw.io",
+      "AWS",
+      "Vercel",
+      "GitHub Pages",
+      "CI/CD",
+      "Docker",
+      "Docker Compose",
+      "Git",
+      "GitHub",
+      "Linux",
+      "Nginx",
+      "Postman",
     ],
   },
+
   {
-    id: "cert-rust",
-    institution: "Linux Foundation",
-    degree: "Introduction to Rust",
-    period: "2023",
+    id: "uca",
+    institution: "Cadi Ayyad University",
+    degree: "English Studies",
+    period: "2024 — Present",
     gpa: null,
-    relevant: ["Memory Safety", "Concurrency", "Systems Programming"],
+    relevant: [
+      "Communication",
+      "Academic English",
+    ],
+  },
+
+  {
+    id: "bac",
+    institution: "Lycée Mohammed Belahcen El Ouazzani",
+    degree: "Baccalaureate in Physical Sciences",
+    period: "2023 — 2024",
+    gpa: null,
+    relevant: [
+      "Mathematics",
+      "Physics",
+    ],
   },
 ]
 
-export const GALLERY_IMAGES = [
-  {
-    id: "g1",
-    src: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&h=600&fit=crop&auto=format",
-    alt: "Workspace with multiple monitors",
-    caption: "The usual setup",
-  },
-  {
-    id: "g2",
-    src: "https://images.unsplash.com/photo-1555099962-4199c345e5dd?w=900&h=600&fit=crop&auto=format",
-    alt: "Code on a screen",
-    caption: "2am debugging session",
-  },
-  {
-    id: "g3",
-    src: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&h=600&fit=crop&auto=format",
-    alt: "Circuit board closeup",
-    caption: "From a hardware project",
-  },
-  {
-    id: "g4",
-    src: "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=900&h=600&fit=crop&auto=format",
-    alt: "Notebook and coffee",
-    caption: "System design sketches",
-  },
-  {
-    id: "g5",
-    src: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=900&h=600&fit=crop&auto=format",
-    alt: "Programming on laptop",
-    caption: "Building spectral",
-  },
-  {
-    id: "g6",
-    src: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=900&h=600&fit=crop&auto=format",
-    alt: "Abstract tech visualization",
-    caption: "neural-canvas output #47",
-  },
-]
+export interface GalleryImage {
+  id: string
+  src: string
+  alt?: string
+  caption: string
+}
+
+export const GALLERY_IMAGES: GalleryImage[] = []

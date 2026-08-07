@@ -920,9 +920,11 @@ export function LocalStorageDeletedArticle({ t }: { t: ReturnType<typeof useThem
             fontFamily: "'JetBrains Mono', monospace",
             color: t.isDark ? "#f43f5e" : "#e11d48",
             marginBottom: 12,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-all",
           }}
         >
-          localStorage.setItem("hykViewed", "HYK")
+          localStorage.setItem("HYK_STORAGE", JSON.stringify(&#123; theme: "dark", hyk: &#123; viewed: "HYK" &#125; &#125;))
         </code>
         <p style={{ color: t.textMuted, fontSize: "0.84rem", lineHeight: 1.5, margin: 0 }}>
           Do this in your browser console, then <strong>refresh the page</strong>. Let's see if you can fool HYK.

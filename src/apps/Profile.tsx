@@ -6,19 +6,20 @@ type SkillLevel = "Expert" | "Proficient" | "Learning"
 type Skill = { name: string; level: SkillLevel }
 
 const SKILLS: Skill[] = [
-  { name: "TypeScript", level: "Expert" },
-  { name: "Python", level: "Expert" },
-  { name: "Rust", level: "Proficient" },
-  { name: "Go", level: "Proficient" },
-  { name: "React", level: "Expert" },
-  { name: "Node.js", level: "Expert" },
+  { name: "Spring Boot", level: "Expert" },
+  { name: "Laravel", level: "Expert" },
+  { name: "Angular", level: "Expert" },
+  { name: "Java", level: "Expert" },
+  { name: "TypeScript", level: "Proficient" },
+  { name: "JavaScript", level: "Proficient" },
   { name: "PostgreSQL", level: "Proficient" },
-  { name: "Kubernetes", level: "Proficient" },
-  { name: "PyTorch", level: "Proficient" },
-  { name: "WebAssembly", level: "Learning" },
-  { name: "Zig", level: "Learning" },
-  { name: "WebGPU", level: "Learning" },
+  { name: "Docker", level: "Proficient" },
+  { name: "REST APIs", level: "Expert" },
+  { name: "Linux", level: "Proficient" },
+  { name: "Nginx", level: "Proficient" },
+  { name: "Firebase", level: "Learning" },
 ]
+
 
 function getLevelColor(level: SkillLevel, isDark: boolean): string {
   if (isDark) {
@@ -193,7 +194,7 @@ export default function Profile() {
                 transition: t.transition,
               }}
             >
-              HYK
+              Houssam YAKHLAF
             </div>
             <div
               style={{
@@ -203,7 +204,7 @@ export default function Profile() {
                 transition: t.transition,
               }}
             >
-              Software Engineer
+              Full-Stack Developer
             </div>
           </div>
         </div>
@@ -245,10 +246,10 @@ export default function Profile() {
       >
         <Section title="About">
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <Row label="Name" value="HYK" />
+            <Row label="Name" value="Houssam YAKHLAF" />
             <Row label="Location" value="Earth, Solar System" />
-            <Row label="Status" value="Open to opportunities" accent />
-            <Row label="Focus" value="Systems + AI infrastructure" />
+            <Row label="Status" value="Building what others avoid" accent />
+            <Row label="Focus" value="Building modern web applications and developer tools" />
           </div>
           <p
             style={{
@@ -260,11 +261,9 @@ export default function Profile() {
               transition: t.transition,
             }}
           >
-            I build systems that handle complexity at scale — from low-level
-            performance tooling in Rust to ML infrastructure and browser-based
-            creative technology. I care deeply about correctness, clarity, and
-            the craft of writing software that lasts.
+            Second-year student at YouCode with a passion for building clean and practical software. Always learning, always improving. Currently working on HYK.
           </p>
+
         </Section>
 
         <Section title="Skills">
@@ -310,33 +309,35 @@ export default function Profile() {
 
         <Section title="Languages">
           {[
-            { lang: "English", level: "Fluent" },
-            { lang: "Turkish", level: "Native" },
-            { lang: "Japanese", level: "Elementary" },
+            { lang: "Arabic", level: "Native" },
+            { lang: "English", level: "Professional" },
+            { lang: "French", level: "Intermediate" },
           ].map(({ lang, level }) => (
             <Row key={lang} label={lang} value={level} />
           ))}
+
         </Section>
 
         <Section title="Contact">
           <ContactRow
             icon="✉"
             label="Email"
-            value="hyk@proton.me"
-            href="mailto:hyk@proton.me"
+            value="yakhlafhoussam@gmail.com"
+            href="mailto:yakhlafhoussam@gmail.com"
           />
           <ContactRow
             icon="⌨"
             label="GitHub"
-            value="github.com/hyk"
-            href="https://github.com/hyk"
+            value="github.com/yakhlafhoussam"
+            href="https://github.com/yakhlafhoussam"
           />
           <ContactRow
             icon="◈"
             label="LinkedIn"
-            value="linkedin.com/in/hyk"
-            href="https://linkedin.com/in/hyk"
+            value="linkedin.com/in/houssam-yakhlaf"
+            href="https://linkedin.com/in/houssam-yakhlaf"
           />
+
         </Section>
       </div>
     </div>

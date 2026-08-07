@@ -3,33 +3,24 @@ import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react"
 type Line = { type: "input" | "output" | "error" | "warning" | "blank"; text: string }
 
 // Demo asks for Linux-style prompt: [one4all ~]$
-const DEFAULT_HOSTNAME = "one4all"
+const DEFAULT_HOSTNAME = "houssam"
 
 const FS: Record<string, Record<string, string>> = {
   "~": {
     "projects/": "directory",
     "experience/": "directory",
-    "gallery/": "directory",
     "???/": "directory",
     ".bashrc": "file",
     ".gitconfig": "file",
   },
   "~/projects": {
-    "neural-canvas/": "directory",
-    "void-sync/": "directory",
-    "spectral/": "directory",
-    "kernel-drift/": "directory",
+    "debuggers/": "directory",
+    "blackwave/": "directory",
+    "easycoloc/": "directory",
+    "workspace/": "directory",
   },
   "~/experience": {
-    "meridian-systems.md": "file",
-    "university-ml-lab.md": "file",
-    "freelance.md": "file",
-  },
-  "~/gallery": {
-    "workspace.jpg": "file",
-    "debugging-2am.jpg": "file",
-    "hardware.jpg": "file",
-    "neural-canvas-47.png": "file",
+    "glorvia-media.md": "file",
   },
 }
 
@@ -37,14 +28,11 @@ const FILE_CONTENTS: Record<string, string> = {
   ".bashrc":
     "# ~/.bashrc\nexport PATH=$PATH:~/.local/bin\nalias ll='ls -la'\nalias gs='git status'",
   ".gitconfig":
-    "[user]\n  name = HYK\n  email = hyk@localhost\n[core]\n  editor = nvim",
-  "meridian-systems.md":
-    "# Meridian Systems\nRole: Software Engineering Intern\nPeriod: May 2024 — Aug 2024\nReduced deploy pipeline by 34%.",
-  "university-ml-lab.md":
-    "# University ML Lab\nRole: Research Assistant\nPeriod: Sep 2023 — Apr 2024\nLoRA adapter training. NeurIPS workshop paper.",
-  "freelance.md":
-    "# Independent\nRole: Freelance Developer\nPeriod: Jun 2022 — Aug 2023\n6 clients. 100% on-time delivery.",
+    "[user]\n  name = Houssam YAKHLAF\n  email = yakhlafhoussam@gmail.com\n[core]\n  editor = nvim",
+  "glorvia-media.md":
+    "# Glorvia Media Agency\nRole: Full Stack Developer Intern\nPeriod: May 2026 — Jul 2026\nWorked on Spring Boot and Angular enterprise applications through YouCode Safi.",
 }
+
 
 function processCommand(
   cmd: string,
@@ -62,11 +50,11 @@ function processCommand(
 
     case "pwd":
       return {
-        output: [{ type: "output", text: cwd.replace("~", "/home/hyk") }],
+        output: [{ type: "output", text: cwd.replace("~", "/home/houssam") }],
       }
 
     case "whoami":
-      return { output: [{ type: "output", text: "hyk" }] }
+      return { output: [{ type: "output", text: "houssam" }] }
 
     case "uname": {
       if (args[0] === "-a") {
@@ -74,7 +62,7 @@ function processCommand(
           output: [
             {
               type: "output",
-              text: "Linux localhost 6.8.0-hyk #1 SMP x86_64 GNU/Linux",
+              text: "Linux localhost 6.8.0-houssam #1 SMP x86_64 GNU/Linux",
             },
           ],
         }
@@ -99,7 +87,7 @@ function processCommand(
           const isDir = name.endsWith("/")
           lines.push({
             type: "output",
-            text: `${isDir ? "d" : "-"}rwxr-xr-x  hyk  hyk  ${
+            text: `${isDir ? "d" : "-"}rwxr-xr-x  houssam  houssam  ${
               isDir ? "4096" : "  256"
             } Jul 31 02:17 ${name}`,
           })
