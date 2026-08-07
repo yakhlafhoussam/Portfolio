@@ -498,7 +498,7 @@ export function LocalStorageDeletedCard({
             : "rgba(180,120,0,0.05)",
         }}
       >
-        <BrainIcon size={38} color={accent} />
+        <span style={{ fontSize: "3.5rem", lineHeight: 1 }}>🧠</span>
       </div>
       <div style={{ padding: "10px 12px 12px" }}>
         <div
@@ -608,7 +608,7 @@ export function LocalStorageDeletedListRow({
             : "rgba(180,120,0,0.05)",
         }}
       >
-        <BrainIcon size={26} color={accent} />
+        <span style={{ fontSize: "1.8rem", lineHeight: 1 }}>🧠</span>
       </div>
       <div style={{ flex: 1 }}>
         <div
