@@ -1,26 +1,49 @@
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from "react"
+import { buildTerminalProjectFilesystem } from "@/lib/projectFilesystem"
 
 type Line = { type: "input" | "output" | "error" | "warning" | "blank"; text: string }
 
 // Demo asks for Linux-style prompt: [one4all ~]$
-const DEFAULT_HOSTNAME = "houssam"
+const DEFAULT_HOSTNAME = "Houssam@YK"
+
+const { fs: projectFs, contents: projectContents } =
+  buildTerminalProjectFilesystem()
 
 const FS: Record<string, Record<string, string>> = {
   "~": {
-    "projects/": "directory",
-    "experience/": "directory",
+    "Projects/": "directory",
+    "Gallery/": "directory",
     "???/": "directory",
     ".bashrc": "file",
     ".gitconfig": "file",
   },
-  "~/projects": {
-    "debuggers/": "directory",
-    "blackwave/": "directory",
-    "easycoloc/": "directory",
-    "workspace/": "directory",
+  ...projectFs,
+  "~/Gallery": {
+    "DebuGGers/": "directory",
+    "BlackWave/": "directory",
+    "WorkSphere/": "directory",
   },
-  "~/experience": {
-    "glorvia-media.md": "file",
+  "~/Gallery/DebuGGers": {
+    "debuggers_1.png": "file",
+    "debuggers_2.png": "file",
+    "debuggers_3.png": "file",
+    "debuggers_4.png": "file",
+    "debuggers_5.png": "file",
+  },
+  "~/Gallery/BlackWave": {
+    "blackwave_1.png": "file",
+    "blackwave_2.png": "file",
+    "blackwave_3.png": "file",
+    "blackwave_4.png": "file",
+    "blackwave_5.png": "file",
+    "blackwave_6.png": "file",
+    "blackwave_7.png": "file",
+  },
+  "~/Gallery/WorkSphere": {
+    "worksphere_1.png": "file",
+    "worksphere_2.png": "file",
+    "worksphere_3.png": "file",
+    "worksphere_4.png": "file",
   },
 }
 
@@ -29,16 +52,85 @@ const FILE_CONTENTS: Record<string, string> = {
     "# ~/.bashrc\nexport PATH=$PATH:~/.local/bin\nalias ll='ls -la'\nalias gs='git status'",
   ".gitconfig":
     "[user]\n  name = Houssam YAKHLAF\n  email = yakhlafhoussam@gmail.com\n[core]\n  editor = nvim",
-  "glorvia-media.md":
-    "# Glorvia Media Agency\nRole: Full Stack Developer Intern\nPeriod: May 2026 — Jul 2026\nWorked on Spring Boot and Angular enterprise applications through YouCode Safi.",
+  ...projectContents,
+  "~/Gallery/DebuGGers/debuggers_1.png":
+    "Album: DebuGGers\nFile: debuggers_1.png\nIndex: 1 of 5\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/DebuGGers/debuggers_2.png":
+    "Album: DebuGGers\nFile: debuggers_2.png\nIndex: 2 of 5\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/DebuGGers/debuggers_3.png":
+    "Album: DebuGGers\nFile: debuggers_3.png\nIndex: 3 of 5\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/DebuGGers/debuggers_4.png":
+    "Album: DebuGGers\nFile: debuggers_4.png\nIndex: 4 of 5\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/DebuGGers/debuggers_5.png":
+    "Album: DebuGGers\nFile: debuggers_5.png\nIndex: 5 of 5\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_1.png":
+    "Album: BlackWave\nFile: blackwave_1.png\nIndex: 1 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_2.png":
+    "Album: BlackWave\nFile: blackwave_2.png\nIndex: 2 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_3.png":
+    "Album: BlackWave\nFile: blackwave_3.png\nIndex: 3 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_4.png":
+    "Album: BlackWave\nFile: blackwave_4.png\nIndex: 4 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_5.png":
+    "Album: BlackWave\nFile: blackwave_5.png\nIndex: 5 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_6.png":
+    "Album: BlackWave\nFile: blackwave_6.png\nIndex: 6 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/BlackWave/blackwave_7.png":
+    "Album: BlackWave\nFile: blackwave_7.png\nIndex: 7 of 7\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/WorkSphere/worksphere_1.png":
+    "Album: WorkSphere\nFile: worksphere_1.png\nIndex: 1 of 4\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/WorkSphere/worksphere_2.png":
+    "Album: WorkSphere\nFile: worksphere_2.png\nIndex: 2 of 4\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/WorkSphere/worksphere_3.png":
+    "Album: WorkSphere\nFile: worksphere_3.png\nIndex: 3 of 4\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
+  "~/Gallery/WorkSphere/worksphere_4.png":
+    "Album: WorkSphere\nFile: worksphere_4.png\nIndex: 4 of 4\nType: image/png\nCaption: Project Screenshot\n\nOpen the Gallery application to view this image.",
 }
 
+
+/**
+ * Tokenize a shell command line, respecting single and double quotes.
+ * Examples:
+ *   'cat README.md'           -> ['cat', 'README.md']
+ *   'cat "Live Demo.url"'     -> ['cat', 'Live Demo.url']
+ *   "cat 'Live Demo.url'"     -> ['cat', 'Live Demo.url']
+ *   'cd ..'                   -> ['cd', '..']
+ */
+function tokenize(cmd: string): string[] {
+  const tokens: string[] = []
+  let current = ""
+  let i = 0
+  while (i < cmd.length) {
+    const ch = cmd[i]
+    if (ch === '"' || ch === "'") {
+      // Consume until matching quote (no escape handling needed for our use case)
+      const quote = ch
+      i++
+      while (i < cmd.length && cmd[i] !== quote) {
+        current += cmd[i]
+        i++
+      }
+      i++ // skip closing quote
+    } else if (ch === " " || ch === "\t") {
+      if (current.length > 0) {
+        tokens.push(current)
+        current = ""
+      }
+      i++
+    } else {
+      current += ch
+      i++
+    }
+  }
+  if (current.length > 0) tokens.push(current)
+  return tokens
+}
 
 function processCommand(
   cmd: string,
   cwd: string,
 ): { output: Line[]; nextCwd?: string } {
-  const parts = cmd.trim().split(/\s+/)
+  const parts = tokenize(cmd.trim())
   const bin = parts[0]
   const args = parts.slice(1)
 
@@ -54,7 +146,7 @@ function processCommand(
       }
 
     case "whoami":
-      return { output: [{ type: "output", text: "houssam" }] }
+      return { output: [{ type: "output", text: "HYK" }] }
 
     case "uname": {
       if (args[0] === "-a") {
@@ -62,7 +154,7 @@ function processCommand(
           output: [
             {
               type: "output",
-              text: "Linux localhost 6.8.0-houssam #1 SMP x86_64 GNU/Linux",
+              text: "Linux localhost 6.8.0-houssam #1 SMP x86_64 GNU/Linux", /* */
             },
           ],
         }
@@ -131,7 +223,8 @@ function processCommand(
       const file = args[0]
       if (!file)
         return { output: [{ type: "error", text: "cat: missing operand" }] }
-      const content = FILE_CONTENTS[file]
+      const cwdKey = `${cwd}/${file}`.replace(/\/+/g, "/").replace("~//", "~/")
+      const content = FILE_CONTENTS[cwdKey] ?? FILE_CONTENTS[file]
       if (!content) {
         return {
           output: [

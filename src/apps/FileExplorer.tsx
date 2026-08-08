@@ -1,7 +1,12 @@
 import { useState, useMemo } from "react"
 import { PROJECTS, EXPERIENCE, EDUCATION } from "@/content/data"
+import {
+  getProjectFilesystem,
+  resolveProjectExplorerPath,
+  virtualNodesToFileItems,
+  type ExplorerFileItem,
+} from "@/lib/projectFilesystem"
 import { useTheme } from "@/context/ThemeContext"
-import portfolioImg from "@/assets/screenshots/portfolio.png"
 
 
 type Section = "projects" | "experience" | "education"
@@ -123,14 +128,7 @@ function LinkIcon() {
   )
 }
 
-type FileItem = {
-  name: string
-  type: "file" | "folder" | "url" | "image" | "json" | "markdown"
-  content?: string
-  url?: string
-  imageSrc?: string
-  children?: FileItem[]
-}
+type FileItem = ExplorerFileItem
 
 const col: React.CSSProperties = {
   display: "flex",
@@ -166,81 +164,6 @@ function Tag({ label }: { label: string }) {
   )
 }
 
-/* ── Helper to build folder structures for projects ── */
-const buildProjectFiles = (project: typeof PROJECTS[0]): FileItem[] => {
-  const files: FileItem[] = [
-    {
-      name: "README.md",
-      type: "markdown",
-      content: `# ${project.name}
-
-${project.description}
-
-## Technologies
-${project.technologies.map((t) => `- ${t}`).join("\n")}
-
-## Details
-- Year: ${project.year}
-- Status: ${project.status}
-`,
-    },
-    {
-      name: "Technologies.json",
-      type: "json",
-      content: JSON.stringify(project.technologies, null, 2),
-    },
-    {
-      name: "GitHub.url",
-      type: "url",
-      url: project.github,
-    },
-  ]
-
-  if (project.demo) {
-    files.push({
-      name: "Live Demo.url",
-      type: "url",
-      url: project.demo,
-    })
-  }
-
-  // Preview Image
-  const previewImg = project.image || portfolioImg
-  files.push({
-    name: "Preview.png",
-    type: "image",
-    imageSrc: previewImg,
-  })
-
-  // Screenshots Subfolder
-  const screenshotsList: FileItem[] = []
-  if (project.screenshots && project.screenshots.length > 0) {
-    const projPrefix = project.id === "workspace" ? "worksphere" : (project.id === "debuggers-lms" ? "debuggers" : project.id)
-    project.screenshots.forEach((src, idx) => {
-      screenshotsList.push({
-        name: `${projPrefix}_${idx + 1}.png`,
-        type: "image",
-        imageSrc: src,
-      })
-    })
-  } else {
-    screenshotsList.push({
-      name: "home.png",
-      type: "image",
-      imageSrc: previewImg,
-    })
-  }
-
-
-  files.push({
-    name: "Screenshots",
-    type: "folder",
-    children: screenshotsList,
-  })
-
-  return files
-}
-
 /* ── Projects Explorer ── */
 function ProjectsExplorer({
   openWindow,
@@ -257,11 +180,10 @@ function ProjectsExplorer({
   // Construct virtual folder structure
   const displayItems = useMemo((): FileItem[] => {
     if (currentPath.length === 0) {
-      // Root level: show project folders + Archive
       const rootFolders: FileItem[] = PROJECTS.map((p) => ({
         name: p.name,
         type: "folder",
-        children: buildProjectFiles(p),
+        children: virtualNodesToFileItems(getProjectFilesystem(p.id)),
       }))
       rootFolders.push({
         name: "Archive",
@@ -278,9 +200,8 @@ function ProjectsExplorer({
       return rootFolders
     }
 
-    if (currentPath.length === 1) {
-      const projId = currentPath[0]
-      if (projId === "Archive") {
+    if (currentPath[0] === "Archive") {
+      if (currentPath.length === 1) {
         return [
           {
             name: "restricted.tar.gz",
@@ -290,28 +211,10 @@ function ProjectsExplorer({
           },
         ]
       }
-      const project = PROJECTS.find((p) => p.name === projId)
-      if (project) {
-        return buildProjectFiles(project)
-      }
+      return []
     }
 
-    if (currentPath.length === 2) {
-      const [projId, subFolder] = currentPath
-      if (projId === "Archive") return []
-      const project = PROJECTS.find((p) => p.name === projId)
-      if (project) {
-        const files = buildProjectFiles(project)
-        const folder = files.find(
-          (f) => f.name === subFolder && f.type === "folder",
-        )
-        if (folder && folder.children) {
-          return folder.children
-        }
-      }
-    }
-
-    return []
+    return virtualNodesToFileItems(resolveProjectExplorerPath(currentPath))
   }, [currentPath])
 
   const handleItemClick = (e: React.MouseEvent, name: string) => {
