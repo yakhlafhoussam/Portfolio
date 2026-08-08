@@ -1,7 +1,7 @@
 .hyk-loading-indicator {
-  --hyk-load-glow: rgba(74, 222, 128, 0.5);
-  --hyk-load-color: rgb(15, 121, 54);
-  --hyk-load-dim: rgba(74, 222, 128, 0.28);
+  --hyk-load-glow: #4ade8080;
+  --hyk-load-color: #0f7936;
+  --hyk-load-dim: #4ade8047;
 
   display: flex;
   align-items: center;

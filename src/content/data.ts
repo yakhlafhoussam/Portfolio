@@ -113,7 +113,7 @@ export const PROJECTS = [
     ],
     github:
       "https://github.com/yakhlafhoussam/Brief-Soutenance-Crois-e-1-WorkSphere---Virtual-Workspace-.git",
-    demo: null,
+    demo: "https://yakhlafhoussam.github.io/Brief-Soutenance-Crois-e-1-WorkSphere---Virtual-Workspace-/",
     year: "2025",
     status: "Completed",
     image: worksphere_1,
