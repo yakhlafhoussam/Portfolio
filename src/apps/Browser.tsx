@@ -21,6 +21,7 @@ import {
   BypassFailListRow,
   BypassFailArticle,
 } from "@/components/easter/HykEasterEggs"
+import HykLoadingIndicator from "@/components/browser/HykLoadingIndicator"
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -691,7 +692,7 @@ export default function Browser({
   const [page, setPage] = useState<PageState>("home")
   const [urlBar, setUrlBar] = useState("hyk://new-tab")
   const [feed, setFeed] = useState<NewsFeedEntry[]>([])
-  const [feedLoading, setFeedLoading] = useState(false)
+  const [feedLoading, setFeedLoading] = useState(true)
   const [article, setArticle] = useState<NewsArticle | null>(null)
   const [articleLoading, setArticleLoading] = useState(false)
   const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
@@ -1285,9 +1286,7 @@ export default function Browser({
               </div>
 
               {feedLoading ? (
-                <div style={{ color: t.textFaint, fontSize: "0.8rem" }}>
-                  Loading…
-                </div>
+                <HykLoadingIndicator variant="compact" />
               ) : (
                 <div
                   style={{
@@ -1372,6 +1371,10 @@ export default function Browser({
               HYK News Feed
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {feedLoading ? (
+                <HykLoadingIndicator variant="centered" />
+              ) : (
+                <>
               {feed.map((entry) => (
                 <div
                   key={entry.id}
@@ -1514,6 +1517,8 @@ export default function Browser({
                   }}
                 />
               )}
+                </>
+              )}
             </div>
           </div>
         )}
@@ -1538,17 +1543,9 @@ export default function Browser({
               boxSizing: "border-box",
             }}
           >
-            {articleLoading || !article ? (
-              <div
-                style={{
-                  color: t.textFaint,
-                  fontSize: "0.8rem",
-                  textAlign: "center",
-                }}
-              >
-                Loading…
-              </div>
-            ) : (
+            {articleLoading ? (
+              <HykLoadingIndicator variant="centered" />
+            ) : article ? (
               <div
                 style={{ display: "flex", gap: 32, alignItems: "flex-start" }}
               >
@@ -1734,7 +1731,7 @@ export default function Browser({
                   />
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         )}
 
