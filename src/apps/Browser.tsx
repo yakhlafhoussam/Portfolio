@@ -591,91 +591,201 @@ function SponsoredCard({
   desc,
   tag,
   t,
+  onClose,
 }: {
   title: string
   desc: string
   tag: string
   t: ReturnType<typeof useTheme>
+  onClose?: () => void
 }) {
   const [hovered, setHovered] = useState(false)
+  const [closeHovered, setCloseHovered] = useState(false)
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        padding: 12,
-        borderRadius: 8,
-        background: t.isDark ? "#212124" : "#ffffff",
+        padding: 14,
+        borderRadius: 10,
+        background: t.isDark
+          ? "linear-gradient(135deg, #232326 0%, #1f1f23 100%)"
+          : "linear-gradient(135deg, #ffffff 0%, #fafafc 100%)",
         border: "1px solid " + t.border,
         display: "flex",
         flexDirection: "column",
-        gap: 6,
+        gap: 10,
         boxShadow: hovered
           ? t.isDark
-            ? "0 4px 12px rgba(0,0,0,0.2)"
-            : "0 4px 12px rgba(0,0,0,0.04)"
-          : "none",
-        transition: "all 150ms ease",
+            ? "0 8px 24px rgba(0,0,0,0.32)"
+            : "0 8px 24px rgba(0,0,0,0.08)"
+          : t.isDark
+            ? "0 2px 8px rgba(0,0,0,0.12)"
+            : "0 2px 8px rgba(0,0,0,0.04)",
+        transition: "all 180ms ease",
+        animation: "slideInFade 300ms ease-out",
+        position: "relative",
       }}
     >
+      <style>{`
+        @keyframes slideInFade {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+      
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
+          gap: 8,
         }}
       >
-        <span
-          style={{
-            fontSize: "0.55rem",
-            fontWeight: 700,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: t.textFaint,
-          }}
-        >
-          Sponsored
-        </span>
-        <span
-          style={{
-            fontSize: "0.55rem",
-            background: t.isDark
-              ? "rgba(255,255,255,0.06)"
-              : "rgba(0,0,0,0.05)",
-            padding: "1px 5px",
-            borderRadius: 3,
-            color: t.textMuted,
-          }}
-        >
-          {tag}
-        </span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span
+            style={{
+              fontSize: "0.56rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: t.textFaint,
+              display: "inline-block",
+              marginBottom: 4,
+            }}
+          >
+            Sponsored Content
+          </span>
+        </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            onMouseEnter={() => setCloseHovered(true)}
+            onMouseLeave={() => setCloseHovered(false)}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 4,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 4,
+              transition: "all 150ms ease",
+              color: closeHovered ? t.text : t.textMuted,
+              backgroundColor: closeHovered
+                ? t.isDark
+                  ? "rgba(255,255,255,0.08)"
+                  : "rgba(0,0,0,0.06)"
+                : "transparent",
+            }}
+            title="Close advertisement"
+          >
+            <svg width={16} height={16} viewBox="0 0 16 16" fill="none">
+              <path
+                d="M12.5 3.5L3.5 12.5"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+              />
+              <path
+                d="M3.5 3.5L12.5 12.5"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        )}
       </div>
+
+      <span
+        style={{
+          fontSize: "0.54rem",
+          background: t.isDark
+            ? "rgba(74, 222, 128, 0.15)"
+            : "rgba(59, 130, 246, 0.12)",
+          padding: "3px 8px",
+          borderRadius: 4,
+          color: t.isDark ? "rgba(74, 222, 128, 0.8)" : "rgba(59, 130, 246, 0.8)",
+          fontWeight: 600,
+          display: "inline-block",
+          width: "fit-content",
+        }}
+      >
+        {tag}
+      </span>
+
       <div
         style={{
-          fontSize: "0.78rem",
-          fontWeight: 600,
+          fontSize: "0.83rem",
+          fontWeight: 700,
           color: t.text,
-          lineHeight: 1.3,
+          lineHeight: 1.35,
+          marginBottom: 2,
         }}
       >
         {title}
       </div>
-      <div style={{ fontSize: "0.68rem", color: t.textMuted, lineHeight: 1.4 }}>
-        {desc}
-      </div>
+
       <div
         style={{
-          marginTop: 4,
-          textAlign: "center",
-          fontSize: "0.7rem",
-          fontWeight: 600,
-          padding: "4px 8px",
-          borderRadius: 4,
-          background: t.isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)",
-          color: t.text,
+          fontSize: "0.70rem",
+          color: t.textMuted,
+          lineHeight: 1.5,
         }}
       >
-        Claim Offer
+        {desc}
+      </div>
+
+      <div
+        style={{
+          marginTop: 6,
+          display: "flex",
+          gap: 8,
+        }}
+      >
+        <button
+          style={{
+            flex: 1,
+            textAlign: "center",
+            fontSize: "0.73rem",
+            fontWeight: 600,
+            padding: "7px 12px",
+            borderRadius: 6,
+            background: t.isDark
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.06)",
+            color: t.text,
+            border: `1px solid ${t.border}`,
+            cursor: "pointer",
+            transition: "all 150ms ease",
+          }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget
+            el.style.background = t.isDark
+              ? "rgba(255,255,255,0.12)"
+              : "rgba(0,0,0,0.08)"
+            el.style.boxShadow = t.isDark
+              ? "0 4px 12px rgba(0,0,0,0.2)"
+              : "0 4px 12px rgba(0,0,0,0.06)"
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget
+            el.style.background = t.isDark
+              ? "rgba(255,255,255,0.08)"
+              : "rgba(0,0,0,0.06)"
+            el.style.boxShadow = "none"
+          }}
+        >
+          Learn More
+        </button>
       </div>
     </div>
   )
@@ -697,6 +807,7 @@ export default function Browser({
   const [articleLoading, setArticleLoading] = useState(false)
   const [currentArticle, setCurrentArticle] = useState<NewsFeedEntry | null>(null)
   const [hykArticleState, setHykArticleState] = useState<HykArticleState>("normal")
+  const [closedAdIndices, setClosedAdIndices] = useState<Set<number>>(new Set())
   // "egg" page: the user opened an easter egg article (not a real article)
   const [eggPage, setEggPage] = useState<"cheat" | "deleted" | "bypass-success" | "bypass-fail" | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
