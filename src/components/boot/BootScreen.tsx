@@ -15,6 +15,7 @@
  */
 
 import { useEffect } from "react"
+import { useTheme } from "../../context/ThemeContext"
 import "./BootScreen.css"
 
 // ─── Easily replaceable message ────────────────────────────────────────────
@@ -30,10 +31,13 @@ const TOTAL_DURATION_MS = 4600 // exit-delay (3.6s) + exit-duration (0.8s) + 200
 type Props = {
   /** Called once the boot crossfade is complete — switch to desktop. */
   onComplete: () => void
+  isMobile?: boolean
 }
 
 // ─── Component ─────────────────────────────────────────────────────────────
-export default function BootScreen({ onComplete }: Props) {
+export default function BootScreen({ onComplete, isMobile = false }: Props) {
+  const t = useTheme()
+
   useEffect(() => {
     // Respect reduced-motion preference: skip immediately
     const prefersReduced =
@@ -45,6 +49,44 @@ export default function BootScreen({ onComplete }: Props) {
     return () => clearTimeout(timer)
   }, [onComplete])
 
+  if (isMobile) {
+    return (
+      <div
+        className="mobile-boot-root"
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: t.isDark ? "#09090b" : "#f5f5f7",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          userSelect: "none",
+          pointerEvents: "none",
+          transition: "background 0.5s ease",
+        }}
+        aria-hidden="true"
+      >
+        <div className="mobile-boot-content">
+          <div className="mobile-boot-logo" style={{ color: t.text }}>
+            HYK
+          </div>
+          <div className="mobile-boot-dots">
+            <span className="dot" style={{ backgroundColor: t.text }}></span>
+            <span className="dot" style={{ backgroundColor: t.text }}></span>
+            <span className="dot" style={{ backgroundColor: t.text }}></span>
+            <span className="dot" style={{ backgroundColor: t.text }}></span>
+            <span className="dot" style={{ backgroundColor: t.text }}></span>
+          </div>
+          <div className="mobile-boot-status" style={{ color: t.textMuted }}>
+            Starting system...
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="boot-root" aria-hidden="true">
       {/* HYK — color nearly black, revealed by glow not by light */}
@@ -55,3 +97,4 @@ export default function BootScreen({ onComplete }: Props) {
     </div>
   )
 }
+

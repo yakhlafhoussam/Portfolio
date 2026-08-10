@@ -731,7 +731,7 @@ export default function Terminal({ autoCommands, demoLines, cinematicActions, vi
           }}
           onKeyDown={handleKey}
           disabled={isActive}
-          autoFocus={!isActive}
+          autoFocus={!isActive && typeof window !== "undefined" && window.innerWidth >= 768}
           spellCheck={false}
           style={{
             flex: 1,

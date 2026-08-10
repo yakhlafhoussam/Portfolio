@@ -856,7 +856,10 @@ export default function Browser({
   }, [])
 
   useEffect(() => {
-    if (page === "home") setTimeout(() => searchRef.current?.focus(), 100)
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+    if (page === "home" && !isMobile) {
+      setTimeout(() => searchRef.current?.focus(), 100)
+    }
   }, [page])
 
   useEffect(() => {

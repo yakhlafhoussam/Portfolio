@@ -131,16 +131,101 @@
   to   { opacity: 0; }
 }
 
+/* ── Mobile Boot Animation CSS ── */
+.mobile-boot-root {
+  animation: bootExit var(--boot-exit-duration) ease forwards;
+  animation-delay: var(--boot-exit-delay);
+  animation-fill-mode: both;
+}
+
+.mobile-boot-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.mobile-boot-logo {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 3.5rem;
+  letter-spacing: 0.15em;
+  line-height: 1;
+  margin: 0;
+  animation: mobileLogoReveal 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.mobile-boot-dots {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.mobile-boot-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.2;
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+
+.mobile-boot-dots .dot:nth-child(1) { animation-delay: 0s; }
+.mobile-boot-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+.mobile-boot-dots .dot:nth-child(3) { animation-delay: 0.4s; }
+.mobile-boot-dots .dot:nth-child(4) { animation-delay: 0.6s; }
+.mobile-boot-dots .dot:nth-child(5) { animation-delay: 0.8s; }
+
+.mobile-boot-status {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  animation: fadeInStatus 1.2s ease forwards;
+  animation-delay: 0.8s;
+}
+
+@keyframes mobileLogoReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes fadeInStatus {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 0.7; transform: translateY(0); }
+}
+
 /* ── Reduced motion: skip all animations ── */
 @media (prefers-reduced-motion: reduce) {
   .boot-word,
-  .boot-message {
+  .boot-message,
+  .mobile-boot-logo,
+  .mobile-boot-status,
+  .mobile-boot-dots .dot {
     animation: none;
     text-shadow: none;
     color: rgba(255, 255, 255, 0.1);
     opacity: 1;
   }
-  .boot-root {
+  .boot-root,
+  .mobile-boot-root {
     animation: bootExit 0.01s linear forwards;
     animation-delay: 0.5s;
   }

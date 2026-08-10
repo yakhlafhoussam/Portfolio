@@ -77,7 +77,7 @@ export default function App() {
       >
         {/* Boot screen — unmounted after crossfade completes */}
         {(phase === "boot" || phase === "transitioning") && (
-          <BootScreen onComplete={handleBootComplete} />
+          <BootScreen onComplete={handleBootComplete} isMobile={isMobile} />
         )}
 
         {/* Shell — pre-mounted during transition for seamless crossfade */}
