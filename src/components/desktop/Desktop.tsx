@@ -135,17 +135,20 @@ function getInitialWindowPosition(
   return clampWindowPosition(x, y, size.width, size.height, vw, vh);
 }
 
-export default function Desktop() {
+export default function Desktop({
+  isDark,
+  setIsDark,
+}: {
+  isDark: boolean
+  setIsDark: React.Dispatch<React.SetStateAction<boolean>>
+}) {
   // Register visitor on first visit — the visitor service owns all
   // localStorage initialisation decisions. Do NOT call storageManager.initialize() here.
   useEffect(() => {
     initVisitor();
   }, []);
 
-  const [isDark, setIsDark] = useState(() => {
-    // Read theme from storage if present; default to dark without writing anything.
-    return (storageManager.readRaw()?.theme ?? "dark") === "dark";
-  });
+
   const [icons, setIcons] = useState<
     {
       id: AppId;
@@ -225,31 +228,7 @@ export default function Desktop() {
       .catch((err) => console.error("Failed to load desktop icons:", err));
   }, []);
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-      document.documentElement.style.setProperty(
-        "--scrollbar-thumb",
-        "rgba(255,255,255,0.12)",
-      );
-      document.documentElement.style.setProperty(
-        "--scrollbar-thumb-hover",
-        "rgba(255,255,255,0.22)",
-      );
-    } else {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-      document.documentElement.style.setProperty(
-        "--scrollbar-thumb",
-        "rgba(0,0,0,0.15)",
-      );
-      document.documentElement.style.setProperty(
-        "--scrollbar-thumb-hover",
-        "rgba(0,0,0,0.25)",
-      );
-    }
-  }, [isDark]);
+
 
   const bringToFront = useCallback(
     (id: string, options?: { force?: boolean }) => {

@@ -799,6 +799,20 @@ export default function Browser({
   registerCloseRequest?: (callback: () => boolean) => void
 }) {
   const t = useTheme()
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768
+    }
+    return false
+  })
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   const [page, setPage] = useState<PageState>("home")
   const [urlBar, setUrlBar] = useState("hyk://new-tab")
   const [feed, setFeed] = useState<NewsFeedEntry[]>([])
@@ -1254,7 +1268,7 @@ export default function Browser({
             style={{
               display: "flex",
               flexDirection: "column",
-              padding: "40px 32px",
+              padding: isMobile ? "24px 16px" : "40px 32px",
               minHeight: "100%",
               justifyContent: "space-between",
               boxSizing: "border-box",
@@ -1468,7 +1482,7 @@ export default function Browser({
 
         {/* ── NEWS LIST ── */}
         {page === "news" && (
-          <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ padding: isMobile ? "16px" : "32px", maxWidth: 1200, margin: "0 auto" }}>
             <div
               style={{
                 color: t.textFaint,
@@ -1636,8 +1650,8 @@ export default function Browser({
 
         {/* ── ARTICLE READER ── */}
         {page === "article" && eggPage !== null && (
-          <div style={{ padding: "32px", maxWidth: 1200, margin: "0 auto", boxSizing: "border-box" }}>
-            <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
+          <div style={{ padding: isMobile ? "16px" : "32px", maxWidth: 1200, margin: "0 auto", boxSizing: "border-box" }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 16 : 32, alignItems: "flex-start" }}>
               {eggPage === "cheat" && <LocalStorageCheatArticle t={t} />}
               {eggPage === "deleted" && <LocalStorageDeletedArticle t={t} />}
               {eggPage === "bypass-success" && <BypassSuccessArticle t={t} />}
@@ -1648,7 +1662,7 @@ export default function Browser({
         {page === "article" && eggPage === null && (
           <div
             style={{
-              padding: "32px",
+              padding: isMobile ? "16px" : "32px",
               maxWidth: 1200,
               margin: "0 auto",
               boxSizing: "border-box",
@@ -1658,7 +1672,7 @@ export default function Browser({
               <HykLoadingIndicator variant="centered" />
             ) : article ? (
               <div
-                style={{ display: "flex", gap: 32, alignItems: "flex-start" }}
+                style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 16 : 32, alignItems: "flex-start" }}
               >
                 {/* Main Content Column */}
                 <div style={{ flex: 1, minWidth: 0 }}>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import profileImg from "@/assets/profile/profile.png"
 import { useTheme } from "@/context/ThemeContext"
 import { EDUCATION } from "@/content/data"
@@ -153,29 +153,45 @@ function Section({
 export default function Profile() {
   const t = useTheme()
   const [activeTab, setActiveTab] = useState<string>("Profile")
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 768
+    }
+    return false
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   return (
     <div
       style={{
         flex: 1,
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         overflow: "hidden",
         background: t.bg,
         transition: t.transition,
       }}
     >
-      {/* Left sidebar */}
+      {/* Sidebar/TopBar Navigation */}
       <div
         style={{
-          width: 240,
+          width: isMobile ? "100%" : 240,
           flexShrink: 0,
           background: t.bgSidebar,
-          borderRight: "1px solid " + t.border,
+          borderRight: isMobile ? "none" : "1px solid " + t.border,
+          borderBottom: isMobile ? "1px solid " + t.border : "none",
           display: "flex",
-          flexDirection: "column",
-          padding: "28px 20px",
-          gap: 20,
-          overflowY: "auto",
+          flexDirection: isMobile ? "column" : "column",
+          padding: isMobile ? "16px" : "28px 20px",
+          gap: isMobile ? 12 : 20,
+          overflowY: isMobile ? "visible" : "auto",
           transition: t.transition,
         }}
       >
@@ -183,15 +199,15 @@ export default function Profile() {
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: isMobile ? "row" : "column",
             alignItems: "center",
             gap: 12,
           }}
         >
           <div
             style={{
-              width: 88,
-              height: 88,
+              width: isMobile ? 48 : 88,
+              height: isMobile ? 48 : 88,
               borderRadius: "50%",
               overflow: "hidden",
               border: t.isDark
@@ -217,12 +233,12 @@ export default function Profile() {
               }}
             />
           </div>
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: isMobile ? "left" : "center" }}>
             <div
               style={{
                 color: t.text,
                 fontWeight: 600,
-                fontSize: "1rem",
+                fontSize: isMobile ? "0.9rem" : "1rem",
                 transition: t.transition,
               }}
             >
@@ -231,7 +247,7 @@ export default function Profile() {
             <div
               style={{
                 color: t.textMuted,
-                fontSize: "0.75rem",
+                fontSize: isMobile ? "0.7rem" : "0.75rem",
                 marginTop: 2,
                 transition: t.transition,
               }}
@@ -242,30 +258,42 @@ export default function Profile() {
         </div>
 
         {/* Nav items */}
-        {["Profile", "Skills", "Languages", "Contact"].map((item) => {
-          const isSelected = activeTab === item
-          return (
-            <div
-              key={item}
-              onClick={() => setActiveTab(item)}
-              style={{
-                padding: "7px 12px",
-                borderRadius: 6,
-                color: isSelected ? (t.isDark ? "#4ade80" : "#2563eb") : t.textMuted,
-                background: isSelected
-                  ? t.isDark
-                    ? "rgba(74,222,128,0.08)"
-                    : "rgba(37,99,235,0.08)"
-                  : "transparent",
-                fontSize: "0.82rem",
-                cursor: "pointer",
-                transition: t.transition,
-              }}
-            >
-              {item}
-            </div>
-          )
-        })}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: isMobile ? "row" : "column",
+            gap: isMobile ? 8 : 4,
+            overflowX: isMobile ? "auto" : "visible",
+            width: "100%",
+            scrollbarWidth: "none",
+          }}
+        >
+          {["Profile", "Skills", "Languages", "Contact"].map((item) => {
+            const isSelected = activeTab === item
+            return (
+              <div
+                key={item}
+                onClick={() => setActiveTab(item)}
+                style={{
+                  padding: isMobile ? "6px 12px" : "7px 12px",
+                  borderRadius: 6,
+                  color: isSelected ? (t.isDark ? "#4ade80" : "#2563eb") : t.textMuted,
+                  background: isSelected
+                    ? t.isDark
+                      ? "rgba(74,222,128,0.08)"
+                      : "rgba(37,99,235,0.08)"
+                    : "transparent",
+                  fontSize: "0.82rem",
+                  cursor: "pointer",
+                  transition: t.transition,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item}
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* Main content */}
@@ -273,7 +301,7 @@ export default function Profile() {
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "28px 32px",
+          padding: isMobile ? "18px" : "28px 32px",
           display: "flex",
           flexDirection: "column",
           gap: 28,
