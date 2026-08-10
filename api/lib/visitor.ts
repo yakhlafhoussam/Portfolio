@@ -1,4 +1,4 @@
-import { db } from "./firebase"
+import { db } from "./firebase.js"
 import { FieldValue } from "firebase-admin/firestore"
 
 export interface VisitorInput {

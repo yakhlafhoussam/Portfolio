@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node"
-import { findVisitor } from "../../lib/visitor"
-import { getPublishedNews } from "../../lib/news"
+import { findVisitor } from "../../lib/visitor.js"
+import { getPublishedNews } from "../../lib/news.js"
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
