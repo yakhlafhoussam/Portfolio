@@ -9,24 +9,24 @@ type IconItem = {
   type: IconType
 }
 
-// Hardcoded mobile app list — includes all relevant apps for a phone context
+// Hardcoded mobile app list — excluding Terminal and Trash as requested
 const MOBILE_APPS: IconItem[] = [
   { id: "browser",    label: "Browser",    type: "browser"    },
-  { id: "terminal",   label: "Terminal",   type: "terminal"   },
   { id: "profile",    label: "Profile",    type: "person"     },
   { id: "projects",   label: "Files",      type: "folder"     },
-  { id: "gallery",    label: "Gallery",    type: "folder"     },
+  { id: "gallery",    label: "Gallery",    type: "gallery"    },
   { id: "resume",     label: "Resume",     type: "pdf"        },
   { id: "experience", label: "Experience", type: "briefcase"  },
   { id: "education",  label: "Education",  type: "graduation" },
-  { id: "recycle",    label: "Trash",      type: "trash"      },
 ]
 
 type Props = {
   onOpenApp: (appId: AppId) => void
+  isDark: boolean
+  onToggleTheme: () => void
 }
 
-export default function MobileHomeScreen({ onOpenApp }: Props) {
+export default function MobileHomeScreen({ onOpenApp, isDark, onToggleTheme }: Props) {
   const t = useTheme()
   const [date, setDate] = useState(new Date())
 
@@ -47,51 +47,110 @@ export default function MobileHomeScreen({ onOpenApp }: Props) {
         boxSizing: "border-box",
         zIndex: 1,
         overflowY: "auto",
-        // Extra bottom padding so last row isn't hidden behind the nav bar
         paddingBottom: 8,
       }}
     >
-      {/* ── Premium Date/Time Header ── */}
+      {/* ── Premium Date/Time Header & Theme Toggle ── */}
       <div
         style={{
           padding: "28px 24px 20px",
           userSelect: "none",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
         }}
       >
-        <div
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div
+            style={{
+              fontSize: "0.78rem",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              color: t.isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)",
+              marginBottom: 4,
+            }}
+          >
+            {weekday}
+          </div>
+          <div
+            style={{
+              fontSize: "2.2rem",
+              fontWeight: 800,
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
+              color: t.isDark ? "#ffffff" : "#09090b",
+              textShadow: t.isDark ? "0 2px 12px rgba(0,0,0,0.4)" : "none",
+            }}
+          >
+            {monthDay}
+          </div>
+          <div
+            style={{
+              fontSize: "0.82rem",
+              fontWeight: 500,
+              color: t.isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+              marginTop: 6,
+            }}
+          >
+            Welcome to HYK's Workspace
+          </div>
+        </div>
+
+        {/* Circular Theme Toggle Button */}
+        <button
+          onClick={onToggleTheme}
           style={{
-            fontSize: "0.78rem",
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-            color: t.isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)",
-            marginBottom: 4,
+            background: t.isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)",
+            border: "none",
+            borderRadius: "50%",
+            width: 42,
+            height: 42,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: t.text,
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            marginTop: 4,
           }}
         >
-          {weekday}
-        </div>
-        <div
-          style={{
-            fontSize: "2.2rem",
-            fontWeight: 800,
-            letterSpacing: "-0.03em",
-            lineHeight: 1.1,
-            color: t.isDark ? "#ffffff" : "#09090b",
-            textShadow: t.isDark ? "0 2px 12px rgba(0,0,0,0.4)" : "none",
-          }}
-        >
-          {monthDay}
-        </div>
-        <div
-          style={{
-            fontSize: "0.82rem",
-            fontWeight: 500,
-            color: t.isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
-            marginTop: 6,
-          }}
-        >
-          Welcome to HYK's Workspace
-        </div>
+          {isDark ? (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          ) : (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* ── App Launcher Grid ── */}

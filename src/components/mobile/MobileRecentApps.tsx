@@ -8,6 +8,7 @@ import profileSvg from "@/assets/icons/profile.svg"
 import pdfSvg from "@/assets/icons/pdf.svg"
 import graduationSvg from "@/assets/icons/graduation.svg"
 import briefcaseSvg from "@/assets/icons/briefcase.svg"
+import gallerySvg from "@/assets/icons/gallery.svg"
 
 type Props = {
   recentApps: AppId[]
@@ -22,7 +23,7 @@ const APP_INFO: Record<AppId, { label: string; icon: string }> = {
   projects: { label: "Projects", icon: folderSvg },
   experience: { label: "Experience", icon: briefcaseSvg },
   education: { label: "Education", icon: graduationSvg },
-  gallery: { label: "Gallery", icon: folderSvg },
+  gallery: { label: "Gallery", icon: gallerySvg },
   resume: { label: "Resume.pdf", icon: pdfSvg },
   browser: { label: "Browser", icon: browserSvg },
   terminal: { label: "Terminal", icon: terminalSvg },

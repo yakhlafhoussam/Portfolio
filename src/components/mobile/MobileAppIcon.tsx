@@ -8,6 +8,7 @@ import profileSvg from "@/assets/icons/profile.svg"
 import pdfSvg from "@/assets/icons/pdf.svg"
 import graduationSvg from "@/assets/icons/graduation.svg"
 import briefcaseSvg from "@/assets/icons/briefcase.svg"
+import gallerySvg from "@/assets/icons/gallery.svg"
 
 export type IconType =
   | "folder"
@@ -18,6 +19,7 @@ export type IconType =
   | "trash"
   | "graduation"
   | "briefcase"
+  | "gallery"
 
 type Props = {
   id: string
@@ -40,6 +42,7 @@ const ICON_SRC: Record<IconType, string> = {
   trash: trashSvg,
   graduation: graduationSvg,
   briefcase: briefcaseSvg,
+  gallery: gallerySvg,
 }
 
 export default function MobileAppIcon({ id, label, type, onClick }: Props) {

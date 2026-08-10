@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Background rounded square -->
+  <rect width="48" height="48" rx="12" fill="url(#galleryGrad)"/>
+  <!-- Mountains silhouette -->
+  <path d="M8 36 L18 22 L26 30 L30 25 L40 36 Z" fill="rgba(255,255,255,0.25)"/>
+  <!-- Sun circle -->
+  <circle cx="35" cy="16" r="5" fill="rgba(255,255,255,0.85)"/>
+  <!-- Defs -->
+  <defs>
+    <linearGradient id="galleryGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+</svg>

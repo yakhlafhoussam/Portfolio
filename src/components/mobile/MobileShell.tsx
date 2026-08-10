@@ -9,13 +9,14 @@ import type { AppId } from "../desktop/Desktop"
 import { storageManager } from "../../lib/storage"
 
 // Import app components
-import FileExplorer from "../../apps/FileExplorer"
-import Gallery from "../../apps/Gallery"
+import MobileFileExplorer from "./MobileFileExplorer"
+import MobileGallery from "./MobileGallery"
+import MobileExperience from "./MobileExperience"
+import MobileEducation from "./MobileEducation"
 import Resume from "../../apps/Resume"
 import Browser from "../../apps/Browser"
 import Terminal from "../../apps/Terminal"
 import Profile from "../../apps/Profile"
-import Trash from "../../apps/Trash"
 import TextEditor from "../../apps/TextEditor"
 
 type Props = {
@@ -30,7 +31,7 @@ type StackItem = {
 
 const APP_TITLES: Record<AppId, string> = {
   profile: "Profile",
-  projects: "Projects",
+  projects: "Files",
   experience: "Experience",
   education: "Education",
   gallery: "Gallery",
@@ -146,31 +147,25 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
     switch (appId) {
       case "projects":
         return (
-          <FileExplorer
-            section="projects"
+          <MobileFileExplorer
             openWindow={openWindow}
             registerBackHandler={registerBackHandler}
           />
         )
       case "experience":
         return (
-          <FileExplorer
-            section="experience"
-            openWindow={openWindow}
-            registerBackHandler={registerBackHandler}
-          />
+          <MobileExperience />
         )
       case "education":
         return (
-          <FileExplorer
-            section="education"
-            openWindow={openWindow}
+          <MobileEducation
             registerBackHandler={registerBackHandler}
           />
         )
       case "gallery":
+      case "recycle": // Map recycle case to gallery on mobile as well
         return (
-          <Gallery
+          <MobileGallery
             initialImageSrc={appParams?.imageSrc}
             registerBackHandler={registerBackHandler}
           />
@@ -198,8 +193,6 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         )
       case "profile":
         return <Profile />
-      case "recycle":
-        return <Trash />
       case "editor":
         return (
           <TextEditor content={appParams?.content} title={appParams?.title} />
@@ -253,7 +246,11 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         }}
       >
         {openApp === null ? (
-          <MobileHomeScreen onOpenApp={openWindow} />
+          <MobileHomeScreen
+            onOpenApp={openWindow}
+            isDark={isDark}
+            onToggleTheme={handleToggleTheme}
+          />
         ) : (
           <MobileAppView
             title={activeTitle}
