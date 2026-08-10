@@ -7,6 +7,8 @@ import MobileRecentApps from "./MobileRecentApps"
 import MobileAppView from "./MobileAppView"
 import type { AppId } from "../desktop/Desktop"
 import { storageManager } from "../../lib/storage"
+import lightWallpaper from "@/assets/wallpapers/light.png"
+import darkWallpaper from "@/assets/wallpapers/dark.png"
 
 // Import app components
 import MobileFileExplorer from "./MobileFileExplorer"
@@ -216,16 +218,39 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         background: t.isDark ? "#09090b" : "#f5f5f7",
       }}
     >
-      {/* Background wallpaper */}
+      {/* Background wallpaper — mobile-specific positioning */}
+      {/* Dark wallpaper layer */}
       <div
+        aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage: isDark
-            ? "radial-gradient(circle at 50% 20%, #1e1b4b 0%, #09090b 100%)"
-            : "radial-gradient(circle at 50% 20%, #f0f4ff 0%, #e2e8f0 100%)",
+          backgroundImage: `url(${darkWallpaper})`,
+          // auto width, 100% height → natural aspect ratio, no distortion
+          backgroundSize: "auto 100%",
+          // anchor to right so the figure (right-side subject) stays visible
+          backgroundPosition: "right center",
+          backgroundRepeat: "no-repeat",
+          opacity: isDark ? 1 : 0,
+          transition: "opacity 500ms ease-in-out",
           zIndex: 0,
-          transition: t.transition,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Light wallpaper layer */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: `url(${lightWallpaper})`,
+          backgroundSize: "auto 100%",
+          backgroundPosition: "right center",
+          backgroundRepeat: "no-repeat",
+          opacity: isDark ? 0 : 1,
+          transition: "opacity 500ms ease-in-out",
+          zIndex: 0,
+          pointerEvents: "none",
         }}
       />
 
