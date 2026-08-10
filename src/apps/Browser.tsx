@@ -795,8 +795,10 @@ function SponsoredCard({
 
 export default function Browser({
   registerCloseRequest,
+  registerBackHandler,
 }: {
   registerCloseRequest?: (callback: () => boolean) => void
+  registerBackHandler?: (handler: (() => boolean) | null) => void
 }) {
   const t = useTheme()
   const [isMobile, setIsMobile] = useState(() => {
@@ -1128,6 +1130,36 @@ export default function Browser({
       window.localStorage.removeItem("hykViewed")
     } catch {}
   }, [])
+
+  // Register mobile back navigation handler
+  // Must be placed after restoreLocalStorageAfterReading is defined
+  useEffect(() => {
+    if (registerBackHandler) {
+      registerBackHandler(() => {
+        if (eggPageRef.current !== null) {
+          restoreLocalStorageAfterReading()
+          setPage("news")
+          setEggPage(null)
+          setUrlBar("news://hyk.internal/feed")
+          return true
+        }
+        if (page === "article") {
+          setPage("news")
+          setUrlBar("news://hyk.internal/feed")
+          return true
+        }
+        if (page === "news") {
+          setPage("home")
+          setUrlBar("hyk://new-tab")
+          return true
+        }
+        return false
+      })
+    }
+    return () => {
+      if (registerBackHandler) registerBackHandler(null)
+    }
+  }, [page, registerBackHandler, restoreLocalStorageAfterReading])
 
   const eggPageRef = useRef<"cheat" | "deleted" | "bypass-success" | "bypass-fail" | null>(null)
   useEffect(() => {

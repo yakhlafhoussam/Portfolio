@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useTheme } from "../../context/ThemeContext"
 import MobileStatusBar from "./MobileStatusBar"
 import MobileHomeScreen from "./MobileHomeScreen"
@@ -48,6 +48,13 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
   const [navStack, setNavStack] = useState<StackItem[]>([])
   const [recentApps, setRecentApps] = useState<AppId[]>([])
   const [showRecents, setShowRecents] = useState(false)
+  // Each app can register a handler that returns true if it consumed the back action
+  const internalBackHandlerRef = useRef<(() => boolean) | null>(null)
+
+  // Provide this to apps so they can register/unregister their internal back handler
+  const registerBackHandler = useCallback((handler: (() => boolean) | null) => {
+    internalBackHandlerRef.current = handler
+  }, [])
 
   // Custom openWindow implementation for mobile
   const openWindow = useCallback((appId: AppId, params?: any) => {
@@ -58,6 +65,8 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       const filtered = prev.filter((id) => id !== appId)
       return [...filtered, appId]
     })
+    // Reset any internal back handler when opening a new app
+    internalBackHandlerRef.current = null
   }, [])
 
   const handleBack = useCallback(() => {
@@ -65,6 +74,12 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       setShowRecents(false)
       return
     }
+    // First, let the open app handle back internally (e.g. Browser: article → news → home)
+    if (internalBackHandlerRef.current) {
+      const consumed = internalBackHandlerRef.current()
+      if (consumed) return
+    }
+    // App has no more internal history — navigate at the shell level
     if (navStack.length <= 1) {
       setOpenApp(null)
       setAppParams(null)
@@ -83,6 +98,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
     setOpenApp(null)
     setAppParams(null)
     setNavStack([])
+    internalBackHandlerRef.current = null
   }, [])
 
   const handleRecentsToggle = useCallback(() => {
@@ -94,6 +110,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
     setAppParams(null)
     setNavStack([{ appId }])
     setShowRecents(false)
+    internalBackHandlerRef.current = null
   }, [])
 
   const handleCloseRecentApp = useCallback(
@@ -103,6 +120,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         setOpenApp(null)
         setAppParams(null)
         setNavStack([])
+        internalBackHandlerRef.current = null
       }
     },
     [openApp],
@@ -114,6 +132,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
     setAppParams(null)
     setNavStack([])
     setShowRecents(false)
+    internalBackHandlerRef.current = null
   }, [])
 
   const handleToggleTheme = useCallback(() => {
@@ -122,21 +141,49 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
     setIsDark(next)
   }, [isDark, setIsDark])
 
-  // Map AppId to its component render
+  // Map AppId to its component render, passing registerBackHandler for apps that support it
   const renderApp = (appId: AppId) => {
     switch (appId) {
       case "projects":
-        return <FileExplorer section="projects" openWindow={openWindow} />
+        return (
+          <FileExplorer
+            section="projects"
+            openWindow={openWindow}
+            registerBackHandler={registerBackHandler}
+          />
+        )
       case "experience":
-        return <FileExplorer section="experience" openWindow={openWindow} />
+        return (
+          <FileExplorer
+            section="experience"
+            openWindow={openWindow}
+            registerBackHandler={registerBackHandler}
+          />
+        )
       case "education":
-        return <FileExplorer section="education" openWindow={openWindow} />
+        return (
+          <FileExplorer
+            section="education"
+            openWindow={openWindow}
+            registerBackHandler={registerBackHandler}
+          />
+        )
       case "gallery":
-        return <Gallery initialImageSrc={appParams?.imageSrc} />
+        return (
+          <Gallery
+            initialImageSrc={appParams?.imageSrc}
+            registerBackHandler={registerBackHandler}
+          />
+        )
       case "resume":
         return <Resume />
       case "browser":
-        return <Browser registerCloseRequest={() => {}} />
+        return (
+          <Browser
+            registerCloseRequest={() => {}}
+            registerBackHandler={registerBackHandler}
+          />
+        )
       case "terminal":
         return (
           <Terminal
@@ -154,13 +201,16 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       case "recycle":
         return <Trash />
       case "editor":
-        return <TextEditor content={appParams?.content} title={appParams?.title} />
+        return (
+          <TextEditor content={appParams?.content} title={appParams?.title} />
+        )
       default:
         return null
     }
   }
 
   const activeTitle = openApp ? APP_TITLES[openApp] || "App" : ""
+  const canGoBack = showRecents || openApp !== null
 
   return (
     <div
@@ -173,7 +223,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         background: t.isDark ? "#09090b" : "#f5f5f7",
       }}
     >
-      {/* Background wallpaper layers matching desktop shell */}
+      {/* Background wallpaper */}
       <div
         style={{
           position: "absolute",
@@ -186,10 +236,10 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         }}
       />
 
-      {/* Top Status Bar */}
+      {/* Top Status Bar — fixed height 28px */}
       <MobileStatusBar />
 
-      {/* Main Content Area */}
+      {/* Main Content Area — grows between status bar and nav bar */}
       <div
         style={{
           flex: 1,
@@ -198,19 +248,24 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
-          paddingBottom: 52, // bottom nav bar offset
+          // Reserve bottom space for the nav bar (52px fixed)
+          marginBottom: 52,
         }}
       >
         {openApp === null ? (
           <MobileHomeScreen onOpenApp={openWindow} />
         ) : (
-          <MobileAppView title={activeTitle} isDark={isDark} onToggleTheme={handleToggleTheme}>
+          <MobileAppView
+            title={activeTitle}
+            isDark={isDark}
+            onToggleTheme={handleToggleTheme}
+          >
             {renderApp(openApp)}
           </MobileAppView>
         )}
       </div>
 
-      {/* Recent apps deck preview overlay */}
+      {/* Recent apps deck overlay */}
       {showRecents && (
         <MobileRecentApps
           recentApps={recentApps}
@@ -221,12 +276,12 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
         />
       )}
 
-      {/* Bottom Navigation Bar */}
+      {/* Bottom Navigation Bar — position: fixed so it stays at bottom */}
       <MobileNavBar
         onBack={handleBack}
         onHome={handleHome}
         onRecents={handleRecentsToggle}
-        canGoBack={navStack.length > 0 || showRecents}
+        canGoBack={canGoBack}
       />
     </div>
   )

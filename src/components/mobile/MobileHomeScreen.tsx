@@ -9,21 +9,26 @@ type IconItem = {
   type: IconType
 }
 
+// Hardcoded mobile app list — includes all relevant apps for a phone context
+const MOBILE_APPS: IconItem[] = [
+  { id: "browser",    label: "Browser",    type: "browser"    },
+  { id: "terminal",   label: "Terminal",   type: "terminal"   },
+  { id: "profile",    label: "Profile",    type: "person"     },
+  { id: "projects",   label: "Files",      type: "folder"     },
+  { id: "gallery",    label: "Gallery",    type: "folder"     },
+  { id: "resume",     label: "Resume",     type: "pdf"        },
+  { id: "experience", label: "Experience", type: "briefcase"  },
+  { id: "education",  label: "Education",  type: "graduation" },
+  { id: "recycle",    label: "Trash",      type: "trash"      },
+]
+
 type Props = {
   onOpenApp: (appId: AppId) => void
 }
 
 export default function MobileHomeScreen({ onOpenApp }: Props) {
   const t = useTheme()
-  const [icons, setIcons] = useState<IconItem[]>([])
   const [date, setDate] = useState(new Date())
-
-  useEffect(() => {
-    fetch("/content/desktop.json")
-      .then((res) => res.json())
-      .then((data) => setIcons(data))
-      .catch((err) => console.error("Failed to load desktop icons:", err))
-  }, [])
 
   useEffect(() => {
     const id = setInterval(() => setDate(new Date()), 60000)
@@ -31,7 +36,7 @@ export default function MobileHomeScreen({ onOpenApp }: Props) {
   }, [])
 
   const weekday = date.toLocaleDateString("en-US", { weekday: "long" })
-  const monthDay = date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  const monthDay = date.toLocaleDateString("en-US", { month: "long", day: "numeric" })
 
   return (
     <div
@@ -39,72 +44,68 @@ export default function MobileHomeScreen({ onOpenApp }: Props) {
         flex: 1,
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "36px 20px 48px",
         boxSizing: "border-box",
         zIndex: 1,
         overflowY: "auto",
+        // Extra bottom padding so last row isn't hidden behind the nav bar
+        paddingBottom: 8,
       }}
     >
-      {/* Top section: Premium Header and Date */}
+      {/* ── Premium Date/Time Header ── */}
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 6,
-          marginTop: 20,
+          padding: "28px 24px 20px",
           userSelect: "none",
-          textAlign: "left",
         }}
       >
         <div
           style={{
-            fontSize: "0.85rem",
+            fontSize: "0.78rem",
             fontWeight: 700,
             textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            color: t.isDark ? "rgba(255, 255, 255, 0.45)" : "rgba(0, 0, 0, 0.45)",
+            letterSpacing: "0.12em",
+            color: t.isDark ? "rgba(255,255,255,0.45)" : "rgba(0,0,0,0.4)",
+            marginBottom: 4,
           }}
         >
           {weekday}
         </div>
         <div
           style={{
-            fontSize: "2.4rem",
+            fontSize: "2.2rem",
             fontWeight: 800,
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             color: t.isDark ? "#ffffff" : "#09090b",
-            textShadow: t.isDark ? "0 2px 10px rgba(0,0,0,0.3)" : "none",
+            textShadow: t.isDark ? "0 2px 12px rgba(0,0,0,0.4)" : "none",
           }}
         >
           {monthDay}
         </div>
         <div
           style={{
-            fontSize: "0.85rem",
+            fontSize: "0.82rem",
             fontWeight: 500,
-            color: t.isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.6)",
-            marginTop: 4,
+            color: t.isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
+            marginTop: 6,
           }}
         >
           Welcome to HYK's Workspace
         </div>
       </div>
 
-      {/* Grid of Launcher Icons */}
+      {/* ── App Launcher Grid ── */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "16px 8px",
+          gap: "4px 0px",
           justifyItems: "center",
-          marginTop: "auto",
-          marginBottom: 10,
-          padding: "24px 0",
+          alignItems: "start",
+          padding: "0 4px 16px",
         }}
       >
-        {icons.map((icon) => (
+        {MOBILE_APPS.map((icon) => (
           <MobileAppIcon
             key={icon.id}
             id={icon.id}

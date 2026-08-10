@@ -5,6 +5,7 @@ import portfolioImg from "@/assets/screenshots/portfolio.png"
 
 type Props = {
   initialImageSrc?: string
+  registerBackHandler?: (handler: (() => boolean) | null) => void
 }
 
 function ChevronLeftIcon({ size = 24, color = "#fff" }: { size?: number; color?: string }) {
@@ -41,7 +42,7 @@ function ChevronRightIcon({ size = 24, color = "#fff" }: { size?: number; color?
   )
 }
 
-export default function Gallery({ initialImageSrc }: Props) {
+export default function Gallery({ initialImageSrc, registerBackHandler }: Props) {
   const t = useTheme()
   const [currentAlbumId, setCurrentAlbumId] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
@@ -50,6 +51,32 @@ export default function Gallery({ initialImageSrc }: Props) {
   const [customImage, setCustomImage] = useState<string | null>(
     initialImageSrc || null,
   )
+
+  // Register back handler: close lightbox → close album → let shell close app
+  useEffect(() => {
+    if (registerBackHandler) {
+      registerBackHandler(() => {
+        if (isZoomed) {
+          setIsZoomed(false)
+          setZoomOrigin("center center")
+          return true
+        }
+        if (selected || customImage) {
+          setSelected(null)
+          setCustomImage(null)
+          return true
+        }
+        if (currentAlbumId) {
+          setCurrentAlbumId(null)
+          return true
+        }
+        return false
+      })
+    }
+    return () => {
+      if (registerBackHandler) registerBackHandler(null)
+    }
+  }, [isZoomed, selected, customImage, currentAlbumId, registerBackHandler])
 
   // Sync state if initialImageSrc changes while the component is mounted
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { PROJECTS, EXPERIENCE, EDUCATION } from "@/content/data"
 import {
   getProjectFilesystem,
@@ -13,6 +13,7 @@ type Section = "projects" | "experience" | "education"
 type FileExplorerProps = {
   section: Section
   openWindow?: (appId: any, params?: any) => void
+  registerBackHandler?: (handler: (() => boolean) | null) => void
 }
 
 /* ── File type icons (SVGs) ── */
@@ -217,9 +218,15 @@ function ProjectsExplorer({
     return virtualNodesToFileItems(resolveProjectExplorerPath(currentPath))
   }, [currentPath])
 
-  const handleItemClick = (e: React.MouseEvent, name: string) => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
+
+  const handleItemClick = (e: React.MouseEvent, item: FileItem) => {
     e.stopPropagation()
-    setSelectedItem(name)
+    if (isMobile) {
+      handleItemDoubleClick(item)
+    } else {
+      setSelectedItem(item.name)
+    }
   }
 
   const handleItemDoubleClick = (item: FileItem) => {
@@ -265,6 +272,7 @@ function ProjectsExplorer({
       style={{
         flex: 1,
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         overflow: "hidden",
         transition: t.transition,
       }}
@@ -272,11 +280,16 @@ function ProjectsExplorer({
       {/* Sidebar */}
       <div
         style={{
-          width: 200,
+          width: isMobile ? "100%" : 200,
           flexShrink: 0,
           background: t.bgSidebar,
-          borderRight: "1px solid " + t.border,
-          ...col,
+          borderRight: isMobile ? "none" : "1px solid " + t.border,
+          borderBottom: isMobile ? "1px solid " + t.border : "none",
+          display: "flex",
+          flexDirection: isMobile ? "row" : "column",
+          overflowX: isMobile ? "auto" : "visible",
+          overflowY: isMobile ? "hidden" : "auto",
+          scrollbarWidth: "none",
           transition: t.transition,
         }}
       >
@@ -289,6 +302,7 @@ function ProjectsExplorer({
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             transition: t.transition,
+            display: isMobile ? "none" : "block",
           }}
         >
           Navigation
@@ -309,16 +323,23 @@ function ProjectsExplorer({
                   ? "rgba(74,222,128,0.08)"
                   : "rgba(37,99,235,0.08)"
                 : "transparent",
-            borderLeft:
-              currentPath.length === 0
+            borderLeft: isMobile
+              ? "none"
+              : currentPath.length === 0
                 ? t.isDark
                   ? "2px solid #4ade80"
                   : "2px solid #2563eb"
                 : "2px solid transparent",
+            borderBottom: isMobile
+              ? currentPath.length === 0
+                ? "2px solid " + (t.isDark ? "#4ade80" : "#2563eb")
+                : "2px solid transparent"
+              : "none",
             display: "flex",
             alignItems: "center",
             gap: 8,
             transition: t.transition,
+            whiteSpace: isMobile ? "nowrap" : "normal",
           }}
           onMouseEnter={(e) => {
             if (currentPath.length !== 0)
@@ -360,15 +381,23 @@ function ProjectsExplorer({
                     ? "rgba(74,222,128,0.08)"
                     : "rgba(37,99,235,0.08)"
                   : "transparent",
-                borderLeft: isActive
-                  ? t.isDark
-                    ? "2px solid #4ade80"
-                    : "2px solid #2563eb"
-                  : "2px solid transparent",
+                borderLeft: isMobile
+                  ? "none"
+                  : isActive
+                    ? t.isDark
+                      ? "2px solid #4ade80"
+                      : "2px solid #2563eb"
+                    : "2px solid transparent",
+                borderBottom: isMobile
+                  ? isActive
+                    ? "2px solid " + (t.isDark ? "#4ade80" : "#2563eb")
+                    : "2px solid transparent"
+                  : "none",
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
                 transition: t.transition,
+                whiteSpace: isMobile ? "nowrap" : "normal",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) e.currentTarget.style.background = t.bgHover
@@ -379,9 +408,9 @@ function ProjectsExplorer({
             >
               <svg width="14" height="14" viewBox="0 0 16 14" fill="none">
                 <path
-                  d="M1 3C1 2.2 1.6 1.5 2.4 1.5H6.5L7.5 3H13.6C14.4 3 15 3.7 15 4.5V11.5C15 12.3 14.4 13 13.6 13H2.4C1.6 13 1 12.3 1 11.5V3Z"
-                  fill={t.isDark ? "#4a9eff" : "#2563eb"}
-                  fillOpacity="0.75"
+                   d="M1 3C1 2.2 1.6 1.5 2.4 1.5H6.5L7.5 3H13.6C14.4 3 15 3.7 15 4.5V11.5C15 12.3 14.4 13 13.6 13H2.4C1.6 13 1 12.3 1 11.5V3Z"
+                   fill={t.isDark ? "#4a9eff" : "#2563eb"}
+                   fillOpacity="0.75"
                 />
               </svg>
               <span
@@ -410,17 +439,24 @@ function ProjectsExplorer({
           style={{
             padding: "7px 14px",
             cursor: "default",
-            marginTop: "auto",
+            marginTop: isMobile ? 0 : "auto",
             display: "flex",
             alignItems: "center",
             gap: 8,
             background:
               currentPath[0] === "Archive" ? t.bgHover : "transparent",
-            borderLeft:
-              currentPath[0] === "Archive"
+            borderLeft: isMobile
+              ? "none"
+              : currentPath[0] === "Archive"
                 ? "2px solid " + t.borderStrong
                 : "2px solid transparent",
+            borderBottom: isMobile
+              ? currentPath[0] === "Archive"
+                ? "2px solid " + t.borderStrong
+                : "2px solid transparent"
+              : "none",
             transition: t.transition,
+            whiteSpace: isMobile ? "nowrap" : "normal",
           }}
           onMouseEnter={(e) => {
             if (currentPath[0] !== "Archive")
@@ -485,7 +521,7 @@ function ProjectsExplorer({
             return (
               <div
                 key={item.name}
-                onClick={(e) => handleItemClick(e, item.name)}
+                onClick={(e) => handleItemClick(e, item)}
                 onDoubleClick={() => handleItemDoubleClick(item)}
                 style={{
                   display: "flex",
@@ -554,12 +590,14 @@ function ExperienceExplorer() {
   const t = useTheme()
   const [selected, setSelected] = useState(EXPERIENCE[0].id)
   const item = EXPERIENCE.find((e) => e.id === selected)
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
 
   return (
     <div
       style={{
         flex: 1,
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         overflow: "hidden",
         background: t.bg,
         transition: t.transition,
@@ -567,11 +605,16 @@ function ExperienceExplorer() {
     >
       <div
         style={{
-          width: 200,
+          width: isMobile ? "100%" : 200,
           flexShrink: 0,
           background: t.bgSidebar,
-          borderRight: "1px solid " + t.border,
-          ...col,
+          borderRight: isMobile ? "none" : "1px solid " + t.border,
+          borderBottom: isMobile ? "1px solid " + t.border : "none",
+          display: "flex",
+          flexDirection: isMobile ? "row" : "column",
+          overflowX: isMobile ? "auto" : "visible",
+          overflowY: isMobile ? "hidden" : "auto",
+          scrollbarWidth: "none",
           transition: t.transition,
         }}
       >
@@ -584,6 +627,7 @@ function ExperienceExplorer() {
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             transition: t.transition,
+            display: isMobile ? "none" : "block",
           }}
         >
           Experience
@@ -602,12 +646,20 @@ function ExperienceExplorer() {
                     ? "rgba(167,139,250,0.08)"
                     : "rgba(124,58,237,0.08)"
                   : "transparent",
-                borderLeft: isActive
-                  ? t.isDark
-                    ? "2px solid #a78bfa"
-                    : "2px solid #7c3aed"
-                  : "2px solid transparent",
+                borderLeft: isMobile
+                  ? "none"
+                  : isActive
+                    ? t.isDark
+                      ? "2px solid #a78bfa"
+                      : "2px solid #7c3aed"
+                    : "2px solid transparent",
+                borderBottom: isMobile
+                  ? isActive
+                    ? "2px solid " + (t.isDark ? "#a78bfa" : "#7c3aed")
+                    : "2px solid transparent"
+                  : "none",
                 transition: t.transition,
+                whiteSpace: isMobile ? "nowrap" : "normal",
               }}
               onMouseEnter={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = t.bgHover
@@ -641,7 +693,7 @@ function ExperienceExplorer() {
         })}
       </div>
 
-      <div style={{ flex: 1, ...col, overflowY: "auto", padding: "24px 28px" }}>
+      <div style={{ flex: 1, ...col, overflowY: "auto", padding: isMobile ? "16px 20px" : "24px 28px" }}>
         {item && (
           <div style={{ ...col, gap: 18 }}>
             <div>
@@ -731,12 +783,14 @@ function EducationExplorer() {
   const t = useTheme()
   const [selected, setSelected] = useState(EDUCATION[0].id)
   const item = EDUCATION.find((e) => e.id === selected)
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768
 
   return (
     <div
       style={{
         flex: 1,
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         overflow: "hidden",
         background: t.bg,
         transition: t.transition,
@@ -744,11 +798,16 @@ function EducationExplorer() {
     >
       <div
         style={{
-          width: 200,
+          width: isMobile ? "100%" : 200,
           flexShrink: 0,
           background: t.bgSidebar,
-          borderRight: "1px solid " + t.border,
-          ...col,
+          borderRight: isMobile ? "none" : "1px solid " + t.border,
+          borderBottom: isMobile ? "1px solid " + t.border : "none",
+          display: "flex",
+          flexDirection: isMobile ? "row" : "column",
+          overflowX: isMobile ? "auto" : "visible",
+          overflowY: isMobile ? "hidden" : "auto",
+          scrollbarWidth: "none",
           transition: t.transition,
         }}
       >
@@ -761,6 +820,7 @@ function EducationExplorer() {
             letterSpacing: "0.08em",
             textTransform: "uppercase",
             transition: t.transition,
+            display: isMobile ? "none" : "block",
           }}
         >
           Education
@@ -779,12 +839,20 @@ function EducationExplorer() {
                     ? "rgba(251,191,36,0.08)"
                     : "rgba(217,119,6,0.08)"
                   : "transparent",
-                borderLeft: isActive
-                  ? t.isDark
-                    ? "2px solid #fbbf24"
-                    : "2px solid #d97706"
-                  : "2px solid transparent",
+                borderLeft: isMobile
+                  ? "none"
+                  : isActive
+                    ? t.isDark
+                      ? "2px solid #fbbf24"
+                      : "2px solid #d97706"
+                    : "2px solid transparent",
+                borderBottom: isMobile
+                  ? isActive
+                    ? "2px solid " + (t.isDark ? "#fbbf24" : "#d97706")
+                    : "2px solid transparent"
+                  : "none",
                 transition: t.transition,
+                whiteSpace: isMobile ? "nowrap" : "normal",
               }}
               onMouseEnter={(ev) => {
                 if (!isActive) ev.currentTarget.style.background = t.bgHover
@@ -818,7 +886,7 @@ function EducationExplorer() {
         })}
       </div>
 
-      <div style={{ flex: 1, ...col, overflowY: "auto", padding: "24px 28px" }}>
+      <div style={{ flex: 1, ...col, overflowY: "auto", padding: isMobile ? "16px 20px" : "24px 28px" }}>
         {item && (
           <div style={{ ...col, gap: 18 }}>
             <div>
@@ -1072,9 +1140,25 @@ function Toolbar({
 export default function FileExplorer({
   section,
   openWindow,
+  registerBackHandler,
 }: FileExplorerProps) {
   const t = useTheme()
   const [currentPath, setCurrentPath] = useState<string[]>([])
+
+  useEffect(() => {
+    if (registerBackHandler) {
+      registerBackHandler(() => {
+        if (currentPath.length > 0) {
+          setCurrentPath((prev) => prev.slice(0, -1))
+          return true
+        }
+        return false
+      })
+    }
+    return () => {
+      if (registerBackHandler) registerBackHandler(null)
+    }
+  }, [currentPath, registerBackHandler])
 
   return (
     <div
