@@ -222,7 +222,7 @@ const SHORTCUTS = [
   {
     id: "discord",
     label: "Discord",
-    url: "https://discord.com/users/houssam_yakhlaf",
+    url: "https://discord.com/users/1412070532844752950",
     icon: (
       <svg
         width="22"

@@ -520,7 +520,7 @@ export default function Profile() {
                 }
                 label="Discord"
                 value="houssam_yakhlaf"
-                href="https://discord.com"
+                href="https://discord.com/users/1412070532844752950"
               />
               {profileData.contact.phone && (
                 <ContactRow
