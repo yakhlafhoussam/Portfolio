@@ -53,6 +53,7 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
   const [showRecents, setShowRecents] = useState(false)
   // Each app can register a handler that returns true if it consumed the back action
   const internalBackHandlerRef = useRef<(() => boolean) | null>(null)
+  const browserCloseRequestRef = useRef<() => boolean>(() => true)
 
   // Provide this to apps so they can register/unregister their internal back handler
   const registerBackHandler = useCallback((handler: (() => boolean) | null) => {
@@ -77,6 +78,10 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       setShowRecents(false)
       return
     }
+    if (openApp === "browser" && !browserCloseRequestRef.current()) {
+      window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+      return
+    }
     // First, let the open app handle back internally (e.g. Browser: article → news → home)
     if (internalBackHandlerRef.current) {
       const consumed = internalBackHandlerRef.current()
@@ -94,15 +99,19 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       setOpenApp(prevItem.appId)
       setAppParams(prevItem.params)
     }
-  }, [navStack, showRecents])
+  }, [navStack, showRecents, openApp])
 
   const handleHome = useCallback(() => {
+    if (openApp === "browser" && !browserCloseRequestRef.current()) {
+      window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+      return
+    }
     setShowRecents(false)
     setOpenApp(null)
     setAppParams(null)
     setNavStack([])
     internalBackHandlerRef.current = null
-  }, [])
+  }, [openApp])
 
   const handleRecentsToggle = useCallback(() => {
     setShowRecents((prev) => !prev)
@@ -118,6 +127,10 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
 
   const handleCloseRecentApp = useCallback(
     (appId: AppId) => {
+      if (appId === "browser" && !browserCloseRequestRef.current()) {
+        window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+        return
+      }
       setRecentApps((prev) => prev.filter((id) => id !== appId))
       if (openApp === appId) {
         setOpenApp(null)
@@ -130,13 +143,17 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
   )
 
   const handleClearAllRecents = useCallback(() => {
+    if (recentApps.includes("browser") && !browserCloseRequestRef.current()) {
+      window.dispatchEvent(new CustomEvent("hyk-breach-escape"))
+      return
+    }
     setRecentApps([])
     setOpenApp(null)
     setAppParams(null)
     setNavStack([])
     setShowRecents(false)
     internalBackHandlerRef.current = null
-  }, [])
+  }, [recentApps])
 
   const handleToggleTheme = useCallback(() => {
     const next = !isDark

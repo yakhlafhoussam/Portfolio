@@ -1139,6 +1139,10 @@ export default function Browser({
   useEffect(() => {
     if (registerBackHandler) {
       registerBackHandler(() => {
+        if ((countdownActive || takeoverActive) && currentArticle?.source === "hyk") {
+          forceStartShow()
+          return true
+        }
         if (eggPageRef.current !== null) {
           restoreLocalStorageAfterReading()
           setPage("news")
@@ -1162,7 +1166,39 @@ export default function Browser({
     return () => {
       if (registerBackHandler) registerBackHandler(null)
     }
-  }, [page, registerBackHandler, restoreLocalStorageAfterReading])
+  }, [
+    page,
+    registerBackHandler,
+    restoreLocalStorageAfterReading,
+    countdownActive,
+    takeoverActive,
+    currentArticle,
+    forceStartShow,
+  ])
+
+  // Listen to browser native back events to prevent leaving the page during countdown/show
+  useEffect(() => {
+    let active = false
+    if ((countdownActive || takeoverActive) && currentArticle?.source === "hyk") {
+      window.history.pushState({ hykBlock: true }, "")
+      active = true
+
+      const handlePopState = () => {
+        if ((countdownActive || takeoverActive) && currentArticle?.source === "hyk") {
+          window.history.pushState({ hykBlock: true }, "")
+          forceStartShow()
+        }
+      }
+
+      window.addEventListener("popstate", handlePopState)
+      return () => {
+        window.removeEventListener("popstate", handlePopState)
+        if (active) {
+          window.history.back()
+        }
+      }
+    }
+  }, [countdownActive, takeoverActive, currentArticle, forceStartShow])
 
   const eggPageRef = useRef<"cheat" | "deleted" | "bypass-success" | "bypass-fail" | null>(null)
   useEffect(() => {
