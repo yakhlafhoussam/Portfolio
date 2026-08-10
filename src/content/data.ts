@@ -221,5 +221,3 @@ export interface GalleryImage {
   alt?: string
   caption: string
 }
-
-export const GALLERY_IMAGES: GalleryImage[] = []
