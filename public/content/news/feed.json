@@ -21,10 +21,10 @@
   },
   {
     "id": "mavel",
-    "title": "Mavel Still Awaits Its Next Commit",
-    "summary": "Months after its announcement, the experimental PHP framework 'Mavel' remains one of the most anticipated personal projects.",
+    "title": "Anomaly X-7: The Bug That Rewrote Itself",
+    "summary": "Researchers stumbled upon a runtime anomaly that appeared to modify its own stack trace—causing cascading failures that no debugger could trace.",
     "date": "2026-07-31",
-    "category": "community",
+    "category": "security",
     "readingTime": "2 min read",
     "cover": "/content/news/covers/mavel.png",
     "miniImage": "/content/news/mini_images/mavel_b.png"
