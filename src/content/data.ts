@@ -150,7 +150,7 @@ export const EDUCATION = [
   {
     id: "youcode",
     institution: "YouCode Safi",
-    degree: "Software Engineering & Artificial Intelligence",
+    degree: "Artificial Intelligence & Software Development",
     period: "2025 — Present",
     gpa: null,
     relevant: [
