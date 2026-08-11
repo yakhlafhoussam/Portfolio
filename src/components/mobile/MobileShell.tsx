@@ -201,7 +201,9 @@ export default function MobileShell({ isDark, setIsDark }: Props) {
       case "browser":
         return (
           <Browser
-            registerCloseRequest={() => {}}
+            registerCloseRequest={(callback) => {
+              browserCloseRequestRef.current = callback
+            }}
             registerBackHandler={registerBackHandler}
           />
         )
