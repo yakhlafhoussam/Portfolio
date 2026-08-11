@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useTheme } from "../../context/ThemeContext"
 import MobileStatusBar from "./MobileStatusBar"
 import MobileHomeScreen from "./MobileHomeScreen"
@@ -7,6 +7,7 @@ import MobileRecentApps from "./MobileRecentApps"
 import MobileAppView from "./MobileAppView"
 import type { AppId } from "../desktop/Desktop"
 import { storageManager } from "../../lib/storage"
+import { initVisitor } from "../../services/visitor"
 import lightWallpaper from "@/assets/wallpapers/light.png"
 import darkWallpaper from "@/assets/wallpapers/dark.png"
 
@@ -46,6 +47,12 @@ const APP_TITLES: Record<AppId, string> = {
 
 export default function MobileShell({ isDark, setIsDark }: Props) {
   const t = useTheme()
+
+  // Register visitor on first visit — reuses the same shared service as Desktop.
+  // Do NOT call storageManager.initialize() here; the visitor service owns that decision.
+  useEffect(() => {
+    initVisitor()
+  }, [])
   const [openApp, setOpenApp] = useState<AppId | null>(null)
   const [appParams, setAppParams] = useState<any>(null)
   const [navStack, setNavStack] = useState<StackItem[]>([])
